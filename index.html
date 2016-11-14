@@ -242,7 +242,7 @@ ruminations on software development
 
 <p>It’s a more functional way of describing what the code’s doing. It could be argued I’m making the code more functional, but really all I’m doing is exposing the functional properties of the code which already existed. Whether you think this is a good thing in and of itself is up to you, but – as you’ll see – these changes make it easier to spot further functional refactorings down the line.</p>
 
-<p>###PRINCIPLE 3: Don’t treat Optionals like nulls</p>
+<h3 id="principle-3-dont-treat-optionals-like-nulls">PRINCIPLE 3: Don’t treat Optionals like nulls</h3>
 
 <p>The next thing I noticed was:</p>
 
@@ -448,7 +448,7 @@ ruminations on software development
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>And ended up with this:</p>
+<p>And, through a series of tiny steps, each improving the code in its own right, ended up with this:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">ResponseWithMaybeDeal</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">maybeDeal</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">).</span><span class="na">flatMap</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">findDeal</span><span class="o">);</span>
@@ -456,7 +456,10 @@ ruminations on software development
 <span class="o">}</span>
 </code></pre>
 </div>
-<p>Seems pretty good.</p>
+
+<p>You may argue that one or two of the steps weren’t an improvement in style, in and of themselves. I’m not sure I’d agree, but I can see how you might think that. However, that’s not the point. Each of the steps were part of a gradual progression towards the final result - an implementation which is clearly, objectively better than the original.</p>
+
+<p>These refactorings aren’t just changes in style - they’re changes in form, replacing broad constructs with more restrictive ones. Each application is therefore a simplification: being we were <em>able</em> to apply them shows that our code is simpler than its original structure implies. Repeated applications of those refactorings took us to the simplest possible form, where our body does little more than restate the method name.</p>
 
         </div>
     </div>

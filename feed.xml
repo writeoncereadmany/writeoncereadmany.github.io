@@ -169,7 +169,7 @@
 
 &lt;p&gt;It’s a more functional way of describing what the code’s doing. It could be argued I’m making the code more functional, but really all I’m doing is exposing the functional properties of the code which already existed. Whether you think this is a good thing in and of itself is up to you, but – as you’ll see – these changes make it easier to spot further functional refactorings down the line.&lt;/p&gt;
 
-&lt;p&gt;###PRINCIPLE 3: Don’t treat Optionals like nulls&lt;/p&gt;
+&lt;h3 id=&quot;principle-3-dont-treat-optionals-like-nulls&quot;&gt;PRINCIPLE 3: Don’t treat Optionals like nulls&lt;/h3&gt;
 
 &lt;p&gt;The next thing I noticed was:&lt;/p&gt;
 
@@ -375,7 +375,7 @@
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;p&gt;And ended up with this:&lt;/p&gt;
+&lt;p&gt;And, through a series of tiny steps, each improving the code in its own right, ended up with this:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ResponseWithMaybeDeal&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;matchResponseToDeal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;BidResponse&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bidResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UnrulySSPDeal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maybeDeal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getDealIdFromResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bidResponse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;flatMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;findDeal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
@@ -383,7 +383,10 @@
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;p&gt;Seems pretty good.&lt;/p&gt;
+
+&lt;p&gt;You may argue that one or two of the steps weren’t an improvement in style, in and of themselves. I’m not sure I’d agree, but I can see how you might think that. However, that’s not the point. Each of the steps were part of a gradual progression towards the final result - an implementation which is clearly, objectively better than the original.&lt;/p&gt;
+
+&lt;p&gt;These refactorings aren’t just changes in style - they’re changes in form, replacing broad constructs with more restrictive ones. Each application is therefore a simplification: being we were &lt;em&gt;able&lt;/em&gt; to apply them shows that our code is simpler than its original structure implies. Repeated applications of those refactorings took us to the simplest possible form, where our body does little more than restate the method name.&lt;/p&gt;
 </description>
 				<pubDate>Fri, 11 Nov 2016 00:00:00 +0000</pubDate>
 				<link>/2016/11/refactoring-to-functionality</link>
