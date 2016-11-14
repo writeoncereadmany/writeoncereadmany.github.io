@@ -1,0 +1,4 @@
+/* This css file is the colorful.css theme from https://github.com/iwootten/jekyll-syntax */
+
+.highlight .pink { background-color: #ffcccc } /* Literal.String.Heredoc */
+.highlight .blue { background-color: #bbddff } /* Literal.String.Interpol */

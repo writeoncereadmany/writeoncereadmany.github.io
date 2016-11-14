@@ -53,23 +53,23 @@ The first thing I noticed was this:
 private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
-    Optional<ResponseWithMaybeDeal> responseWithDeal1;
+    "!!pink!!"Optional<ResponseWithMaybeDeal> responseWithDeal1;"!!end!!"
     if (dealIdFromResponse.isPresent()) {
-        responseWithDeal1 = dealIdFromResponse
+        "!!pink!!"responseWithDeal1 ="!!end!!" dealIdFromResponse
             .flatMap(dealId -> {
                 Optional<UnrulySSPDeal> deal = findDeal(dealId);
-                Optional<ResponseWithMaybeDeal> responseWithDeal;
+                "!!blue!!"Optional<ResponseWithMaybeDeal> responseWithDeal;"!!end!!"
                 if (deal.isPresent()) {
-                    responseWithDeal = Optional.of(new ResponseWithMaybeDeal(bidResponse, deal));
+                    "!!blue!!"responseWithDeal ="!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, deal));
                 } else {
-                    responseWithDeal = Optional.empty();
+                    "!!blue!!"responseWithDeal ="!!end!!" Optional.empty();
                 }
-                return responseWithDeal;
+                "!!blue!!"return responseWithDeal;"!!end!!"
             });
     } else {
-        responseWithDeal1 = Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
+        "!!pink!!"responseWithDeal1 ="!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
     }
-    return responseWithDeal1;
+    "!!pink!!"return responseWithDeal1;"!!end!!"
 }
 ```
 Here we have two examples of the single-return style, one in the method itself and one in a lambda contained within the method. Arguments exist as to which of single-return and early-return style is more readable – personally, I find that tracking changes through mutable variables like this is harder to reason about than just returning values when you have them. Returning rather than assigning gives us:
