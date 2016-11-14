@@ -36,9 +36,9 @@
                     <li class="active"><a href="/archive.html">Archive</a></li>
                     <li class="active"><a href="/about.html">About</a></li>
                     <li class="active"><a href="/feed.xml">RSS</a></li>
-
+                    
                       <li class="active"><a href="https://github.com/scotte/jekyll-clean">Github</a></li>
-
+                    
                 </ul>
               </div>
         </div>
@@ -56,9 +56,9 @@ ruminations on software development
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
-
+        
           <li><a href="/2016/11/refactoring-to-functionality">Refactoring To Functionality</a></li>
-
+        
     </ul>
 </div>
 
@@ -78,7 +78,7 @@ ruminations on software development
           <div class="article">
             <div class="well">
                 <h1><a href="/2016/11/refactoring-to-functionality">Nov 11, 2016 - Refactoring To Functionality</a></h1>
-
+            
             <div class="post-content">
             <h1 id="refactoring-towards-functionality">Refactoring towards Functionality</h1>
 
@@ -129,23 +129,23 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="pink"><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal1</span><span class="o">;</span></span>
+    <span class="s">"!!pink!!"</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal1</span><span class="o">;</span><span class="s">"!!end!!"</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="pink"><span class="n">responseWithDeal1</span> <span class="o">=</span></span> <span class="n">dealIdFromResponse</span>
+        <span class="s">"!!pink!!"</span><span class="n">responseWithDeal1</span> <span class="o">=</span><span class="s">"!!end!!"</span> <span class="n">dealIdFromResponse</span>
             <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-                <span class="blue"><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal</span><span class="o">;</span></span>
+                <span class="s">"!!blue!!"</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal</span><span class="o">;</span><span class="s">"!!end!!"</span>
                 <span class="k">if</span> <span class="o">(</span><span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="blue"><span class="n">responseWithDeal</span> <span class="o">=</span></span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">));</span>
+                    <span class="s">"!!blue!!"</span><span class="n">responseWithDeal</span> <span class="o">=</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">));</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="blue"><span class="n">responseWithDeal</span> <span class="o">=</span></span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+                    <span class="s">"!!blue!!"</span><span class="n">responseWithDeal</span> <span class="o">=</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
                 <span class="o">}</span>
-                <span class="blue"><span class="k">return</span> <span class="n">responseWithDeal</span><span class="o">;</span></span>
+                <span class="s">"!!blue!!"</span><span class="k">return</span> <span class="n">responseWithDeal</span><span class="o">;</span><span class="s">"!!end!!"</span>
             <span class="o">});</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="pink"><span class="n">responseWithDeal1</span> <span class="o">=</span></span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
+        <span class="s">"!!pink!!"</span><span class="n">responseWithDeal1</span> <span class="o">=</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
     <span class="o">}</span>
-    <span class="pink"><span class="k">return</span> <span class="n">responseWithDeal1</span><span class="o">;</span></span>
+    <span class="s">"!!pink!!"</span><span class="k">return</span> <span class="n">responseWithDeal1</span><span class="o">;</span><span class="s">"!!end!!"</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -154,23 +154,23 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal1</span><span class="o">;</span>
+    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="s">"!!unused!!"</span><span class="n">responseWithDeal1</span><span class="s">"!!end!!"</span><span class="o">;</span>
     <span class="k">if</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">dealIdFromResponse</span>
             <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-                <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="n">responseWithDeal</span><span class="o">;</span>
+                <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="s">"!!unused!!"</span><span class="n">responseWithDeal</span><span class="s">"!!end!!"</span><span class="o">;</span>
                 <span class="k">if</span> <span class="o">(</span><span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">));</span>
                 <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
                     <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
                 <span class="o">}</span>
-                <span class="k">return</span> <span class="n">responseWithDeal</span><span class="o">;</span>
+                <span class="k">return</span> <span class="s">"!!error!!"</span><span class="n">responseWithDeal</span><span class="s">"!!end!!"</span><span class="o">;</span>
             <span class="o">});</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
     <span class="o">}</span>
-    <span class="k">return</span> <span class="n">responseWithDeal1</span><span class="o">;</span>
+    <span class="k">return</span> <span class="s">"!!error!!"</span><span class="n">responseWithDeal1</span><span class="s">"!!end!!"</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -202,18 +202,18 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="k">if</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">dealIdFromResponse</span>
+    <span class="s">"!!pink!!"</span><span class="k">if</span><span class="s">"!!end!!"</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="s">"!!pink!!"</span><span class="k">return</span><span class="s">"!!end!!"</span> <span class="n">dealIdFromResponse</span>
             <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-                <span class="k">if</span> <span class="o">(</span><span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-                    <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">));</span>
-                <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-                    <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+                <span class="s">"!!blue!!"</span><span class="k">if</span><span class="s">"!!end!!"</span> <span class="o">(</span><span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+                    <span class="s">"!!blue!!"</span><span class="k">return</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">));</span>
+                <span class="o">}</span> <span class="s">"!!blue!!"</span><span class="k">else</span><span class="s">"!!end!!"</span> <span class="o">{</span>
+                    <span class="s">"!!blue!!"</span><span class="k">return</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
                 <span class="o">}</span>
             <span class="o">});</span>
-    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
+    <span class="o">}</span> <span class="s">"!!pink!!"</span><span class="k">else</span><span class="s">"!!end!!"</span> <span class="o">{</span>
+        <span class="s">"!!pink!!"</span><span class="k">return</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -223,14 +223,14 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="k">return</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span>
+    <span class="k">return</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> 
         <span class="o">?</span> <span class="n">dealIdFromResponse</span>
             <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-                <span class="k">return</span> <span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span>
+                <span class="k">return</span> <span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span> 
                     <span class="o">?</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">))</span>
                     <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
-            <span class="o">})</span>
+            <span class="o">})</span> 
         <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
 <span class="o">}</span>
 </code></pre>
@@ -248,15 +248,15 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="k">return</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span>
-        <span class="o">?</span> <span class="n">dealIdFromResponse</span>
+    <span class="k">return</span> <span class="s">"!!pink!!"</span><span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span><span class="s">"!!end!!"</span> 
+        <span class="s">"!!pink!!"</span><span class="o">?</span><span class="s">"!!end!!"</span> <span class="n">dealIdFromResponse</span>
             <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="o">{</span>
                 <span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-                <span class="k">return</span> <span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span>
-                    <span class="o">?</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">))</span>
-                    <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
-            <span class="o">})</span>
-        <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
+                <span class="k">return</span> <span class="s">"!!blue!!"</span><span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span><span class="s">"!!end!!"</span> 
+                    <span class="s">"!!blue!!"</span><span class="o">?</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">))</span>
+                    <span class="s">"!!blue!!"</span><span class="o">:</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+            <span class="o">})</span> 
+        <span class="s">"!!pink!!"</span><span class="o">:</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -271,7 +271,7 @@ ruminations on software development
 <p>The blue section here is easiest to refactor, from this:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">UnrulySSPDeal</span><span class="o">&gt;</span> <span class="n">deal</span> <span class="o">=</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">);</span>
-<span class="k">return</span> <span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span>
+<span class="k">return</span> <span class="n">deal</span><span class="o">.</span><span class="na">isPresent</span><span class="o">()</span> 
     <span class="o">?</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">deal</span><span class="o">))</span>
     <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
 </code></pre>
@@ -293,11 +293,11 @@ ruminations on software development
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
-    <span class="k">return</span> <span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span>
-        <span class="o">?</span> <span class="n">dealIdFromResponse</span>
-            <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span>
+    <span class="k">return</span> <span class="s">"!!pink!!"</span><span class="o">(</span><span class="n">dealIdFromResponse</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span><span class="s">"!!end!!"</span>
+        <span class="s">"!!pink!!"</span><span class="o">?</span><span class="s">"!!end!!"</span> <span class="n">dealIdFromResponse</span>
+            <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> 
                 <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))))</span>
-        <span class="o">:</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
+        <span class="s">"!!pink!!"</span><span class="o">:</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -307,7 +307,7 @@ ruminations on software development
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
     <span class="k">return</span> <span class="n">dealIdFromResponse</span>
-        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> 
             <span class="n">of</span><span class="o">(</span><span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">of</span><span class="o">(</span><span class="n">deal</span><span class="o">)))))</span>
         <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">empty</span><span class="o">())));</span>
 <span class="o">}</span>
@@ -331,14 +331,14 @@ ruminations on software development
 
 <p>So, we changed what the function does, and moved the filtering outside. If we just pair the response to the corresponding deal (when we can find one), we no longer have a reason to wrap in an <code class="highlighter-rouge">Optional</code>, allowing us to go from this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">private</span> <span class="s">"!!pink!!"</span><span class="n">Optional</span><span class="s">"!!end!!"</span><span class="o">&lt;</span><span class="n">ResponseWithMaybeDeal</span><span class="o">&gt;</span> <span class="nf">matchResponseToDeal</span><span class="o">(</span><span class="n">BidResponse</span> <span class="n">bidResponse</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
     <span class="k">return</span> <span class="n">dealIdFromResponse</span>
-        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span>
-            <span class="n">of</span><span class="o">(</span><span class="n">maybeDeal</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))));</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> 
+            <span class="s">"!!pink!!"</span><span class="n">of</span><span class="s">"!!end!!"</span><span class="o">(</span><span class="n">maybeDeal</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))));</span>
         <span class="o">})</span>
-        <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">of</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">empty</span><span class="o">())));</span>
+        <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="s">"!!pink!!"</span><span class="n">of</span><span class="s">"!!end!!"</span><span class="o">(</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">empty</span><span class="o">())));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -348,7 +348,7 @@ ruminations on software development
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
     <span class="k">return</span> <span class="n">dealIdFromResponse</span>
-        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> 
             <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))))</span>
         <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
 <span class="o">}</span>
@@ -364,9 +364,9 @@ ruminations on software development
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">dealIdFromResponse</span> <span class="o">=</span> <span class="n">getDealIdFromResponse</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">);</span>
 
     <span class="k">return</span> <span class="n">dealIdFromResponse</span>
-        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span>
-            <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))))</span>
-        <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
+        <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> 
+            <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="s">"!!pink!!"</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))))</span>
+        <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="s">"!!pink!!"</span><span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span><span class="s">"!!end!!"</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -378,7 +378,7 @@ ruminations on software development
     <span class="n">ResponseWithMaybeDeal</span> <span class="n">responseWithMaybeDeal</span> <span class="o">=</span> <span class="n">dealIdFromResponse</span>
         <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">dealId</span> <span class="o">-&gt;</span> <span class="n">findDeal</span><span class="o">(</span><span class="n">dealId</span><span class="o">).</span><span class="na">map</span><span class="o">(</span><span class="n">deal</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">deal</span><span class="o">))))</span>
         <span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">ResponseWithMaybeDeal</span><span class="o">(</span><span class="n">bidResponse</span><span class="o">,</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">()));</span>
-
+    
     <span class="k">return</span> <span class="n">responseWithMaybeDeal</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre>
@@ -458,12 +458,12 @@ ruminations on software development
 <p>Seems pretty good.</p>
 
             </div>
-
+            
             </div>
           </div>
           <div class="pagination">
-
-
+              
+              
           </div>
         </div>
     </div>

@@ -78,23 +78,23 @@ Here we have two examples of the single-return style, one in the method itself a
 private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
-    Optional<ResponseWithMaybeDeal> responseWithDeal1;
+    Optional<ResponseWithMaybeDeal> "!!unused!!"responseWithDeal1"!!end!!";
     if (dealIdFromResponse.isPresent()) {
         return dealIdFromResponse
             .flatMap(dealId -> {
                 Optional<UnrulySSPDeal> deal = findDeal(dealId);
-                Optional<ResponseWithMaybeDeal> responseWithDeal;
+                Optional<ResponseWithMaybeDeal> "!!unused!!"responseWithDeal"!!end!!";
                 if (deal.isPresent()) {
                     return Optional.of(new ResponseWithMaybeDeal(bidResponse, deal));
                 } else {
                     return Optional.empty();
                 }
-                return responseWithDeal;
+                return "!!error!!"responseWithDeal"!!end!!";
             });
     } else {
         return Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
     }
-    return responseWithDeal1;
+    return "!!error!!"responseWithDeal1"!!end!!";
 }
 ```
 That's reassuring, we have compile errors on the original return statements as they're unreachable, and the variables are unused. It's always nice when your IDE confirms that you've hit all the cases. Get rid of those lines and we get:
@@ -126,18 +126,18 @@ The next thing I noticed was this:
 private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
-    if (dealIdFromResponse.isPresent()) {
-        return dealIdFromResponse
+    "!!pink!!"if"!!end!!" (dealIdFromResponse.isPresent()) {
+        "!!pink!!"return"!!end!!" dealIdFromResponse
             .flatMap(dealId -> {
                 Optional<UnrulySSPDeal> deal = findDeal(dealId);
-                if (deal.isPresent()) {
-                    return Optional.of(new ResponseWithMaybeDeal(bidResponse, deal));
-                } else {
-                    return Optional.empty();
+                "!!blue!!"if"!!end!!" (deal.isPresent()) {
+                    "!!blue!!"return"!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, deal));
+                } "!!blue!!"else"!!end!!" {
+                    "!!blue!!"return"!!end!!" Optional.empty();
                 }
             });
-    } else {
-        return Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
+    } "!!pink!!"else"!!end!!" {
+        "!!pink!!"return"!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
     }
 }
 ```
@@ -172,15 +172,15 @@ The next thing I noticed was:
 private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
-    return (dealIdFromResponse.isPresent()) 
-        ? dealIdFromResponse
+    return "!!pink!!"(dealIdFromResponse.isPresent())"!!end!!" 
+        "!!pink!!"?"!!end!!" dealIdFromResponse
             .flatMap(dealId -> {
                 Optional<UnrulySSPDeal> deal = findDeal(dealId);
-                return deal.isPresent() 
-                    ? Optional.of(new ResponseWithMaybeDeal(bidResponse, deal))
-                    : Optional.empty();
+                return "!!blue!!"deal.isPresent()"!!end!!" 
+                    "!!blue!!"?"!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, deal))
+                    "!!blue!!":"!!end!!" Optional.empty();
             }) 
-        : Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
+        "!!pink!!":"!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
 }
 ```
 `Optional`s are a really important addition to Java 8. Unfortunately, the general introduction to `Optional`s - that they're a better way of addressing the problems we get with `null` – tends to result in `Optional`-handling code looking like `null`-handling code at first. Our method is currently a good example of that.
@@ -217,11 +217,11 @@ Here we're unwrapping and then re-wrapping the deal in an `Optional`. This does 
 private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
-    return (dealIdFromResponse.isPresent())
-        ? dealIdFromResponse
+    return "!!pink!!"(dealIdFromResponse.isPresent())"!!end!!"
+        "!!pink!!"?"!!end!!" dealIdFromResponse
             .flatMap(dealId -> 
                 findDeal(dealId).map(deal -> new ResponseWithMaybeDeal(bidResponse, Optional.of(deal))))
-        : Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
+        "!!pink!!":"!!end!!" Optional.of(new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
 }
 ```
 The pink section is also easy to refactor, as we're already doing a mapping operation over it: we know if the deal isn't present, we'll have an `Optional.empty()`. So we can refactor this too:
@@ -253,14 +253,14 @@ Functions should do one thing.
 So, we changed what the function does, and moved the filtering outside. If we just pair the response to the corresponding deal (when we can find one), we no longer have a reason to wrap in an `Optional`, allowing us to go from this:
 
 ```java
-private Optional<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
+private "!!pink!!"Optional"!!end!!"<ResponseWithMaybeDeal> matchResponseToDeal(BidResponse bidResponse) {
     Optional<String> dealIdFromResponse = getDealIdFromResponse(bidResponse);
 
     return dealIdFromResponse
         .flatMap(dealId -> 
-            of(maybeDeal.map(deal -> new ResponseWithMaybeDeal(bidResponse, of(deal))));
+            "!!pink!!"of"!!end!!"(maybeDeal.map(deal -> new ResponseWithMaybeDeal(bidResponse, of(deal))));
         })
-        .orElseGet(() -> of(new ResponseWithMaybeDeal(bidResponse, empty())));
+        .orElseGet(() -> "!!pink!!"of"!!end!!"(new ResponseWithMaybeDeal(bidResponse, empty())));
 }
 ```
 To this:
@@ -287,8 +287,8 @@ private ResponseWithMaybeDeal matchResponseToDeal(BidResponse bidResponse) {
 
     return dealIdFromResponse
         .flatMap(dealId -> 
-            findDeal(dealId).map(deal -> new ResponseWithMaybeDeal(bidResponse, Optional.of(deal))))
-        .orElseGet(() -> new ResponseWithMaybeDeal(bidResponse, Optional.empty()));
+            findDeal(dealId).map(deal -> "!!pink!!"new ResponseWithMaybeDeal(bidResponse,"!!end!!" Optional.of(deal))))
+        .orElseGet(() -> "!!pink!!"new ResponseWithMaybeDeal(bidResponse,"!!end!!" Optional.empty()));
 }
 ```
 We're returning a ResponseWithMaybeDeal from this method, and we're creating it on both paths. So we can simplify that by lifting that part out – first by extracting the return value into a variable:
