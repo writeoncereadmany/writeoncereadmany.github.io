@@ -89,13 +89,13 @@ ruminations on software development
 
 <p><em>– Tony Hoare</em></p>
 
-<p>Nulls are terrible. They’re dangerous and sneaky and they’re <a href="http://io.livecode.ch/learn/namin/unsound">why Java’s type system is unsound</a>. We might not be able to remove them from the language, but at least we can stop using them ourselves, because Java 8 gave us <code class="highlighter-rouge">Optional</code>s.</p>
+<p>Nulls are terrible. They’re dangerous and sneaky and they’re <a href="http://io.livecode.ch/learn/namin/unsound">why Java’s type system is unsound</a>. Ideally, we’d never use them, but we can’t do much about twenty years of libraries which might return nulls. At least we can try to stop returning them in our own APIs, because Java 8 gave us <code class="highlighter-rouge">Optional</code>s.</p>
 
 <p>What’s an <code class="highlighter-rouge">Optional</code>? It’s a data type which represents either a value, or… not a value. This allows us to represent the possibility of an absence of the value in the type system. So, instead of code like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Cat</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -103,15 +103,15 @@ ruminations on software development
 
 <p>We can write code like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>The latter code is, to my mind, indisputably better than the former. The possibility of nullity is encoded in the types, and we can’t do anything with the student without making a conscious decision to remove it from the <code class="highlighter-rouge">Optional</code>.</p>
+<p>The latter code is, to my mind, indisputably better than the former. The possibility of nullity is encoded in the types, and we can’t do anything to the cat without making a conscious decision to remove it from the <code class="highlighter-rouge">Optional</code>.</p>
 
 <p>Intent is clearer. Mistakes are less likely. These are good things.</p>
 
@@ -119,9 +119,9 @@ ruminations on software development
 
 <p>So, what’s wrong with it? It’s right here:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="pink"><span class="n">get</span><span class="o">()</span></span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="pink"><span class="n">get</span><span class="o">()</span></span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -148,9 +148,9 @@ ruminations on software development
 
 <p>If we take the code above, we can rewrite it from:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -158,54 +158,54 @@ ruminations on software development
 
 <p>to:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">student</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()));</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">kitty</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">cat</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">cat</span><span class="o">.</span><span class="na">meow</span><span class="o">()));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>The latter is safer than the former. You can’t accidentally invert the condition or comment it out and blow up on the get, because it’s encapsulated in the <code class="highlighter-rouge">Optional</code> itself. The code that handles the <code class="highlighter-rouge">Student</code> is only ever invoked when there’s a <code class="highlighter-rouge">Student</code> to invoke it on.</p>
+<p>The latter is safer than the former. You can’t accidentally invert the condition or comment it out and blow up on the get, because it’s encapsulated in the <code class="highlighter-rouge">Optional</code> itself. The code that handles the <code class="highlighter-rouge">Cat</code> is only ever invoked when there’s a <code class="highlighter-rouge">Cat</code> to invoke it on.</p>
 
 <p>Importantly, it’s also nicer. It’s shorter and more direct. The reason that’s important is <em>you don’t even have the aesthetic excuse</em> for using the check-and-get pattern.</p>
 
 <p>Depending on taste and context, we could also rewrite it as:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">student</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Student:</span><span class="o">:</span><span class="n">name</span><span class="o">)</span>
-           <span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">kitty</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Cat:</span><span class="o">:</span><span class="n">meow</span><span class="o">)</span>
+         <span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>This is a little longer, but it’s more declarative and composable. If we had more steps of digging into structure, or we wanted to do some processing of the name prior to printing it, then this structure would scale better than building a large lambda.</p>
+<p>This is a little longer, but it’s more declarative and composable. If we had more steps of digging into structure, or we wanted to do some processing of the cat’s distressed yelp prior to printing it, then this structure would scale better than building a large lambda.</p>
 
-<p>If the operations we want get more complex - say, for example, we want to print the name <em>and</em> address - we can also consider the following:</p>
+<p>If the operations we want become more complex - say, for example, we want to hear all forms of the poor moggy’s anguish - we can also consider the following:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">student</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">ThisClass:</span><span class="o">:</span><span class="n">printInfo</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">kitty</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">ThisClass:</span><span class="o">:</span><span class="n">listen</span><span class="o">);</span>
 <span class="o">}</span>
 
-<span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printInfo</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">address</span><span class="o">());</span>
+<span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">listen</span><span class="o">(</span><span class="n">Cat</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">hiss</span><span class="o">());</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<h3 id="we-know-its-there">We know it’s there</h3>
+<h3 id="we-know-its-always-there">We know it’s always there</h3>
 
 <p>Occasionally, you might find yourself in a situation where either a presence check or providing an alternate in case of absence is overkill, because you know the <code class="highlighter-rouge">Optional</code> can’t be empty. In that case you should refactor code like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
 <p>to this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Cat</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -216,17 +216,17 @@ ruminations on software development
 
 <p>Maybe you’ll find yourself in a situation where the <em>code</em> doesn’t guarantee the <code class="highlighter-rouge">Optional</code> is present, but the <em>domain</em> does. Then, you don’t want to provide an alternative: you want to throw an error in case of absence. That’s what <code class="highlighter-rouge">Optional.get()</code> does. In that situation, you should prefer to write this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
 <p>Like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">Student</span> <span class="n">student</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(</span><span class="nl">DomainSpecificException:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
-    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Cat</span> <span class="n">myKitty</span> <span class="o">=</span> <span class="n">kitty</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(</span><span class="nl">HaveYouSeenThisCatException:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">myKitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
 <span class="o">}</span>
 </code></pre>
 </div>
@@ -282,11 +282,11 @@ ruminations on software development
 
 <p>One thing that none of these patterns help with, though, is when the <code class="highlighter-rouge">if</code> block has an <code class="highlighter-rouge">else</code> clause. Sometimes dealing with these constructs is simple. For example:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -294,8 +294,9 @@ ruminations on software development
 
 <p>can be rewritten:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">String</span> <span class="n">output</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Student:</span><span class="o">:</span><span class="n">name</span><span class="o">).</span><span class="na">orElse</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">output</span> <span class="o">=</span> <span class="n">kitty</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Cat:</span><span class="o">:</span><span class="n">meow</span><span class="o">)</span>
+                         <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">);</span>
     <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre>
@@ -303,11 +304,11 @@ ruminations on software development
 
 <p>But sometimes you want to do different things on the different paths:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-        <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -315,21 +316,21 @@ ruminations on software development
 
 <p>Here, it would be nice if we could rewrite it as:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">student</span><span class="o">.</span><span class="na">ifPresentOrElse</span><span class="o">(</span>
-        <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()),</span>
-        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">));</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">kitty</span><span class="o">.</span><span class="na">ifPresentOrElse</span><span class="o">(</span>
+        <span class="n">cat</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">cat</span><span class="o">.</span><span class="na">meow</span><span class="o">()),</span>
+        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre>
 </div>
 
 <p>Unfortunately, there’s no <code class="highlighter-rouge">Optional.ifPresentOrElse()</code> method - but the good news is that’s coming in Java 9 too. Again, in the meantime, we can roll our own:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">ifPresentOrElse</span><span class="o">(</span>
-        <span class="n">student</span><span class="o">,</span>
-        <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()),</span>
-        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">));</span>
+        <span class="n">kitty</span><span class="o">,</span>
+        <span class="n">cat</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">cat</span><span class="o">.</span><span class="na">meow</span><span class="o">()),</span>
+        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">));</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">ifPresentOrElse</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">optional</span><span class="o">,</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">consumer</span><span class="o">,</span> <span class="n">Runnable</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
