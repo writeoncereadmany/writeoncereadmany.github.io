@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
 
+          <li><a href="/2016/12/optional-get-considered-harmful">Optional Get Considered Harmful</a></li>
+
           <li><a href="/2016/11/refactoring-to-functionality">Refactoring To Functionality</a></li>
 
     </ul>
@@ -75,6 +77,288 @@ ruminations on software development
 
         </div>
         <div class="col-md-9">
+
+<div class="article">
+    <div class="well">
+        <h1><a href="/2016/12/optional-get-considered-harmful">Dec 21, 2016 - Optional Get Considered Harmful</a></h1>
+
+        <div class="content">
+            <p>Optional.get() considered harmful</p>
+
+<blockquote>
+  <p>I call it my billion-dollar mistake. It was the invention of the null reference in 1965… <strong>My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler</strong>. But I couldn’t resist the temptation to put in a null reference, simply because it was so easy to implement. This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.</p>
+</blockquote>
+
+<p><em>– Tony Hoare</em></p>
+
+<p>Nulls are terrible. They’re dangerous and sneaky and they’re <a href="http://io.livecode.ch/learn/namin/unsound">why Java’s type system is unsound</a>. We might not be able to remove them from the language, but at least we can stop using them ourselves, because Java 8 gave us <code class="highlighter-rouge">Optional</code>s.</p>
+
+<p>What’s an <code class="highlighter-rouge">Optional</code>? It’s a data type which represents either a value, or… not a value. This allows us to represent the possibility of an absence of the value in the type system. So, instead of code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We can write code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The latter code is, to my mind, indisputably better than the former. The possibility of nullity is encoded in the types, and we can’t do anything with the student without making a conscious decision to remove it from the <code class="highlighter-rouge">Optional</code>.</p>
+
+<p>Intent is clearer. Mistakes are less likely. These are good things.</p>
+
+<p>That said, <strong>don’t write code like this</strong>. Just because it’s better than the null-exposed version doesn’t make it <em>good</em>.</p>
+
+<p>So, what’s wrong with it? It’s right here:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="s">"!!!pink!!!"</span><span class="n">get</span><span class="o">()</span><span class="s">"!!!end!!!"</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="one-of-these-things-is-not-like-the-other">One of these things is not like the other</h3>
+
+<p>There are four methods on an <code class="highlighter-rouge">Optional&lt;T&gt;</code> that return a <code class="highlighter-rouge">T</code>. They are:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">get()</code></li>
+  <li><code class="highlighter-rouge">orElse(T t)</code></li>
+  <li><code class="highlighter-rouge">orElseGet(Supplier&lt;T&gt; t)</code></li>
+  <li><code class="highlighter-rouge">orElseThrow(Supplier&lt;? extends Exception&gt; ex)</code></li>
+</ul>
+
+<p>All of these specify how to behave when a <code class="highlighter-rouge">T</code> is not present in an <code class="highlighter-rouge">Optional&lt;T&gt;</code>. All of them, that is, apart from <code class="highlighter-rouge">get</code>. It makes sense to require a specification of how to behave when the <code class="highlighter-rouge">Optional</code> is empty: the role of <code class="highlighter-rouge">Optional</code> is to represent that possibility.</p>
+
+<p>Simply put: the only time it is safe to call <code class="highlighter-rouge">Optional.get()</code> is when we know it is <em>not</em> empty, and in those situations <em>it shouldn’t be an <code class="highlighter-rouge">Optional</code></em>.</p>
+
+<p>So what happens when you call <code class="highlighter-rouge">get()</code> on an empty <code class="highlighter-rouge">Optional</code>? You get a <code class="highlighter-rouge">NoSuchElementException</code>: Java 8’s sick joke version of a <code class="highlighter-rouge">NullPointerException</code>.</p>
+
+<h3 id="there-is-a-better-way">There is a better way</h3>
+
+<p>If we take the code above, we can rewrite it from:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>to:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">student</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()));</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The latter is safer than the former. You can’t accidentally invert the condition or comment it out and blow up on the get, because it’s encapsulated in the <code class="highlighter-rouge">Optional</code> itself. The code that handles the <code class="highlighter-rouge">Student</code> is only ever invoked when there’s a <code class="highlighter-rouge">Student</code> to invoke it on.</p>
+
+<p>Importantly, it’s also nicer. It’s shorter and more direct. The reason that’s important is <em>you don’t even have the aesthetic excuse</em> for using the check-and-get pattern.</p>
+
+<p>Depending on taste and context, we could also rewrite it as:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">student</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Student:</span><span class="o">:</span><span class="n">name</span><span class="o">)</span>
+           <span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is a little longer, but it’s more declarative and composable. If we had more steps of digging into structure, or we wanted to do some processing of the name prior to printing it, then this structure would scale better than building a large lambda.</p>
+
+<p>If the operations we want get more complex - say, for example, we want to print the name <em>and</em> address - we can also consider the following:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">student</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">ThisClass:</span><span class="o">:</span><span class="n">printInfo</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">private</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printInfo</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">address</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="we-know-its-there">We know it’s there</h3>
+
+<p>Occasionally, you might find yourself in a situation where either a presence check or providing an alternate in case of absence is overkill, because you know the <code class="highlighter-rouge">Optional</code> can’t be empty. In that case you should refactor code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>to this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Student</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Optional</code> exists to represent the possibility of absence. If there’s no such possibility, then we shouldn’t be using an <code class="highlighter-rouge">Optional</code>, and we should push changes up to the calling method.</p>
+
+<h3 id="we-dont-know-its-there-but-its-a-bug-if-it-isnt">We don’t <em>know</em> it’s there, but it’s a bug if it isn’t</h3>
+
+<p>Maybe you’ll find yourself in a situation where the <em>code</em> doesn’t guarantee the <code class="highlighter-rouge">Optional</code> is present, but the <em>domain</em> does. Then, you don’t want to provide an alternative: you want to throw an error in case of absence. That’s what <code class="highlighter-rouge">Optional.get()</code> does. In that situation, you should prefer to write this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">Student</span> <span class="n">student</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(</span><span class="nl">DomainSpecificException:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The difference here is one of intent and communication. In the former case, it’s not clear whether or not the failure case even occurred to the programmer. When an exception is raised, it’s non-specific and doesn’t provide any insight as to where the assumptions broke down. The latter case is clear, and provides appropriate mechanisms to detail exactly what went wrong.</p>
+
+<p>The difference here is that <code class="highlighter-rouge">Optional.get()</code> throws <em>on accident</em>, because that’s all it can do, whereas <code class="highlighter-rouge">Optional.orElseThrow()</code> throws <em>by design</em>, so if you <em>want</em> to throw, use the latter.</p>
+
+<p>In general, <code class="highlighter-rouge">Optional.get()</code> should be considered an alias for <code class="highlighter-rouge">Optional.orElseThrow(BadAtJavaException::new)</code>.</p>
+
+<h3 id="streams">Streams!</h3>
+
+<p>One pattern I’ve seen a bit is turning a sequence of <code class="highlighter-rouge">Optional&lt;T&gt;</code>s into a sequence of <code class="highlighter-rouge">T</code>s, which can be done cleanly using <code class="highlighter-rouge">Stream</code>s:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">extractValues</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">maybes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">maybes</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+                 <span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="nl">Optional:</span><span class="o">:</span><span class="n">isPresent</span><span class="o">)</span>
+                 <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Optional:</span><span class="o">:</span><span class="n">get</span><span class="o">)</span>
+                 <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is usually done as an operation inline on a stream of things, rather than being a standalone method, but that’s the minimal illustrative sample. This pattern of <code class="highlighter-rouge">filter</code> then <code class="highlighter-rouge">get</code> is reasonably clear in its intent, but there’s a better way:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">extractValues</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">maybes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">maybes</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+                 <span class="o">.</span><span class="na">flatmap</span><span class="o">(</span><span class="nl">Optional:</span><span class="o">:</span><span class="n">stream</span><span class="o">)</span>
+                 <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><code class="highlighter-rouge">Optional.stream()</code> converts an <code class="highlighter-rouge">Optional&lt;T&gt;</code> to a <code class="highlighter-rouge">Stream&lt;T&gt;</code>, with one element if it was present or none if it was absent. The only slight drawback is that it doesn’t exist.</p>
+
+<p>Well, it doesn’t exist yet - it’s being added to the API in Java 9. In the meantime, we can build our own version:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">extractValues</span><span class="o">(</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span> <span class="n">maybes</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">maybes</span><span class="o">.</span><span class="na">stream</span><span class="o">()</span>
+                 <span class="o">.</span><span class="na">flatmap</span><span class="o">(</span><span class="nl">ThisClass:</span><span class="o">:</span><span class="n">stream</span><span class="o">)</span>
+                 <span class="o">.</span><span class="na">collect</span><span class="o">(</span><span class="n">Collectors</span><span class="o">.</span><span class="na">toList</span><span class="o">());</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">stream</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">)</span> <span class="o">{</span>
+	<span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Stream:</span><span class="o">:</span><span class="n">of</span><span class="o">).</span><span class="na">orElseGet</span><span class="o">(</span><span class="nl">Stream:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This pattern comes up often enough that it’s well worth extracting as a convenience until you’ve migrated to Java 9, and then it’ll be easy to refactor to the API version.</p>
+
+<h3 id="what-else">What else?</h3>
+
+<p>One thing that none of these patterns help with, though, is when the <code class="highlighter-rouge">if</code> block has an <code class="highlighter-rouge">else</code> clause. Sometimes dealing with these constructs is simple. For example:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>can be rewritten:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">output</span> <span class="o">=</span> <span class="n">student</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Student:</span><span class="o">:</span><span class="n">name</span><span class="o">).</span><span class="na">orElse</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">output</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>But sometimes you want to do different things on the different paths:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">student</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">());</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+        <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Here, it would be nice if we could rewrite it as:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">student</span><span class="o">.</span><span class="na">ifPresentOrElse</span><span class="o">(</span>
+        <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()),</span>
+        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">));</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Unfortunately, there’s no <code class="highlighter-rouge">Optional.ifPresentOrElse()</code> method - but the good news is that’s coming in Java 9 too. Again, in the meantime, we can roll our own:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">printName</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Student</span><span class="o">&gt;</span> <span class="n">student</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ifPresentOrElse</span><span class="o">(</span>
+        <span class="n">student</span><span class="o">,</span>
+        <span class="n">s</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">.</span><span class="na">name</span><span class="o">()),</span>
+        <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"Student not found"</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kt">void</span> <span class="nf">ifPresentOrElse</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">optional</span><span class="o">,</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">consumer</span><span class="o">,</span> <span class="n">Runnable</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+	<span class="n">optional</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">consumer</span><span class="o">);</span>
+	<span class="k">if</span><span class="o">(!</span><span class="n">optional</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+		<span class="n">task</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<h3 id="summing-up">Summing up</h3>
+
+<p>So, to recap:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">Optional</code>s exist to provide a safe, explicit alternative to <code class="highlighter-rouge">null</code></li>
+  <li><code class="highlighter-rouge">Optional.get()</code> is not safe</li>
+  <li><code class="highlighter-rouge">Optional.get()</code> is not necessary</li>
+  <li>When the unsafe-ness of <code class="highlighter-rouge">Optional.get()</code> is the behaviour you want, there is a better alternative: explicitly using <code class="highlighter-rouge">Optional.orElseThrow()</code></li>
+  <li>The world would be a better place without <code class="highlighter-rouge">Optional.get()</code> on the API</li>
+  <li><strong>Don’t use <code class="highlighter-rouge">Optional.get()</code></strong></li>
+</ul>
+
+        </div>
+    </div>
+</div>
 
 <div class="article">
     <div class="well">
