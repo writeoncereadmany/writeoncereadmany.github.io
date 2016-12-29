@@ -3,8 +3,8 @@
 	<channel>
 		<title>write once, read many</title>
 		<description>ruminations on software development</description>
-		<link></link>
-		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		<link>http://localhost:4000</link>
+		<atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
 				<title>Optional.get() considered harmful</title>
@@ -40,7 +40,8 @@
 
 &lt;p&gt;Intent is clearer. Mistakes are less likely. These are good things.&lt;/p&gt;
 
-&lt;p&gt;That said, &lt;strong&gt;don’t write code like this&lt;/strong&gt;. Just because it’s better than the null-exposed version doesn’t make it &lt;em&gt;good&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;That said, &lt;strong&gt;don’t write code like this&lt;/strong&gt;. Just because it’s better than the null-exposed version doesn’t make it &lt;em&gt;good&lt;/em&gt;.
+&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;p&gt;So, what’s wrong with it? It’s right here:&lt;/p&gt;
 
@@ -281,21 +282,20 @@
 &lt;/ul&gt;
 </description>
 				<pubDate>Wed, 21 Dec 2016 00:00:00 +0000</pubDate>
-				<link>/2016/12/optional-get-considered-harmful</link>
-				<guid isPermaLink="true">/2016/12/optional-get-considered-harmful</guid>
+				<link>http://localhost:4000/2016/12/optional-get-considered-harmful</link>
+				<guid isPermaLink="true">http://localhost:4000/2016/12/optional-get-considered-harmful</guid>
 			</item>
 		
 			<item>
-				<title>Refactoring To Functionality</title>
-				<description>&lt;h1 id=&quot;refactoring-towards-functional-style&quot;&gt;Refactoring towards Functional Style&lt;/h1&gt;
-
-&lt;p&gt;Yesterday, I refactored a method.&lt;/p&gt;
+				<title>Refactoring towards a Functional Style</title>
+				<description>&lt;p&gt;Yesterday, I refactored a method.&lt;/p&gt;
 
 &lt;p&gt;Nothing unusual about that - we refactor code constantly. Code is, after all, better described as something grown than something built, and a large part of gardening is keeping the weeds in check. Normally, I wouldn’t have given it a second thought.&lt;/p&gt;
 
 &lt;p&gt;What was unusual, though, was this was my first time pairing with Sarah, who’s relatively new to Java 8 constructs like Optionals. Pairing with someone new often leads to more discussion of what’s being done and why, which can provoke some interesting reflections.&lt;/p&gt;
 
-&lt;p&gt;As we stepped through the refactorings, I noticed a few simple pressures were guiding us towards a functional approach. Each one only made a small, incremental improvement. Together, they had a huge effect on the code.&lt;/p&gt;
+&lt;p&gt;As we stepped through the refactorings, I noticed a few simple pressures were guiding us towards a functional approach. Each one only made a small, incremental improvement. Together, they had a huge effect on the code.
+&lt;!--more--&gt;&lt;/p&gt;
 
 &lt;p&gt;Here’s the original code:&lt;/p&gt;
 
@@ -666,8 +666,8 @@
 &lt;p&gt;These refactorings aren’t just changes in style - they’re changes in form, replacing broad constructs with more restrictive ones. Each application is therefore a simplification: being &lt;em&gt;able&lt;/em&gt; to apply them shows that our code is simpler than its original structure implies. Repeated applications of those refactorings took us to the simplest possible form.&lt;/p&gt;
 </description>
 				<pubDate>Fri, 11 Nov 2016 00:00:00 +0000</pubDate>
-				<link>/2016/11/refactoring-to-functionality</link>
-				<guid isPermaLink="true">/2016/11/refactoring-to-functionality</guid>
+				<link>http://localhost:4000/2016/11/refactoring-to-functionality</link>
+				<guid isPermaLink="true">http://localhost:4000/2016/11/refactoring-to-functionality</guid>
 			</item>
 		
 	</channel>

@@ -36,9 +36,9 @@
                     <li class="active"><a href="/archive.html">Archive</a></li>
                     <li class="active"><a href="/about.html">About</a></li>
                     <li class="active"><a href="/feed.xml">RSS</a></li>
-
+                    
                       <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
-
+                    
                 </ul>
               </div>
         </div>
@@ -56,11 +56,11 @@ ruminations on software development
 <div class="sidebar well">
     <h1>Recent Posts</h1>
     <ul>
-
+        
           <li><a href="/2016/12/optional-get-considered-harmful">Optional.get() considered harmful</a></li>
-
-          <li><a href="/2016/11/refactoring-to-functionality">Refactoring To Functionality</a></li>
-
+        
+          <li><a href="/2016/11/refactoring-to-functionality">Refactoring towards a Functional Style</a></li>
+        
     </ul>
 </div>
 
@@ -80,7 +80,7 @@ ruminations on software development
           <div class="article">
             <div class="well">
                 <h1><a href="/2016/12/optional-get-considered-harmful">Dec 21, 2016 - Optional.get() considered harmful</a></h1>
-
+            
             <div class="post-content">
             <blockquote>
   <p>I call it my billion-dollar mistake. It was the invention of the null reference in 1965… <strong>My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler</strong>. But I couldn’t resist the temptation to put in a null reference, simply because it was so easy to implement. This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.</p>
@@ -114,13 +114,14 @@ ruminations on software development
 
 <p>Intent is clearer. Mistakes are less likely. These are good things.</p>
 
-<p>That said, <strong>don’t write code like this</strong>. Just because it’s better than the null-exposed version doesn’t make it <em>good</em>.</p>
+<p>That said, <strong>don’t write code like this</strong>. Just because it’s better than the null-exposed version doesn’t make it <em>good</em>.
+<!--more--></p>
 
 <p>So, what’s wrong with it? It’s right here:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="pink"><span class="n">get</span><span class="o">()</span></span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class=pink><span class="n">get</span><span class="o">()</span></span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre>
@@ -327,7 +328,7 @@ ruminations on software development
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">ifPresentOrElse</span><span class="o">(</span>
-        <span class="n">kitty</span><span class="o">,</span>
+        <span class="n">kitty</span><span class="o">,</span> 
         <span class="n">cat</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">cat</span><span class="o">.</span><span class="na">meow</span><span class="o">()),</span>
         <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"I tawt I taw a puddy tat?"</span><span class="o">));</span>
 <span class="o">}</span>
@@ -355,14 +356,14 @@ ruminations on software development
 </ul>
 
             </div>
-
+            
             </div>
           </div>
           <div class="pagination">
-
-
+              
+              
                 <a class="btn btn-default" href="/2016/11/refactoring-to-functionality" class="previous">Older Post</a>
-
+              
           </div>
         </div>
     </div>
