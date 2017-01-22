@@ -166,8 +166,8 @@ ruminations on software development
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Optional</span><span class="o">&lt;</span><span class="n">King</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">();</span>
-    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
-    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">);</span>
+    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">);</span>
     <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"n/a"</span><span class="o">);</span> 
 <span class="o">}</span>
 </code></pre>
@@ -177,8 +177,8 @@ ruminations on software development
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
-                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
                   <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"n/a"</span><span class="o">);</span> 
 <span class="o">}</span>
 </code></pre>
@@ -197,11 +197,11 @@ ruminations on software development
     <span class="k">if</span><span class="o">(!</span><span class="n">king</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">name</span><span class="o">()</span> <span class="o">+</span> <span class="s">" does not have a king"</span><span class="o">;</span>
     <span class="o">}</span>
-    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
     <span class="k">if</span><span class="o">(!</span><span class="n">beard</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
         <span class="k">return</span> <span class="n">king</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">name</span><span class="o">()</span> <span class="o">+</span> <span class="s">" does not have a beard"</span><span class="o">;</span>
     <span class="o">}</span>
-    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">);</span>
+    <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">color</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">);</span>
     <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"n/a"</span><span class="o">);</span> 
 <span class="o">}</span>
 </code></pre>
@@ -242,23 +242,23 @@ ruminations on software development
 
 <p>How often can things fail <em>and you care how</em>? That’s a place where you should consider using a <code class="highlighter-rouge">Result</code>.</p>
 
-<p>So let’s compare how that code can look, using first <code class="highlighter-rouge">Optional</code>s and not caring about the error-case:</p>
+<p>So let’s compare how that code can look, using first <code class="highlighter-rouge">Optional</code>, not caring about the error-case:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
-                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
                   <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"n/a"</span><span class="o">);</span> 
 <span class="o">}</span>
 </code></pre>
 </div>
 
-<p>And secondly using <code class="highlighter-rouge">Result</code>s, and reporting details about the error:</p>
+<p>And secondly using (a hypothetical implementation of) <code class="highlighter-rouge">Result</code>, reporting details about the error:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
-                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
                   <span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">success</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">,</span>
                           <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span> 
 <span class="o">}</span>
@@ -315,6 +315,8 @@ ruminations on software development
 <span class="o">}</span>
 </code></pre>
 </div>
+
+<p>Unfortunately, this is basically the minimal case of an algebraic data type in Java.</p>
 
 <p>This creates a type <code class="highlighter-rouge">Result</code> with two subtypes <code class="highlighter-rouge">Success</code> and <code class="highlighter-rouge">Failure</code>. It’s impossible to create further subtypes, so any <code class="highlighter-rouge">Result</code> is either a <code class="highlighter-rouge">Success</code> or a <code class="highlighter-rouge">Failure</code>. The only way to access the contents is via a single method <code class="highlighter-rouge">Result::either</code>, which requires the caller specify how to handle each case.</p>
 
