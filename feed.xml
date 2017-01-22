@@ -3,8 +3,224 @@
 	<channel>
 		<title>write once, read many</title>
 		<description>ruminations on software development</description>
-		<link>http://localhost:4000</link>
-		<atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+		<link></link>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Smell-O-Vision</title>
+				<description>&lt;p&gt;Take a look at this code snippet - a Java puzzler from the classic book of the same name by Josh Bloch and Neal Grafter:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;StrungOut&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello World&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The answer is: it does nothing, and if you try to run it as a main method, you’ll get:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Exception in thread &quot;main&quot;: java.lang.NoSuchMethodError: main
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Why? Because a main method has to take an array of String, and ours takes an array of &lt;em&gt;String&lt;/em&gt;, and…&lt;/p&gt;
+
+&lt;p&gt;Talking about code can often be imprecise. At times like that it’s nice to show the actual code, and also show what I want to talk about in it. Like this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;StrungOut&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Hello World&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;!!blue!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!blue!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+	&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;!!blue!!&quot;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;java&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;lang&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;toString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+		&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+	&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;The problem is there are two String classes here: &lt;code class=&quot;highlighter-rouge&quot;&gt;java.lang.String&lt;/code&gt; (in blue) and our own &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt; class (in pink). &lt;code class=&quot;highlighter-rouge&quot;&gt;main()&lt;/code&gt; requires a blue &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;, but it gets a pink &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;, so it’s not a &lt;code class=&quot;highlighter-rouge&quot;&gt;main()&lt;/code&gt; method. But I don’t really care about the puzzler here: I want to talk about the highlighting.
+&lt;!--more--&gt;&lt;/p&gt;
+
+&lt;p&gt;This highlighting of blocks of code is a useful device when talking about code. I call it “Smell-O-Vision”, because it’s a good way of showing code smells in context.&lt;/p&gt;
+
+&lt;p&gt;It’s easy to do: just surround the formatted code with a &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;span class=whatever&amp;gt;&lt;/code&gt; with a style which changes the background colour.&lt;/p&gt;
+
+&lt;p&gt;The issue here is that I want writing blogs to be lightweight, so I’m using Jekyll with posts written in markdown - which doesn’t really support that.&lt;/p&gt;
+
+&lt;h4 id=&quot;do-it-yourself&quot;&gt;Do It Yourself&lt;/h4&gt;
+
+&lt;p&gt;The first thing I did was to simply wrap the bits I wanted highlighted in spans manually. I’d build the site, then go in and modify the generated HTML.&lt;/p&gt;
+
+&lt;p&gt;On the one hand, this was definitely the right place to start: at a very low investment, it allowed me to verify I got the output I wanted.&lt;/p&gt;
+
+&lt;p&gt;On the other hand, this was definitely not going to be viable for anything more than that verification: every time I rebuilt the page, whether it be for an edit of the post or even introducing a new post, all my formatting was lost, and I couldn’t even be sure of all the places I wanted it originally.&lt;/p&gt;
+
+&lt;p&gt;I knew where I wanted to be: I wanted to apply the highlighting as part of the page build process. This seemed like a big step though, as I’d need to work out the following:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;How to mark up the blocks I wanted highlighting in the source markdown&lt;/li&gt;
+  &lt;li&gt;How to plug behaviour in to the Jekyll build process&lt;/li&gt;
+  &lt;li&gt;Where to plug that behaviour in to the Jekyll build process&lt;/li&gt;
+  &lt;li&gt;How to write Ruby&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;That’s a lot of problems to solve all at once. So I didn’t.&lt;/p&gt;
+
+&lt;h4 id=&quot;out-of-band-post-processing&quot;&gt;Out of Band Post-Processing&lt;/h4&gt;
+
+&lt;p&gt;I wasn’t going to start getting into the Jekyll pipeline at first, so I wrote a processor that I could just use myself. This is fine while my blog is a couple of pages: after each build, I can just run it manually.&lt;/p&gt;
+
+&lt;p&gt;I could even write a wrapper script to run Jekyll and then my post-processing step. I didn’t, because at that point I’m building parallel infrastructure - that’s the point to learn how to plugin.&lt;/p&gt;
+
+&lt;p&gt;So I’m trying to find a way to automate the post-processing of HTML that I had previously been doing manually. The first step was to come up with some sort of way of marking up code blocks for highlighting, so I knew what to highlight and how.&lt;/p&gt;
+
+&lt;p&gt;My first attempts were to introduce some markup that was clearly not Java: for example, &lt;code class=&quot;highlighter-rouge&quot;&gt;$pink$&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;$end$&lt;/code&gt; for the beginning and end of a range to be highlighted in pink. This would have worked a treat if I was highlighting preformatted text, like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ```
+ public static void main(String[] args) {
+	 System.out.println(&quot;Cheeseburgers!&quot;);
+ }
+ ```
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But I wasn’t. I was highlighting &lt;em&gt;Java code&lt;/em&gt;, specified as so:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ```java
+ public static void main(String[] args) {
+ 	 System.out.println(&quot;Cheeseburgers!&quot;);
+ }
+ ```
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Which generates:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Cheeseburgers!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s all formatted, on the expectation that what I give it is Java. So what happens when I introduce some non-Java markup to that? For example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ```java
+ public static void main(String[] args) {
+ 	 $pink$System.out.println$end$(&quot;Cheeseburgers!&quot;);
+ }
+ ```
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;The generated HTML for the print line looks something like:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&amp;lt;span class=&quot;n&quot;&amp;gt;$pink$System&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;o&quot;&amp;gt;.&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;na&quot;&amp;gt;out&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;o&quot;&amp;gt;.&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;na&quot;&amp;gt;println&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;n&quot;&amp;gt;$end&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;err&quot;&amp;gt;$&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;o&quot;&amp;gt;(&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;s&quot;&amp;gt;&quot;Cheeseburgers!&quot;&amp;lt;/span&amp;gt;
+&amp;lt;span class=&quot;o&quot;&amp;gt;);&amp;lt;/span&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s not going to play nicely with an automated post-processor. The start tag is part of a larger element, and the end tag is split between two elements. That’s just this case: I don’t know what I need to prepare for in the general case.&lt;/p&gt;
+
+&lt;p&gt;What we ideally want is our markup to be rendered by the syntax highlighter into a single element within its own span, in a consistent way.&lt;/p&gt;
+
+&lt;p&gt;The issue here is: that’s dependent on how exactly the syntax highlighter works. I started working on the assumption it was a pure lexer, on the basis that parsing was probably overkill for syntax highlighting and is made more complex than usual as snippets are supported, meaning you don’t know what the root element is.&lt;/p&gt;
+
+&lt;p&gt;So I picked the only thing I could think of which would consistently be a single output regardless of context, and yet contain arbitrary payloads: a &lt;code class=&quot;highlighter-rouge&quot;&gt;String&lt;/code&gt;. To ensure that I don’t accidentally post-process regular &lt;code class=&quot;highlighter-rouge&quot;&gt;Strings&lt;/code&gt;, require an unusual formulation which I can consistently avoid in the code I want to publish. For example, &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;!!pink!!&quot;&lt;/code&gt; to open a pink block and &lt;code class=&quot;highlighter-rouge&quot;&gt;&quot;!!end!!&quot;&lt;/code&gt; to close it.&lt;/p&gt;
+
+&lt;p&gt;So I build the following post-processor (in Python, because I know it and it’s good at this sort of job):&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;fileinput&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sys&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;re&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;span&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'end'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'&amp;lt;/span&amp;gt;'&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'&amp;lt;span class=&quot;{}&quot;&amp;gt;'&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;arg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fileinput&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inplace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;backup&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'.bak'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;re&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'&amp;lt;span class=&quot;s&quot;&amp;gt;&quot;!!([^!]*)!!&quot;&amp;lt;/span&amp;gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;span&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;line&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rstrip&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;())&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That seemed to work pretty well for the first couple of blogposts I used it on. I wasn’t encountering any rendering problems with it: it handled all the cases I threw at it. It was a hassle having to re-run the script on my output after each build, but a huge step forward from doing the job manually.&lt;/p&gt;
+
+&lt;p&gt;That said, I knew it wasn’t going to scale, so I had to bite the bullet and do the job properly.&lt;/p&gt;
+
+&lt;h4 id=&quot;plugging-in&quot;&gt;Plugging In&lt;/h4&gt;
+
+&lt;p&gt;The next step was to integrate this into the Jekyll pipeline, which meant it was time to turn this into a plugin. That meant, at a minimum, I needed to:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;learn enough Ruby to express what I want&lt;/li&gt;
+  &lt;li&gt;understand the Jekyll pipeline so I can put my plugin at an appropriate location&lt;/li&gt;
+  &lt;li&gt;understand the Jekyll API so I can interact with things correctly&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;By now I had a strong idea of how I wanted to model , but that was too big a step to try and cross in one go. My initial approach was to just get the existing logic and model into the pipeline.&lt;/p&gt;
+
+&lt;p&gt;Learning enough Ruby to replace some strings with others according to a regex wasn’t hard. Adding a plugin to the build is trivial: just put a &lt;code class=&quot;highlighter-rouge&quot;&gt;*.rb&lt;/code&gt; file in &lt;code class=&quot;highlighter-rouge&quot;&gt;_plugins&lt;/code&gt; in the root. And there was an obvious place to plug it in to, as well: post-render on posts.&lt;/p&gt;
+
+&lt;p&gt;So, after a little (well, a lot of) experimentation and reading around the API, I ended up with the following plugin:&lt;/p&gt;
+
+&lt;div class=&quot;language-ruby highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;extract_smell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;gsub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/&amp;lt;span class=&quot;s&quot;&amp;gt;&quot;!!(?&amp;lt;smell&amp;gt;[^!]*)!!&quot;&amp;lt;\/span&amp;gt;/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;match&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;smell&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;vg&quot;&gt;$1&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;smell&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'end'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;then&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&amp;lt;/span&amp;gt;'&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;span class=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;smell&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;gt;&quot;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+
+&lt;span class=&quot;no&quot;&gt;Jekyll&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;Hooks&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;register&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:posts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;ss&quot;&gt;:post_render&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;do&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;|&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;extract_smell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;excerpt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;extract_smell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;post&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;excerpt&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And this does what I need, so I can run a Jekyll server and update the posts as I go, and just have smell-o-vision built in to my processing pipeline. Job done, right?&lt;/p&gt;
+
+&lt;h4 id=&quot;doing-it-properly&quot;&gt;Doing It Properly&lt;/h4&gt;
+
+&lt;p&gt;The job is, most emphatically, &lt;em&gt;not&lt;/em&gt; done at this point. It works, but that’s all I can really say for it. It’s not scalable in a number of directions: if I wanted to integrate with a different syntax highlighter, or a different language, or a different output format, then there’s no principled way of doing that.&lt;/p&gt;
+
+&lt;p&gt;How to model it properly, and how to implement a properly modelled solution, though - that’s a topic for another time. Hopefully, I’ll be able follow this up soon.&lt;/p&gt;
+</description>
+				<pubDate>Thu, 29 Dec 2016 00:00:00 +0000</pubDate>
+				<link>/2016/12/smell-o-vision</link>
+				<guid isPermaLink="true">/2016/12/smell-o-vision</guid>
+			</item>
 		
 			<item>
 				<title>Optional.get() considered harmful</title>
@@ -70,7 +286,7 @@
 
 &lt;p&gt;So what happens when you call &lt;code class=&quot;highlighter-rouge&quot;&gt;get()&lt;/code&gt; on an empty &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt;? You get a &lt;code class=&quot;highlighter-rouge&quot;&gt;NoSuchElementException&lt;/code&gt;: Java 8’s sick joke version of a &lt;code class=&quot;highlighter-rouge&quot;&gt;NullPointerException&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&quot;there-is-a-better-way&quot;&gt;There is a better way&lt;/h3&gt;
+&lt;h4 id=&quot;there-is-a-better-way&quot;&gt;There is a better way&lt;/h4&gt;
 
 &lt;p&gt;If we take the code above, we can rewrite it from:&lt;/p&gt;
 
@@ -118,7 +334,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;h3 id=&quot;we-know-its-always-there&quot;&gt;We know it’s always there&lt;/h3&gt;
+&lt;h4 id=&quot;we-know-its-always-there&quot;&gt;We know it’s always there&lt;/h4&gt;
 
 &lt;p&gt;Occasionally, you might find yourself in a situation where either a presence check or providing an alternate in case of absence is overkill, because you know the &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt; can’t be empty. In that case you should refactor code like this:&lt;/p&gt;
 
@@ -163,7 +379,7 @@
 
 &lt;p&gt;In general, &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional.get()&lt;/code&gt; should be considered an alias for &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional.orElseThrow(BadAtJavaException::new)&lt;/code&gt;.&lt;/p&gt;
 
-&lt;h3 id=&quot;streams&quot;&gt;Streams!&lt;/h3&gt;
+&lt;h4 id=&quot;streams&quot;&gt;Streams!&lt;/h4&gt;
 
 &lt;p&gt;One pattern I’ve seen a bit is turning a sequence of &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&amp;lt;T&amp;gt;&lt;/code&gt;s into a sequence of &lt;code class=&quot;highlighter-rouge&quot;&gt;T&lt;/code&gt;s, which can be done cleanly using &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream&lt;/code&gt;s:&lt;/p&gt;
 
@@ -204,7 +420,7 @@
 
 &lt;p&gt;This pattern comes up often enough that it’s well worth extracting as a convenience until you’ve migrated to Java 9, and then it’ll be easy to refactor to the API version.&lt;/p&gt;
 
-&lt;h3 id=&quot;what-else&quot;&gt;What else?&lt;/h3&gt;
+&lt;h4 id=&quot;what-else&quot;&gt;What else?&lt;/h4&gt;
 
 &lt;p&gt;One thing that none of these patterns help with, though, is when the &lt;code class=&quot;highlighter-rouge&quot;&gt;if&lt;/code&gt; block has an &lt;code class=&quot;highlighter-rouge&quot;&gt;else&lt;/code&gt; clause. Sometimes dealing with these constructs is simple. For example:&lt;/p&gt;
 
@@ -268,7 +484,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;h3 id=&quot;summing-up&quot;&gt;Summing up&lt;/h3&gt;
+&lt;h4 id=&quot;summing-up&quot;&gt;Summing up&lt;/h4&gt;
 
 &lt;p&gt;So, to recap:&lt;/p&gt;
 
@@ -282,8 +498,8 @@
 &lt;/ul&gt;
 </description>
 				<pubDate>Wed, 21 Dec 2016 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2016/12/optional-get-considered-harmful</link>
-				<guid isPermaLink="true">http://localhost:4000/2016/12/optional-get-considered-harmful</guid>
+				<link>/2016/12/optional-get-considered-harmful</link>
+				<guid isPermaLink="true">/2016/12/optional-get-considered-harmful</guid>
 			</item>
 		
 			<item>
@@ -325,7 +541,7 @@
 
 &lt;p&gt;My first impression: well, I can trace through that and understand what’s going on, but it’s a little hairy. Let’s see if we can smooth it out a bit.&lt;/p&gt;
 
-&lt;h3 id=&quot;principle-1-favour-early-return-over-single-return&quot;&gt;PRINCIPLE 1: Favour early-return over single-return.&lt;/h3&gt;
+&lt;h4 id=&quot;principle-1-favour-early-return-over-single-return&quot;&gt;PRINCIPLE 1: Favour early-return over single-return.&lt;/h4&gt;
 
 &lt;p&gt;The first thing I noticed was this:&lt;/p&gt;
 
@@ -398,7 +614,7 @@
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;h3 id=&quot;principle-2-favour-if-expressions-over-if-statements&quot;&gt;PRINCIPLE 2: Favour if-expressions over if-statements&lt;/h3&gt;
+&lt;h4 id=&quot;principle-2-favour-if-expressions-over-if-statements&quot;&gt;PRINCIPLE 2: Favour if-expressions over if-statements&lt;/h4&gt;
 
 &lt;p&gt;The next thing I noticed was this:&lt;/p&gt;
 
@@ -446,7 +662,7 @@
 
 &lt;p&gt;It’s a more functional way of describing what the code’s doing. I’m not &lt;em&gt;making&lt;/em&gt; the code more functional; I’m just &lt;em&gt;exposing&lt;/em&gt; the functional properties of the code which already existed. Whether you think this is a good thing in and of itself is up to you, but – as you’ll see – these changes make it easier to spot further functional refactorings down the line.&lt;/p&gt;
 
-&lt;h3 id=&quot;principle-3-dont-treat-optionals-like-nulls&quot;&gt;PRINCIPLE 3: Don’t treat Optionals like nulls&lt;/h3&gt;
+&lt;h4 id=&quot;principle-3-dont-treat-optionals-like-nulls&quot;&gt;PRINCIPLE 3: Don’t treat Optionals like nulls&lt;/h4&gt;
 
 &lt;p&gt;The next thing I noticed was:&lt;/p&gt;
 
@@ -526,7 +742,7 @@
   &lt;li&gt;In order to use &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt;’s branching, we have to wrap our return values in more &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt;s.&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h3 id=&quot;principle-4-think-outside-the-box&quot;&gt;PRINCIPLE 4: Think outside the box&lt;/h3&gt;
+&lt;h4 id=&quot;principle-4-think-outside-the-box&quot;&gt;PRINCIPLE 4: Think outside the box&lt;/h4&gt;
 
 &lt;p&gt;At this point we started asking ourselves: this wrapping in &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt;s is clunky, why are we doing that? We’re doing that in order to return an &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&amp;lt;ResponseWithMaybeDeal&amp;gt;&lt;/code&gt;, because we’re in a situation where we can return &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional.empty()&lt;/code&gt;. Where’s the empty case?&lt;/p&gt;
 
@@ -561,7 +777,7 @@
 &lt;/div&gt;
 &lt;p&gt;We could have made this simplification without having gone through the previous steps, but the path we were going down led us to question whether or not we were doing the right thing.&lt;/p&gt;
 
-&lt;h3 id=&quot;principle-5-repeated-patterns-are-usually-liftable&quot;&gt;PRINCIPLE 5: Repeated patterns are usually liftable&lt;/h3&gt;
+&lt;h4 id=&quot;principle-5-repeated-patterns-are-usually-liftable&quot;&gt;PRINCIPLE 5: Repeated patterns are usually liftable&lt;/h4&gt;
 
 &lt;p&gt;The next thing we noticed was:&lt;/p&gt;
 
@@ -625,7 +841,7 @@
 &lt;/div&gt;
 &lt;p&gt;And, finally, it feels like we’re done. First get a &lt;code class=&quot;highlighter-rouge&quot;&gt;maybeDeal&lt;/code&gt; (by getting the deal id, and then looking up the deal, assuming they both exist), and then we construct a &lt;code class=&quot;highlighter-rouge&quot;&gt;ResponseWithMaybeDeal&lt;/code&gt; with the &lt;code class=&quot;highlighter-rouge&quot;&gt;BidResponse&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;maybeDeal&lt;/code&gt;. It really does just do what it says on the tin.&lt;/p&gt;
 
-&lt;h3 id=&quot;summing-up&quot;&gt;SUMMING UP&lt;/h3&gt;
+&lt;h4 id=&quot;summing-up&quot;&gt;SUMMING UP&lt;/h4&gt;
 
 &lt;p&gt;Before we go, let’s just reflect on how far we came - we started with this:&lt;/p&gt;
 
@@ -666,8 +882,8 @@
 &lt;p&gt;These refactorings aren’t just changes in style - they’re changes in form, replacing broad constructs with more restrictive ones. Each application is therefore a simplification: being &lt;em&gt;able&lt;/em&gt; to apply them shows that our code is simpler than its original structure implies. Repeated applications of those refactorings took us to the simplest possible form.&lt;/p&gt;
 </description>
 				<pubDate>Fri, 11 Nov 2016 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2016/11/refactoring-to-functionality</link>
-				<guid isPermaLink="true">http://localhost:4000/2016/11/refactoring-to-functionality</guid>
+				<link>/2016/11/refactoring-to-functionality</link>
+				<guid isPermaLink="true">/2016/11/refactoring-to-functionality</guid>
 			</item>
 		
 	</channel>

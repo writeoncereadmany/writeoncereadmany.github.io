@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2016/12/smell-o-vision">Smell-O-Vision</a></li>
+        
           <li><a href="/2016/12/optional-get-considered-harmful">Optional.get() considered harmful</a></li>
         
           <li><a href="/2016/11/refactoring-to-functionality">Refactoring towards a Functional Style</a></li>
@@ -144,7 +146,7 @@ ruminations on software development
 
 <p>So what happens when you call <code class="highlighter-rouge">get()</code> on an empty <code class="highlighter-rouge">Optional</code>? You get a <code class="highlighter-rouge">NoSuchElementException</code>: Java 8’s sick joke version of a <code class="highlighter-rouge">NullPointerException</code>.</p>
 
-<h3 id="there-is-a-better-way">There is a better way</h3>
+<h4 id="there-is-a-better-way">There is a better way</h4>
 
 <p>If we take the code above, we can rewrite it from:</p>
 
@@ -192,7 +194,7 @@ ruminations on software development
 </code></pre>
 </div>
 
-<h3 id="we-know-its-always-there">We know it’s always there</h3>
+<h4 id="we-know-its-always-there">We know it’s always there</h4>
 
 <p>Occasionally, you might find yourself in a situation where either a presence check or providing an alternate in case of absence is overkill, because you know the <code class="highlighter-rouge">Optional</code> can’t be empty. In that case you should refactor code like this:</p>
 
@@ -237,7 +239,7 @@ ruminations on software development
 
 <p>In general, <code class="highlighter-rouge">Optional.get()</code> should be considered an alias for <code class="highlighter-rouge">Optional.orElseThrow(BadAtJavaException::new)</code>.</p>
 
-<h3 id="streams">Streams!</h3>
+<h4 id="streams">Streams!</h4>
 
 <p>One pattern I’ve seen a bit is turning a sequence of <code class="highlighter-rouge">Optional&lt;T&gt;</code>s into a sequence of <code class="highlighter-rouge">T</code>s, which can be done cleanly using <code class="highlighter-rouge">Stream</code>s:</p>
 
@@ -278,7 +280,7 @@ ruminations on software development
 
 <p>This pattern comes up often enough that it’s well worth extracting as a convenience until you’ve migrated to Java 9, and then it’ll be easy to refactor to the API version.</p>
 
-<h3 id="what-else">What else?</h3>
+<h4 id="what-else">What else?</h4>
 
 <p>One thing that none of these patterns help with, though, is when the <code class="highlighter-rouge">if</code> block has an <code class="highlighter-rouge">else</code> clause. Sometimes dealing with these constructs is simple. For example:</p>
 
@@ -342,7 +344,7 @@ ruminations on software development
 </code></pre>
 </div>
 
-<h3 id="summing-up">Summing up</h3>
+<h4 id="summing-up">Summing up</h4>
 
 <p>So, to recap:</p>
 
@@ -361,6 +363,8 @@ ruminations on software development
           </div>
           <div class="pagination">
               
+                <a class="btn btn-default" href="/2016/12/smell-o-vision" class="next">Newer Post</a>
+              
               
                 <a class="btn btn-default" href="/2016/11/refactoring-to-functionality" class="previous">Older Post</a>
               
@@ -374,7 +378,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2016 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

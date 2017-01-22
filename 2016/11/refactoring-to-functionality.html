@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2016/12/smell-o-vision">Smell-O-Vision</a></li>
+        
           <li><a href="/2016/12/optional-get-considered-harmful">Optional.get() considered harmful</a></li>
         
           <li><a href="/2016/11/refactoring-to-functionality">Refactoring towards a Functional Style</a></li>
@@ -119,7 +121,7 @@ ruminations on software development
 
 <p>My first impression: well, I can trace through that and understand what’s going on, but it’s a little hairy. Let’s see if we can smooth it out a bit.</p>
 
-<h3 id="principle-1-favour-early-return-over-single-return">PRINCIPLE 1: Favour early-return over single-return.</h3>
+<h4 id="principle-1-favour-early-return-over-single-return">PRINCIPLE 1: Favour early-return over single-return.</h4>
 
 <p>The first thing I noticed was this:</p>
 
@@ -192,7 +194,7 @@ ruminations on software development
 <span class="o">}</span>
 </code></pre>
 </div>
-<h3 id="principle-2-favour-if-expressions-over-if-statements">PRINCIPLE 2: Favour if-expressions over if-statements</h3>
+<h4 id="principle-2-favour-if-expressions-over-if-statements">PRINCIPLE 2: Favour if-expressions over if-statements</h4>
 
 <p>The next thing I noticed was this:</p>
 
@@ -240,7 +242,7 @@ ruminations on software development
 
 <p>It’s a more functional way of describing what the code’s doing. I’m not <em>making</em> the code more functional; I’m just <em>exposing</em> the functional properties of the code which already existed. Whether you think this is a good thing in and of itself is up to you, but – as you’ll see – these changes make it easier to spot further functional refactorings down the line.</p>
 
-<h3 id="principle-3-dont-treat-optionals-like-nulls">PRINCIPLE 3: Don’t treat Optionals like nulls</h3>
+<h4 id="principle-3-dont-treat-optionals-like-nulls">PRINCIPLE 3: Don’t treat Optionals like nulls</h4>
 
 <p>The next thing I noticed was:</p>
 
@@ -320,7 +322,7 @@ ruminations on software development
   <li>In order to use <code class="highlighter-rouge">Optional</code>’s branching, we have to wrap our return values in more <code class="highlighter-rouge">Optional</code>s.</li>
 </ul>
 
-<h3 id="principle-4-think-outside-the-box">PRINCIPLE 4: Think outside the box</h3>
+<h4 id="principle-4-think-outside-the-box">PRINCIPLE 4: Think outside the box</h4>
 
 <p>At this point we started asking ourselves: this wrapping in <code class="highlighter-rouge">Optional</code>s is clunky, why are we doing that? We’re doing that in order to return an <code class="highlighter-rouge">Optional&lt;ResponseWithMaybeDeal&gt;</code>, because we’re in a situation where we can return <code class="highlighter-rouge">Optional.empty()</code>. Where’s the empty case?</p>
 
@@ -355,7 +357,7 @@ ruminations on software development
 </div>
 <p>We could have made this simplification without having gone through the previous steps, but the path we were going down led us to question whether or not we were doing the right thing.</p>
 
-<h3 id="principle-5-repeated-patterns-are-usually-liftable">PRINCIPLE 5: Repeated patterns are usually liftable</h3>
+<h4 id="principle-5-repeated-patterns-are-usually-liftable">PRINCIPLE 5: Repeated patterns are usually liftable</h4>
 
 <p>The next thing we noticed was:</p>
 
@@ -419,7 +421,7 @@ ruminations on software development
 </div>
 <p>And, finally, it feels like we’re done. First get a <code class="highlighter-rouge">maybeDeal</code> (by getting the deal id, and then looking up the deal, assuming they both exist), and then we construct a <code class="highlighter-rouge">ResponseWithMaybeDeal</code> with the <code class="highlighter-rouge">BidResponse</code> and the <code class="highlighter-rouge">maybeDeal</code>. It really does just do what it says on the tin.</p>
 
-<h3 id="summing-up">SUMMING UP</h3>
+<h4 id="summing-up">SUMMING UP</h4>
 
 <p>Before we go, let’s just reflect on how far we came - we started with this:</p>
 
@@ -478,7 +480,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2016 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>
