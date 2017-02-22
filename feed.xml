@@ -14,6 +14,8 @@
 
 &lt;p&gt;Let’s take the example of the King of Spain’s beard.&lt;/p&gt;
 
+&lt;p&gt;&lt;!--more--&gt;&lt;/p&gt;
+
 &lt;h3 id=&quot;the-king-of-spains-beard&quot;&gt;The King of Spain’s Beard&lt;/h3&gt;
 
 &lt;p&gt;&lt;img src=&quot;http://study.com/cimages/multimages/16/philip_ii_of_spain_by_antonio_moro.jpg&quot; alt=&quot;King Phillip 2 of Spain&quot; /&gt;&lt;/p&gt;
@@ -280,7 +282,7 @@
 &lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 
-&lt;p&gt;But now we want to log an &lt;em&gt;error&lt;/em&gt; if we don’t get an event at all, well. There’s an ifPresent() method on Optional, but no ifAbsent(). This gives us some options:&lt;/p&gt;
+&lt;p&gt;But now we want to log an &lt;em&gt;error&lt;/em&gt; if we don’t get an event at all, well. There’s an &lt;code class=&quot;highlighter-rouge&quot;&gt;ifPresent()&lt;/code&gt; method on &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&lt;/code&gt;, but no &lt;code class=&quot;highlighter-rouge&quot;&gt;ifAbsent()&lt;/code&gt;. This means we have various options, none of which are particularly inspiring:&lt;/p&gt;
 
 &lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// this approach is noisy, will lead to us repeating ourselves,&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;// and inverting conditions is difficult to read and easy to bug out&lt;/span&gt;
@@ -414,18 +416,18 @@
 
 &lt;p&gt;For example, we often end up with the &lt;code class=&quot;highlighter-rouge&quot;&gt;Success&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Failure&lt;/code&gt; types being the same type, and we want to return whatever the current value is, be it success or failure. We’ve been calling &lt;code class=&quot;highlighter-rouge&quot;&gt;either&lt;/code&gt; in our examples, but we could just as easily make that a function:&lt;/p&gt;
 
-&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getKingBeardColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Country&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;country&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;country&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getKing&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
-                  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;flatMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;King:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getBeard&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
-                  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Beard:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;getColor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; 
-                  &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;collapse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt; 
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;p&gt;```java
+public static String getKingBeardColor(Country country) {
+    return country.getKing()
+                  .then(flatMap(King::getBeard))
+                  .then(map(Beard::getColor)) 
+                  .then(collapse()); 
+}&lt;/p&gt;
 
-&lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;collapse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;either&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
+&lt;p&gt;static Function&amp;lt;Result&amp;lt;T, T&amp;gt;, T&amp;gt; collapse() {
+    return r -&amp;gt; either(s -&amp;gt; s, f -&amp;gt; f);
+}
+```&lt;/p&gt;
 
 &lt;p&gt;We might want to map &lt;code class=&quot;highlighter-rouge&quot;&gt;Failure&lt;/code&gt; values to new values/types, leaving &lt;code class=&quot;highlighter-rouge&quot;&gt;Success&lt;/code&gt;es unchanged. We might want to convert a &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&amp;lt;S, F&amp;gt;&lt;/code&gt; to an &lt;code class=&quot;highlighter-rouge&quot;&gt;Optional&amp;lt;S&amp;gt;&lt;/code&gt;, throwing away the failure value, to interact with some other API. We might want to invert a &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt;, flipping it so what was a &lt;code class=&quot;highlighter-rouge&quot;&gt;Success&lt;/code&gt; is now a &lt;code class=&quot;highlighter-rouge&quot;&gt;Failure&lt;/code&gt; and vice versa. And we might want to do many such operations, in sequence in a pipeline.&lt;/p&gt;
 
