@@ -276,11 +276,11 @@ ruminations on software development
 <p>On those points:</p>
 <ul>
   <li>It’s really very simple to implement your own, or you could use <a href="https://github.com/unruly/control">this one we open-sourced</a>.</li>
-  <li>The API could look exactly like the <code class="highlighter-rouge">Optional</code> API, only with some enhancements around dealing with failure-cases. In the linked example it doesn’t, because functions are better than methods, which I’ll get onto later.</li>
-  <li>It’s trivial to convert between <code class="highlighter-rouge">Result</code> and <code class="highlighter-rouge">Optional</code> at module boundaries.</li>
+  <li>The API could look exactly like the <code class="highlighter-rouge">Optional</code> API, only with some enhancements around dealing with failure-cases. In the linked example it doesn’t, because functions are better than methods.</li>
+  <li>If you really need <code class="highlighter-rouge">Optional</code>s, it’s trivial to convert between <code class="highlighter-rouge">Result</code> and <code class="highlighter-rouge">Optional</code> at module boundaries.</li>
 </ul>
 
-<p>All the operations you’re used to on an <code class="highlighter-rouge">Optional</code> - you can do those on a <code class="highlighter-rouge">Result</code>, only now those can be augmented by operations which deal with failure values too. This means you can continue to think in terms of pipelines of operations.</p>
+<p>All the operations you’re used to on an <code class="highlighter-rouge">Optional</code> - you can do those on a <code class="highlighter-rouge">Result</code>, only now those can be augmented by operations which deal with failure values too. Whereas an <code class="highlighter-rouge">Optional</code> pipeline will continue operations until it hits an <code class="highlighter-rouge">empty</code> value (yielding <code class="highlighter-rouge">empty</code> at the end), a <code class="highlighter-rouge">Result</code> pipeline can continue operations until it hits a <code class="highlighter-rouge">failure</code> value (yielding <em>that</em> failure at the end). This means you can continue to think in terms of pipelines of operations.</p>
 
 <h3 id="how-i-built-result">How I built Result</h3>
 
@@ -290,7 +290,7 @@ ruminations on software development
 </code></pre>
 </div>
 
-<p>In Java, it’s <em>just a tad</em> more complex:</p>
+<p>In Java, it’s <em>just a tad</em> more verbose:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="nf">Result</span><span class="o">()</span> <span class="o">{}</span>
@@ -333,30 +333,79 @@ ruminations on software development
 <p>The same function in Java:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
-        <span class="n">s</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Success</span><span class="o">&lt;&gt;(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">s</span><span class="o">)),</span>
-        <span class="n">f</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Failure</span><span class="o">&lt;&gt;(</span><span class="n">f</span><span class="o">)</span>
-    <span class="o">);</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Success</span><span class="o">&lt;&gt;(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">s</span><span class="o">)),</span> <span class="nl">Failure:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+<span class="o">}</span> 
+</code></pre>
+</div>
+
+<p>And, for good measure, here’s <code class="highlighter-rouge">flatMap</code>:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">flatMap</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">s</span><span class="o">),</span> <span class="nl">Failure:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
 <span class="o">}</span> 
 </code></pre>
 </div>
 
 <h3 id="methods-vs-functions">Methods vs Functions</h3>
 
-<p>That <code class="highlighter-rouge">map</code> function could, instead, be written as a method on <code class="highlighter-rouge">Result</code>: that would be in line with what <code class="highlighter-rouge">Optional</code> does.</p>
+<p>That <code class="highlighter-rouge">map</code> function could, instead, be written as a method on <code class="highlighter-rouge">Result</code>: that would be in line with what <code class="highlighter-rouge">Optional</code> does, and what Java developers would expect.</p>
 
-<p>The problem with methods, though, is that if you present an API where you can do three things with an object, those are the only three things your consumers are ever likely to do. If you present an API where you provide a higher-level abstraction and then implement three things <em>using it</em>, then not only will people use those three things, they’re more likely to build their own ad-hoc extensions to it.</p>
+<p>The problem with methods, though, is one of extensibility. In object-oriented programming, it’s easy to add new <em>types</em> which support a given set of operations: it’s much harder to add an operation to a given type. For example, let’s say we have some code which takes an <code class="highlighter-rouge">Optional</code> and fires an event based on its content, if it’s present:</p>
 
-<p>That’s why I implemented <code class="highlighter-rouge">map</code>, <code class="highlighter-rouge">flatMap</code> and so on as static methods (ie, functions) in terms of <code class="highlighter-rouge">Result::either</code>. Firstly because I <em>can</em>: any possible interaction with a <code class="highlighter-rouge">Result</code> can be implemented through <code class="highlighter-rouge">Result::either</code> - and secondly because <em>you can too</em>. The library provides many useful patterns but I’m not going to pretend I’ve considered every use-case, so it’s easy to augment it as per your requirements <em>and retain the same calling conventions</em>.</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="nf">logEvents</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeEvent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">maybeEvent</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">LOG:</span><span class="o">:</span><span class="n">info</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
-<p>That’s not to say that this approach to API design is pure upside: for starters, your IDE is less useful because you don’t have auto-complete on methods. Secondly, composing operations on a <code class="highlighter-rouge">Result</code> is considerably less elegant.</p>
+<p>But now we want to log an <em>error</em> if we don’t get an event at all, well. There’s an ifPresent() method on Optional, but no ifAbsent(). This gives us some options:</p>
 
-<p>Whereas a method-based API would allow us to do the following:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="c1">// this approach is noisy, will lead to us repeating ourselves,</span>
+<span class="c1">// and inverting conditions is difficult to read and easy to bug out</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nf">justInlineIt</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeEvent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">maybeEvent</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">LOG:</span><span class="o">:</span><span class="n">info</span><span class="o">);</span>
+    <span class="k">if</span><span class="o">(!</span><span class="n">maybeEvent</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">LOG</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"No event present"</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">// this abstracts out the ifAbsent case, but it's inconsistent with the</span>
+<span class="c1">// ifPresent call and it's not obvious the two lines are complementary</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nf">utilityFunction</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeEvent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">maybeEvent</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nl">LOG:</span><span class="o">:</span><span class="n">info</span><span class="o">);</span>
+    <span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeEvent</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOG</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"No event present"</span><span class="o">));</span>
+<span class="o">}</span>
+
+
+<span class="c1">// this gives us a consistent set of operations on the event, but</span>
+<span class="c1">// it's inconsistent with other usages of the Optional API</span>
+<span class="kd">public</span> <span class="kd">static</span> <span class="nf">utilityFunction</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeEvent</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">ifPresent</span><span class="o">(</span><span class="n">maybeEvent</span><span class="o">,</span> <span class="nl">LOG:</span><span class="o">:</span><span class="n">info</span><span class="o">);</span>
+    <span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeEvent</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOG</span><span class="o">.</span><span class="na">error</span><span class="o">(</span><span class="s">"No event present"</span><span class="o">));</span>
+<span class="o">}</span>
+
+<span class="c1">// and our helper functions</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">ifAbsent</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Runnable</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(!</span><span class="n">maybe</span><span class="o">.</span><span class="na">isPresent</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">task</span><span class="o">.</span><span class="na">run</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">ifPresent</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Consumer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">consumer</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">maybe</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">consumer</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>That’s why I implemented <code class="highlighter-rouge">map</code>, <code class="highlighter-rouge">flatMap</code> and so on as static methods (ie, functions) in terms of <code class="highlighter-rouge">Result::either</code>. Firstly because I can: <em>any possible interaction</em> with a <code class="highlighter-rouge">Result</code> can be implemented through <code class="highlighter-rouge">Result::either</code> - and secondly because <em>you can too</em>. The library provides many useful patterns but I’m not going to pretend I’ve considered every use-case, so it’s easy to augment it as per your requirements <em>and retain consistent calling conventions</em>.</p>
+
+<p>So, where a method-based API would allow us to do the following:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
-                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
-                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
                   <span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">success</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">,</span>
                           <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span> 
 <span class="o">}</span>
@@ -366,8 +415,7 @@ ruminations on software development
 <p>With just functions, we could write:</p>
 
 <div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="nf">flatMap</span><span class="o">(</span>
-               <span class="n">map</span><span class="o">(</span><span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">(),</span> <span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">),</span> 
+    <span class="k">return</span> <span class="nf">map</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">(),</span> <span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">),</span> 
                <span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span>
            <span class="o">).</span><span class="na">either</span><span class="o">(</span>
                <span class="n">success</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">,</span>
@@ -377,15 +425,97 @@ ruminations on software development
 </code></pre>
 </div>
 
-<p>At this point, our reasoning is getting considerably more tangled. Order of operations isn’t so clear any more, and that’s when we paid particular attention to formatting. That the <code class="highlighter-rouge">flatMap</code> is being applied to the output of mapping getKing() to getBeard(), even though the <code class="highlighter-rouge">flatMap</code> is written before the <code class="highlighter-rouge">map</code> despite the <code class="highlighter-rouge">map</code> having to be called first…</p>
+<p>But this is ugly. Order of operations isn’t so clear any more, and that’s when we paid particular attention to formatting. That the <code class="highlighter-rouge">flatMap</code> is being applied to the output of mapping getKing() to getBeard(), even though the <code class="highlighter-rouge">flatMap</code> is written before the <code class="highlighter-rouge">map</code> despite the <code class="highlighter-rouge">map</code> having to be called first…</p>
 
-<p>All of this is decipherable with practise. That’s not the point. The point is we’ve gone from a typical calling convention where operations are listed in order to one where they’re not. Maybe the other benefits of such an API design mean that’s a worthwhile tradeoff, and maybe they don’t.</p>
+<p>It doesn’t have to be this way, though.</p>
 
-<p>Fortunately, that’s not a division we need to choose a side on. The functional approach described above is far from ideal, because it’s not using the API in the right way. It’s approaching it from a noun-composition perspective, whereas what it <em>ought</em> to be doing is approaching it from a verb-composition perspective.</p>
+<h3 id="the-applicable-pattern">The Applicable Pattern</h3>
 
-<p>What do I mean by that? All will become clear when I start talking about the use-case that motivated me to write this library in the first case: validation.</p>
+<p>There’s no need for a tradeoff between versatility and readability here. We can just add another method to <code class="highlighter-rouge">Result</code>.</p>
 
-<p>But that’s something that deserves a post all of its own.</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="nf">Result</span><span class="o">()</span> <span class="o">{}</span>
+
+    <span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onSuccess</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onFailure</span><span class="o">);</span>
+
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">then</span><span class="o">(</span><span class="n">ResultMapper</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">mapper</span><span class="o">.</span><span class="na">onResult</span><span class="o">(</span><span class="k">this</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// subtypes elided...</span>
+<span class="o">}</span>
+
+<span class="nd">@FunctionalInterface</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ResultMapper</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="n">T</span> <span class="nf">onResult</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">result</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>I call this the Applicable Pattern. All the method <code class="highlighter-rouge">then</code> does is invert the calling convention: instead of passing an object to a function, you pass a function to an object. That does mean we need to express our functions in curried form instead:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">ResultMapper</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">Success</span><span class="o">&lt;&gt;(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">s</span><span class="o">)),</span> <span class="nl">Failure:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+<span class="o">}</span> 
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">ResultMapper</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">s</span><span class="o">),</span> <span class="nl">Failure:</span><span class="o">:</span><span class="k">new</span><span class="o">);</span>
+<span class="o">}</span> 
+</code></pre>
+</div>
+
+<p>This allows us to take all those functions, and compose them sequentially instead:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">))</span> 
+                  <span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">success</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">,</span> 
+                          <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span> 
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is only marginally noisier than implementing it with regular methods:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
+                  <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">)</span>
+                  <span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">success</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">,</span>
+                          <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span> 
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>There’s a little boilerplate in having to wrap our function calls in calls to <code class="highlighter-rouge">then</code>. That’s a minor cost. A larger cost is the impact on discoverability: now our auto-completion can’t tell us what we can do with a Result, beyond passing it two <code class="highlighter-rouge">Function</code>s or a <code class="highlighter-rouge">ResultMapper</code>. That’s the point, though: we don’t want to define a restricted set of operations.</p>
+
+<p>For example, we often end up with the <code class="highlighter-rouge">Success</code> and <code class="highlighter-rouge">Failure</code> types being the same type, and we want to return whatever the current value is, be it success or failure. We’ve been calling <code class="highlighter-rouge">either</code> in our examples, but we could just as easily make that a function:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">))</span> 
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">collapse</span><span class="o">());</span> 
+<span class="o">}</span>
+
+<span class="kd">static</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nf">collapse</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">,</span> <span class="n">f</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We might want to map <code class="highlighter-rouge">Failure</code> values to new values/types, leaving <code class="highlighter-rouge">Success</code>es unchanged. We might want to convert a <code class="highlighter-rouge">Result&lt;S, F&gt;</code> to an <code class="highlighter-rouge">Optional&lt;S&gt;</code>, throwing away the failure value, to interact with some other API. We might want to invert a <code class="highlighter-rouge">Result</code>, flipping it so what was a <code class="highlighter-rouge">Success</code> is now a <code class="highlighter-rouge">Failure</code> and vice versa. And we might want to do many such operations, in sequence in a pipeline.</p>
+
+<p>These are trivial functions to write, and now they can be integrated to extend the toolkit we have at our disposal - because we can bring tools into the toolkit from different packages.</p>
+
+<h3 id="are-we-nearly-there-yet">Are we nearly there yet?</h3>
+
+<p>If you’re dealing with operations which can fail, and you care how they fail, then a <code class="highlighter-rouge">Result</code> datatype is a good model for that. Operations which can fail are kind of our stock in trade.</p>
+
+<p>This particular implementation of <code class="highlighter-rouge">Result</code> is designed to be easily composable and extensible. Common operations are provided, and more niche functionality is easily integrated after the fact.</p>
+
+<p>There are many ways to compose and apply some simple operations on <code class="highlighter-rouge">Result</code>s to build clean approaches to common problems, such as validation, and useful techniques not available in vanilla Java, like flow typing. I’ll talk about some of the key examples in the next post.</p>
 
             </div>
             
