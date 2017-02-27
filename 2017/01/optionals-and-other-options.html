@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/02/failure-is-not-right">Failure is not Right</a></li>
+        
           <li><a href="/2017/01/optionals-and-other-options">Optionals, and other options</a></li>
         
           <li><a href="/2016/12/smell-o-vision">Smell-O-Vision</a></li>
@@ -494,18 +496,18 @@ ruminations on software development
 
 <p>For example, we often end up with the <code class="highlighter-rouge">Success</code> and <code class="highlighter-rouge">Failure</code> types being the same type, and we want to return whatever the current value is, be it success or failure. We’ve been calling <code class="highlighter-rouge">either</code> in our examples, but we could just as easily make that a function:</p>
 
-<p>```java
-public static String getKingBeardColor(Country country) {
-    return country.getKing()
-                  .then(flatMap(King::getBeard))
-                  .then(map(Beard::getColor)) 
-                  .then(collapse()); 
-}</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getKingBeardColor</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getKing</span><span class="o">()</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">King:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColor</span><span class="o">))</span> 
+                  <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">collapse</span><span class="o">());</span> 
+<span class="o">}</span>
 
-<p>static Function&lt;Result&lt;T, T&gt;, T&gt; collapse() {
-    return r -&gt; either(s -&gt; s, f -&gt; f);
-}
-```</p>
+<span class="kd">static</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nf">collapse</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">either</span><span class="o">(</span><span class="n">s</span> <span class="o">-&gt;</span> <span class="n">s</span><span class="o">,</span> <span class="n">f</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
 
 <p>We might want to map <code class="highlighter-rouge">Failure</code> values to new values/types, leaving <code class="highlighter-rouge">Success</code>es unchanged. We might want to convert a <code class="highlighter-rouge">Result&lt;S, F&gt;</code> to an <code class="highlighter-rouge">Optional&lt;S&gt;</code>, throwing away the failure value, to interact with some other API. We might want to invert a <code class="highlighter-rouge">Result</code>, flipping it so what was a <code class="highlighter-rouge">Success</code> is now a <code class="highlighter-rouge">Failure</code> and vice versa. And we might want to do many such operations, in sequence in a pipeline.</p>
 
@@ -524,6 +526,8 @@ public static String getKingBeardColor(Country country) {
             </div>
           </div>
           <div class="pagination">
+              
+                <a class="btn btn-default" href="/2017/02/failure-is-not-right" class="next">Newer Post</a>
               
               
                 <a class="btn btn-default" href="/2016/12/smell-o-vision" class="previous">Older Post</a>

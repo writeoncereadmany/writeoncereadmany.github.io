@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/02/failure-is-not-right">Failure is not Right</a></li>
+        
           <li><a href="/2017/01/optionals-and-other-options">Optionals, and other options</a></li>
         
           <li><a href="/2016/12/smell-o-vision">Smell-O-Vision</a></li>
@@ -178,12 +180,12 @@ ruminations on software development
 
 <p>My first attempts were to introduce some markup that was clearly not Java: for example, <code class="highlighter-rouge">$pink$</code> and <code class="highlighter-rouge">$end$</code> for the beginning and end of a range to be highlighted in pink. This would have worked a treat if I was highlighting preformatted text, like this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> ```
- public static void main(String[] args) {
-	 System.out.println("Cheeseburgers!");
- }
- ```
-</code></pre>
+<div class="highlighter-rouge"><pre class="highlight"><code></code></pre>
+</div>
+<p>public static void main(String[] args) {
+	 System.out.println(“Cheeseburgers!”);
+ }</p>
+<div class="highlighter-rouge"><pre class="highlight"><code></code></pre>
 </div>
 
 <p>But I wasn’t. I was highlighting <em>Java code</em>, specified as so:</p>
@@ -192,14 +194,14 @@ ruminations on software development
  public static void main(String[] args) {
  	 System.out.println("Cheeseburgers!");
  }
- ```
 </code></pre>
 </div>
-<p>Which generates:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>Which generates:
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Cheeseburgers!"</span><span class="o">);</span>
-<span class="o">}</span>
+```java
+public static void main(String[] args) {
+	System.out.println("Cheeseburgers!");
+}
 </code></pre>
 </div>
 
@@ -209,47 +211,47 @@ ruminations on software development
  public static void main(String[] args) {
  	 $pink$System.out.println$end$("Cheeseburgers!");
  }
- ```
 </code></pre>
 </div>
-<p>The generated HTML for the print line looks something like:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>The generated HTML for the print line looks something like:
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&lt;span class="n"&gt;$pink$System&lt;/span&gt;
-&lt;span class="o"&gt;.&lt;/span&gt;
-&lt;span class="na"&gt;out&lt;/span&gt;
-&lt;span class="o"&gt;.&lt;/span&gt;
-&lt;span class="na"&gt;println&lt;/span&gt;
-&lt;span class="n"&gt;$end&lt;/span&gt;
-&lt;span class="err"&gt;$&lt;/span&gt;
-&lt;span class="o"&gt;(&lt;/span&gt;
-&lt;span class="s"&gt;"Cheeseburgers!"&lt;/span&gt;
-&lt;span class="o"&gt;);&lt;/span&gt;
 </code></pre>
 </div>
+<p><span class="n">$pink$System</span>
+<span class="o">.</span>
+<span class="na">out</span>
+<span class="o">.</span>
+<span class="na">println</span>
+<span class="n">$end</span>
+<span class="err">$</span>
+<span class="o">(</span>
+<span class="s">“Cheeseburgers!”</span>
+<span class="o">);</span></p>
+<div class="highlighter-rouge"><pre class="highlight"><code>
+That's not going to play nicely with an automated post-processor. The start tag is part of a larger element, and the end tag is split between two elements. That's just this case: I don't know what I need to prepare for in the general case.
 
-<p>That’s not going to play nicely with an automated post-processor. The start tag is part of a larger element, and the end tag is split between two elements. That’s just this case: I don’t know what I need to prepare for in the general case.</p>
+What we ideally want is our markup to be rendered by the syntax highlighter into a single element within its own span, in a consistent way.
 
-<p>What we ideally want is our markup to be rendered by the syntax highlighter into a single element within its own span, in a consistent way.</p>
+The issue here is: that's dependent on how exactly the syntax highlighter works. I started working on the assumption it was a pure lexer, on the basis that parsing was probably overkill for syntax highlighting and is made more complex than usual as snippets are supported, meaning you don't know what the root element is.
 
-<p>The issue here is: that’s dependent on how exactly the syntax highlighter works. I started working on the assumption it was a pure lexer, on the basis that parsing was probably overkill for syntax highlighting and is made more complex than usual as snippets are supported, meaning you don’t know what the root element is.</p>
+So I picked the only thing I could think of which would consistently be a single output regardless of context, and yet contain arbitrary payloads: a `String`. To ensure that I don't accidentally post-process regular `Strings`, require an unusual formulation which I can consistently avoid in the code I want to publish. For example, `"!!pink!!"` to open a pink block and `"!!end!!"` to close it.
 
-<p>So I picked the only thing I could think of which would consistently be a single output regardless of context, and yet contain arbitrary payloads: a <code class="highlighter-rouge">String</code>. To ensure that I don’t accidentally post-process regular <code class="highlighter-rouge">Strings</code>, require an unusual formulation which I can consistently avoid in the code I want to publish. For example, <code class="highlighter-rouge">"!!pink!!"</code> to open a pink block and <code class="highlighter-rouge">"!!end!!"</code> to close it.</p>
+So I build the following post-processor (in Python, because I know it and it's good at this sort of job):
 
-<p>So I build the following post-processor (in Python, because I know it and it’s good at this sort of job):</p>
+```python
+import fileinput
+import sys
+import re
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fileinput</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">re</span>
+def span(match):
+    arg = match.group(1)
+    if arg == 'end':
+        return '&lt;/span&gt;'
+    else:
+        return '&lt;span class="{}"&gt;'.format(arg)
 
-<span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
-    <span class="n">arg</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">arg</span> <span class="o">==</span> <span class="s">'end'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">'&lt;/span&gt;'</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">'&lt;span class="{}"&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileinput</span><span class="o">.</span><span class="nb">input</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">backup</span><span class="o">=</span><span class="s">'.bak'</span><span class="p">):</span>
-    <span class="k">print</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">'&lt;span class="s"&gt;"!!([^!]*)!!"&lt;/span&gt;'</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
+for line in fileinput.input(inplace=True, backup='.bak'):
+    print re.sub('&lt;span class="s"&gt;"!!([^!]*)!!"&lt;/span&gt;', span, line.rstrip())
 </code></pre>
 </div>
 
