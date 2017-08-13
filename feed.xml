@@ -7,6 +7,307 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Reflections on Equality</title>
+				<description>&lt;p&gt;As always, it started with a bug. We’d been extending the capabilities
+of one of our services, to allow filtering deals on a new concept. While
+introducing that new concept, some classes had new fields added. One of those
+classes implemented &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, but the method wasn’t updated to account for
+the new field.&lt;/p&gt;
+
+&lt;p&gt;The first-order fix was easy: just re-generate the &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method. Trying to
+protect against this class of problem reoccurring, though, is a really
+interesting question.&lt;/p&gt;
+
+&lt;p&gt;Not because it’s difficult to come up with a broader solution, but because
+so many solutions are available. And they’re all terrible in different ways.&lt;/p&gt;
+
+&lt;p&gt;But first, let’s talk about &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, and understand our problem.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;h3 id=&quot;why-equals-is-problematic-in-java&quot;&gt;Why equals() is problematic in Java&lt;/h3&gt;
+
+&lt;p&gt;Java isn’t unique in having a really, really bad approach to equality, but
+I don’t think I can imagine a way to approach equality that’s as thorny as Java’s.&lt;/p&gt;
+
+&lt;p&gt;Firstly, &lt;code class=&quot;highlighter-rouge&quot;&gt;Object&lt;/code&gt; implements &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;. That means &lt;em&gt;everything&lt;/em&gt; implements
+&lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;: even things like &lt;code class=&quot;highlighter-rouge&quot;&gt;Function&lt;/code&gt; which have no possible sensible approach.&lt;/p&gt;
+
+&lt;p&gt;Secondly, &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; &lt;em&gt;takes&lt;/em&gt; an &lt;code class=&quot;highlighter-rouge&quot;&gt;Object&lt;/code&gt;, which means everything can be compared
+to everything else, even when it doesn’t make sense to do so. That means a
+well-behaved implementation of &lt;code class=&quot;highlighter-rouge&quot;&gt;equals&lt;/code&gt; needs to do runtime type-checks and casts.&lt;/p&gt;
+
+&lt;p&gt;Thirdly, Java has subtyping, which means you need to consider not only how
+&lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; works for your class but &lt;em&gt;also for any extenders of your class&lt;/em&gt;, and
+anyone extending the class needs to be aware of what you’ve done.&lt;/p&gt;
+
+&lt;p&gt;Altogether, this means that there are a number of best practices when
+implementing &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; that need to be taken into consideration.
+&lt;em&gt;Effective Java&lt;/em&gt; has eight pages on how to do this properly, and a further
+six on also implementing &lt;code class=&quot;highlighter-rouge&quot;&gt;hashCode()&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;What this boils down to is: the vast majority of the time, Java developers
+&lt;em&gt;don’t write &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; methods&lt;/em&gt;. They use standardised templates to do so,
+except in the few custom cases where custom logic is required
+(for example, implementing &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; on a &lt;code class=&quot;highlighter-rouge&quot;&gt;List&lt;/code&gt; requires that other
+implementations of &lt;code class=&quot;highlighter-rouge&quot;&gt;List&lt;/code&gt; with the same contents are considered equal).&lt;/p&gt;
+
+&lt;p&gt;Compare that to, for example, Kotlin, which has a concept of data classes which
+implement &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; implicitly. Or Scala, which has case classes which
+implement &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; implicitly. Or Haskell, where you can use &lt;code class=&quot;highlighter-rouge&quot;&gt;deriving Eq&lt;/code&gt; to,
+well, derive an implementation of &lt;code class=&quot;highlighter-rouge&quot;&gt;==&lt;/code&gt;, Haskell’s equivalent.&lt;/p&gt;
+
+&lt;p&gt;Because that behaviour’s built into the language, any time you change type
+definitions in Kotlin, Scala, or Haskell, the implementation of &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;
+changes alongside.&lt;/p&gt;
+
+&lt;p&gt;But in Java, that doesn’t happen. If you add a field to a class and don’t change
+its &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method, you have an incorrect &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method, and the standard
+language and tooling do nothing to help you.&lt;/p&gt;
+
+&lt;h3 id=&quot;on-being-a-responsible-programmer&quot;&gt;On being a responsible programmer&lt;/h3&gt;
+
+&lt;p&gt;It may seem reasonable to say: well, that’s one of the responsibilities of
+the programmer. When they make a change, they should have the presence of mind
+to ensure it doesn’t break anything. So, add this to the list of things that
+the programmer should have at the front of their mind whenever making a change.&lt;/p&gt;
+
+&lt;p&gt;That attitude simply doesn’t scale. There are only so many things that can be
+held in the front of the mind at once, and there are much more important things
+to be worrying about.&lt;/p&gt;
+
+&lt;p&gt;The responsible programmer should ensure changes don’t break anything. Being
+responsible, they will recognise there are limits to how much they can rely
+on the presence of their own mind - and instead automate the problem away.&lt;/p&gt;
+
+&lt;h3 id=&quot;automating-the-correctness-of-equals&quot;&gt;Automating the correctness of equals()&lt;/h3&gt;
+
+&lt;p&gt;There are five broad categories of solution to the problem:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Static analysis&lt;/li&gt;
+  &lt;li&gt;Dynamic analysis&lt;/li&gt;
+  &lt;li&gt;Static generation&lt;/li&gt;
+  &lt;li&gt;Dynamic generation&lt;/li&gt;
+  &lt;li&gt;Rewrite it in Rust&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Even these five categories fall into two broader groupings: analytic and
+generative. Before going into the pros and cons of each category, though,
+a brief overview of what it is and how it could be used to solve this problem.&lt;/p&gt;
+
+&lt;h3 id=&quot;static-analysis&quot;&gt;Static analysis&lt;/h3&gt;
+
+&lt;p&gt;Static analysis involves the use of tooling to analyse code without actually
+running it. In the Java world, this includes tools like Checkstyle, PMD,
+Error-Prone, the Checker Framework and more. Many tools in this category are
+referred to as &lt;em&gt;linters&lt;/em&gt;, after &lt;code class=&quot;highlighter-rouge&quot;&gt;lint&lt;/code&gt;, an early static analysis tool for C.&lt;/p&gt;
+
+&lt;p&gt;Most of these tools have an API that allows you to define your own rules. So we
+could build a plugin which looks at classes which implements &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, and
+performs various checks on that implementation. For example, in order to protect
+against the bug we encountered, we could check that every field declared is
+referenced in the &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method.&lt;/p&gt;
+
+&lt;p&gt;Then, as long as the static analysis tool is part of our build process, we’ll
+find that if we forget to update &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, our build will fail at the static
+analysis step.&lt;/p&gt;
+
+&lt;h3 id=&quot;dynamic-analysis&quot;&gt;Dynamic analysis&lt;/h3&gt;
+
+&lt;p&gt;Whereas static analysis analyses code without running it, dynamic analysis
+analyses code by running it.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;Wait, that’s… that’s just tests right?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Well, yes. But tests are often thought about in very narrow ways, and I’m talking
+about an approach which doesn’t really fit there, and there’s a nice analog to
+some important aspects of static analysis.&lt;/p&gt;
+
+&lt;p&gt;One thing that’s nice about static analysis is we implement our check and it’s
+applied generally, to the whole codebase. We can do that at runtime too.&lt;/p&gt;
+
+&lt;p&gt;First we could use reflection to find everything which implements &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;.
+For each type we found, instantiate it twice with the same parameters: these
+should be equal. Then for each parameter, instantiate it twice with that
+parameter unequal but each other parameter equal, and these objects should not be
+equal. If any type fails these rules, then we need to go look at the implementation.&lt;/p&gt;
+
+&lt;p&gt;I refer to this as ‘dynamic analysis’ because, like static analysis, it’s
+applied generally over a codebase instead of applying only to a specific
+implementation (like most automated tests do) - only it’s done at runtime.
+It’s a different mentality to traditional unit/acceptance/property-based testing.&lt;/p&gt;
+
+&lt;p&gt;But unlike static analysis, it tests what the code &lt;em&gt;does&lt;/em&gt;, not what the code &lt;em&gt;is&lt;/em&gt;.
+We can combine it with property-based testing approaches to make much richer
+assertions about behaviour than we could with static analysis.&lt;/p&gt;
+
+&lt;p&gt;It’s entirely possible to write a test like that. Making it scalable and robust
+is an exercise left to the reader. But we don’t need to go all the way: let’s
+say we just want to ensure &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; is updated when the fields are updated.&lt;/p&gt;
+
+&lt;p&gt;We could use reflection to find everything which implements &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;. For
+each implementation, ensure it’s annotated with a new annotation which includes
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;serialVersionUID&lt;/code&gt; of the type when it was generated, and then check that
+matches the current &lt;code class=&quot;highlighter-rouge&quot;&gt;serialVersionUID&lt;/code&gt;. Whenever the fields change, so does
+the &lt;code class=&quot;highlighter-rouge&quot;&gt;serialVersionUID&lt;/code&gt; and the test requires the method be re-generated.&lt;/p&gt;
+
+&lt;p&gt;This wouldn’t test that the &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method is &lt;em&gt;correct&lt;/em&gt;, just that it’s based
+on the current fields of the class. But it’s easy to build, and it solves our
+actual problem: how to keep the &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method correct when changing fields.&lt;/p&gt;
+
+&lt;h3 id=&quot;static-generation&quot;&gt;Static generation&lt;/h3&gt;
+
+&lt;p&gt;There exist tools which can generate data classes from a specification, such as
+an XML schema. This has an appeal when, for example, we’re trying to code to an
+external standard which is expressed as an XML schema: we can directly implement
+the documented types.&lt;/p&gt;
+
+&lt;p&gt;Another thing we could consider is generating our data types in another JVM
+language, such as Kotlin, Scala, or Haskell (using Frege). After all, that’s
+just treating building the other language in the pipeline as a generator of JVM
+bytecode, and we’ve already referenced how those languages give us a sensible
+implementation of &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; for free.&lt;/p&gt;
+
+&lt;p&gt;Taking such an approach would mean that any data types generated through
+such steps would always have an up-to-date &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; method: any changes to the
+data type would automatically be applied to the &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; implementation.&lt;/p&gt;
+
+&lt;p&gt;One thing worth noting is that these approaches do their generation as a
+separate process to the Java compilation, and therefore have to occur before
+compilation, in order to be referenced by the code. That means they can’t refer
+to our main codebase.&lt;/p&gt;
+
+&lt;p&gt;There are also tools like Lombok which allow us to include data types in our
+main Java codebase without implementing &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, and allowing the compiler
+plugin to derive the implementation for us.&lt;/p&gt;
+
+&lt;h3 id=&quot;dynamic-generation&quot;&gt;Dynamic generation&lt;/h3&gt;
+
+&lt;p&gt;Maybe we’re just taking the wrong approach here. Instead of relying on our
+implementation of &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; being correct at build time, we should find a way
+of doing it correctly at runtime. Maybe we’re better off reflecting over the
+fields of the class and checking them for equality rather than relying on
+anything as prescriptive as &lt;em&gt;code&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Tools exist for this: for example, Apache’s &lt;code class=&quot;highlighter-rouge&quot;&gt;EqualsBuilder&lt;/code&gt; has a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;reflectiveEquals()&lt;/code&gt; method, which looks at whatever the class looks like
+at the time it’s invoked. Not only is this guaranteed to take into account
+the structure of the data class you’re actually running, it’s also concise,
+reducing the amount of code the maintainer needs to consider.&lt;/p&gt;
+
+&lt;h3 id=&quot;rewrite-it-in-rust&quot;&gt;Rewrite it in Rust&lt;/h3&gt;
+
+&lt;p&gt;If we’re considering writing our data classes in another language, like
+Kotlin, then it’s a small step to write other kinds of classes in Kotlin. This
+opens up the question of where we draw that line: maybe we’re better off with
+&lt;em&gt;everything&lt;/em&gt; being in Kotlin, not just our data classes.&lt;/p&gt;
+
+&lt;p&gt;There are obvious costs to rewriting in another language, but at the same time,
+there are costs to multiple languages in the same codebase. Moving comprehensively
+to a language which better meets your requirements will result in something more
+consistent, simpler, and therefore easier to maintain.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-problem-with-best-practices&quot;&gt;The Problem With Best Practices&lt;/h3&gt;
+
+&lt;p&gt;There’s a fundamental difference here between the two overarching categories of
+analysis (be it static or dynamic) and generation (be it static, dynamic, or
+transglottal): &lt;em&gt;generation requires awareness&lt;/em&gt;. You can build your data types
+using Lombok, or with &lt;code class=&quot;highlighter-rouge&quot;&gt;reflectiveEquals()&lt;/code&gt;, or in a separate library, and then
+one day a new developer on the team builds a simple data type and either isn’t
+aware of the agreed approach or just overlooks it.&lt;/p&gt;
+
+&lt;p&gt;This is always a risk whenever adopting any approach, but bear in mind: our
+problem here was it was too easy to overlook something that needed to be done.
+If our solution is also easily overlookable, then all we’ve done is defer the
+responsibility to know and remember things: and now, the responsibility we’ve
+deferred it to is something local to our codebase, something a newcomer is
+much less likely to anticipate.&lt;/p&gt;
+
+&lt;p&gt;We wanted a better solution so we didn’t have to think about so many things:
+well, now we’ve reduced the effort of maintaining data classes, but we’ve
+increased the effort of writing data classes.&lt;/p&gt;
+
+&lt;p&gt;Whereas, if we’d gone with an analytic approach, we only need to decide how we
+want equality to work across our codebase once, apply it, and then we &lt;em&gt;don’t
+need to know about it any more&lt;/em&gt;, let alone think about it. Any time we violate
+our requirements, our build process will tell us what to do.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-problem-with-analysis&quot;&gt;The Problem With Analysis&lt;/h3&gt;
+
+&lt;p&gt;There are three main problems with the analytic approach.&lt;/p&gt;
+
+&lt;p&gt;Firstly, it’s much harder and more complex. Building static analysis checks is
+not straightforward, and requires a reasonably deep understanding of both the
+tool’s API and the Java AST. Building dynamic analysis checks requires a deep
+understanding of the reflection API. &lt;em&gt;Maintaining&lt;/em&gt; those tests puts a
+significant burden on a typical team.&lt;/p&gt;
+
+&lt;p&gt;Secondly, these tests tend not to be exhaustive: they look for specific ways
+the contract can be broken, rather than asserting they are correct. It’s
+entirely possible people find new ways to violate the contract that hadn’t
+been anticipated.&lt;/p&gt;
+
+&lt;p&gt;Thirdly, in addition to the risk of false negatives (breaking the contract in
+ways that hadn’t been anticipated), there’s also the risk of false positives -
+reporting a problem with a contract which doesn’t actually apply in that
+situation. There are approaches to ensuring that’s not a blocker, but they
+have consequences - for example, you can exempt given types from a given check,
+but then you have no protection in the case of future maintenance of that type.&lt;/p&gt;
+
+&lt;p&gt;For something as general as validating &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt;, even if it’s expensive to
+develop, &lt;em&gt;this only ever has to be developed once, and not necessarily by us&lt;/em&gt;.
+Often, a pre-existing plugin exists somewhere, and if not, then if we develop it,
+others can benefit in turn from our labours. This helps mitigate the first point.&lt;/p&gt;
+
+&lt;p&gt;As gaps in our analysis arise, we can extend the implementation to cover those,
+and thus mitigate the second and third points - but doing so well can be hard.&lt;/p&gt;
+
+&lt;p&gt;Whereas, if we’d gone with a generative approach, each step would be much
+cheaper, and we can use different generators as needs must.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-problem-with-rewriting-it-in-rust&quot;&gt;The Problem With Rewriting It In Rust&lt;/h3&gt;
+
+&lt;p&gt;If we move our program to one in which our problem does not exist, then we
+have solved our problem. That doesn’t mean this is a good idea.&lt;/p&gt;
+
+&lt;p&gt;There are three main problems with rewriting it in Rust (or any other language).&lt;/p&gt;
+
+&lt;p&gt;Firstly, it’s incredibly expensive. In order to solve a maintenance problem on
+a small subset of trivial methods, we’re replacing the entire codebase.&lt;/p&gt;
+
+&lt;p&gt;Secondly, there is a serious risk of transliteration errors. It’s very
+difficult to have any confidence that the rewrite maintains the important
+behaviours of the original. Good acceptance tests can help with this, but it
+is unusual to have exhaustive acceptance tests.&lt;/p&gt;
+
+&lt;p&gt;Thirdly, just because our new language is better at this particular task, that
+doesn’t mean it’s even at least as good as our old language in other areas.
+It’s entirely possible we’re solving a small problem and introducing a much
+larger one, be it one of library availability, performance, tooling quality,
+or ability to hire.&lt;/p&gt;
+
+&lt;h3 id=&quot;so-what-to-do&quot;&gt;So what to do?&lt;/h3&gt;
+
+&lt;p&gt;A perfect solution doesn’t exist. Each category has its own characteristic
+issues, and each solution within that category adds more. It’s worth asking
+whether the benefits of any of these solutions outweigh their costs - whether
+just reminding the team to be mindful of updating &lt;code class=&quot;highlighter-rouge&quot;&gt;equals()&lt;/code&gt; is, actually, the
+best solution.&lt;/p&gt;
+
+&lt;p&gt;I would however argue that analytic approaches are woefully underused in
+general. This isn’t the best use-case for them (it’s an atypically hard problem
+to solve generally), but reducing the number of things people need to be
+mindful of is incredibly powerful. Finding better ways to defer the need to
+pay attention to a computer, and doing so in increasingly general ways, is
+something everyone could benefit from being better at.&lt;/p&gt;
+</description>
+				<pubDate>Sat, 12 Aug 2017 00:00:00 +0100</pubDate>
+				<link>/2017/08/reflections-on-equality</link>
+				<guid isPermaLink="true">/2017/08/reflections-on-equality</guid>
+			</item>
+		
+			<item>
 				<title>Safety, subtypes and inference</title>
 				<description>&lt;p&gt;Using &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt; to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to &lt;em&gt;allow&lt;/em&gt; sensible handling of them.&lt;/p&gt;
 
