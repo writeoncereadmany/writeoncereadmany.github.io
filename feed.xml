@@ -7,6 +7,618 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>How Minimal is Minima?</title>
+				<description>&lt;p&gt;This is the second in a series of posts on the &lt;a href=&quot;https://github.com/writeoncereadmany/minimalang&quot;&gt;Minima language&lt;/a&gt;. &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/a-minima&quot;&gt;Here’s the first&lt;/a&gt;,
+and &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/b-overloading-in-minima&quot;&gt;here’s the second&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;One of the motivating factors behind Minima is to make it as small as possible,
+so that when it comes time to add features to it, those changes are easy.&lt;/p&gt;
+
+&lt;p&gt;But Minima isn’t as small as possible. It’s quite small, but some of its
+features are implementable in terms of other features.&lt;/p&gt;
+
+&lt;h3 id=&quot;variables&quot;&gt;Variables&lt;/h3&gt;
+
+&lt;p&gt;Let’s start with variables. We need to be able to access variables, but we have
+two ways of defining them: with &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt; declarations, and as function parameters.&lt;/p&gt;
+
+&lt;p&gt;We can’t really get rid of function parameters, but we can rewrite any code
+which uses &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt; to use function parameters instead. For example:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet is [name] =&amp;gt; (
+  start is &quot;Hello, &quot;,
+  print[start:concat[name]]  
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;We could eliminate the variable &lt;code class=&quot;highlighter-rouge&quot;&gt;start&lt;/code&gt; by inlining it, but for demonstrative
+purposes, we want to give it a name. So instead we can do:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet is [name] =&amp;gt; (
+  ([start] =&amp;gt; print[start:concat[name]])[&quot;Hello, &quot;]
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;h3 id=&quot;grouping&quot;&gt;Grouping&lt;/h3&gt;
+
+&lt;p&gt;Let’s say we want to write a function which prints three things:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;visit is [name] =&amp;gt; (
+  print[&quot;Hello, &quot;:concat[name]]
+  print[name:concat[&quot;, may I take your coat?&quot;]
+  print[&quot;Goodbye, &quot;:concat[name]]  
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can do that without grouping, by creating a function which takes and ignores
+three parameters, and immediately invoking it with our three side-effecting
+expressions:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;visit is [name] =&amp;gt; (
+  ([ignore1, ignore2, ignore3] =&amp;gt; SUCCESS)[
+    print[&quot;Hello, &quot;:concat[name]],
+    print[name:concat[&quot;, may I take your coat?&quot;]],
+    print[&quot;Goodbye, &quot;:concat[name]]
+  ]  
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This achieves both purposes of grouping: allowing side effects, and creating
+variables bound to locally evaluated values.&lt;/p&gt;
+
+&lt;p&gt;It’s worth noting that whilst this obviates the need for sequencing expressions
+in a group, we still do need parentheses for precedence - otherwise, we’d be
+trying to invoke &lt;code class=&quot;highlighter-rouge&quot;&gt;SUCCESS&lt;/code&gt; instead of our locally declared function.&lt;/p&gt;
+
+&lt;p&gt;An expression like: &lt;code class=&quot;highlighter-rouge&quot;&gt;apply is [a, b] =&amp;gt; a[b]&lt;/code&gt; can be interpreted in two ways:
+either as &lt;code class=&quot;highlighter-rouge&quot;&gt;(apply is [a, b] =&amp;gt; a)[b]&lt;/code&gt;, or as &lt;code class=&quot;highlighter-rouge&quot;&gt;apply is ([a, b] =&amp;gt; a[b])&lt;/code&gt;. Here,
+we clearly mean the former, but that’s only obvious as a reader from context.&lt;/p&gt;
+
+&lt;p&gt;We can apply various precedence rules: access binds the most tightly, then
+invocation, then implication and then assignment the most weakly - and that will
+usually do what we want. But sometimes we want invocation to apply after
+implication, and for that we need control of precedence.&lt;/p&gt;
+
+&lt;p&gt;This means we can’t entirely get rid of grouping, at least not with this
+syntax - but we could downgrade it to only taking a single expression: ie
+regular parenthesisation.&lt;/p&gt;
+
+&lt;h3 id=&quot;objects&quot;&gt;Objects&lt;/h3&gt;
+
+&lt;p&gt;Objects are how we build larger data structures out of smaller ones. For example,
+if we want to represent a 2D vector, and we had access to both a &lt;code class=&quot;highlighter-rouge&quot;&gt;square&lt;/code&gt; and
+a &lt;code class=&quot;highlighter-rouge&quot;&gt;sqrt&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vector is { x : 2, y : 5 }
+
+length is [vector] =&amp;gt; (
+  x is vector:x,
+  y is vector:y,
+  sqrt[square[x]:plus[square[y]]]
+)  
+
+print[length[vector]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But we can also represent that with a function:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vector is [f] =&amp;gt; f[2, 5]
+
+length is [vector] =&amp;gt; (
+  calc is [x, y] =&amp;gt; sqrt[square[x]:plus[square[y]]],
+  vector[calc]
+)
+
+print[length[vector]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s just one way of interacting with a function datatype. We may
+prefer to do this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vector is [f] =&amp;gt; f[2, 5]
+getX is [x, y] =&amp;gt; x
+getY is [x, y] =&amp;gt; y
+
+length is [vector] =&amp;gt; (
+  x is vector[getX],
+  y is vector[getY],
+  sqrt[square[x]:plus[square[y]]]
+)
+
+print[length[vector]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This is just another way of binding the values together. It’s interesting to
+note how instead of performing operations &lt;em&gt;on&lt;/em&gt; the vector, we give
+operations &lt;em&gt;to&lt;/em&gt; the vector - which is a bit counterintuitive with how we usually
+use functions, but is surprisingly analagous to the field access. Just compare
+&lt;code class=&quot;highlighter-rouge&quot;&gt;vector:x&lt;/code&gt; to &lt;code class=&quot;highlighter-rouge&quot;&gt;vector[getX]&lt;/code&gt; - it’s basically the same semantics.&lt;/p&gt;
+
+&lt;p&gt;This approach has its problems, though.&lt;/p&gt;
+
+&lt;p&gt;Particularly, there’s no association of name to position - we could easily
+confuse ourselves if we were to do something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vector is [f] =&amp;gt; f[2, 5]
+
+height is vector[[h, w] =&amp;gt; h]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Our &lt;em&gt;intention&lt;/em&gt; was that width is the x-component and height is the y-component,
+and we list those components in the order x, y. But we don’t have any way of
+enforcing that, or even documenting it well.&lt;/p&gt;
+
+&lt;p&gt;Where an object is a mapping of &lt;em&gt;name&lt;/em&gt; to value, here it’s just a mapping of
+&lt;em&gt;position&lt;/em&gt; to value, so contextual mistakes like this are easy to make.&lt;/p&gt;
+
+&lt;p&gt;Also, this is all well and good when we’re concerned about representing a concise
+bundle of data like a 2D point, but it quickly becomes unwieldly when dealing
+with something which has a lot of fields - such as a rich object like a number,
+with many methods.&lt;/p&gt;
+
+&lt;h3 id=&quot;polymorphism-and-abstraction&quot;&gt;Polymorphism and abstraction&lt;/h3&gt;
+
+&lt;p&gt;There’s a bigger problem, too: we don’t just want to represent objects as a
+fixed set of fields/methods. We want to enable polymorphism - for example,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt; is a function which should be able to render anything with a &lt;code class=&quot;highlighter-rouge&quot;&gt;show&lt;/code&gt;
+method. Function datatypes don’t provide an obvious approach to this.&lt;/p&gt;
+
+&lt;p&gt;What we could do, instead, is build a datatype that is just a mapping from
+name to value, build some useful functions around it, and use that instead.
+Like, well, a map.&lt;/p&gt;
+
+&lt;p&gt;At this point I’m going to skip ahead and make two assertions: firstly, that’s
+something we can do, and secondly, it ends up being a lot more verbose. The best
+case scenario is something like this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;vector is mapOf[&quot;x&quot;, 2, mapOf[&quot;y&quot;, 5, empty]]
+
+length is [vector] =&amp;gt; (
+  x is get[vector, &quot;x&quot;],
+  y is get[vector, &quot;y&quot;],
+  sqrt[square[x]:plus[square[y]]]
+)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Effectively, we can build an object system in our code. It doesn’t &lt;em&gt;feel&lt;/em&gt; like
+an object system, but it gives us the capabilities we need, albeit clunkily. In
+fact, that’s pretty much what the Java implementation of Minima does.&lt;/p&gt;
+
+&lt;h3 id=&quot;numbers&quot;&gt;Numbers&lt;/h3&gt;
+
+&lt;p&gt;We don’t need numbers in our language either. We can build our own, using just
+functions. Let’s start with the natural numbers: counting numbers, starting
+with zero and going up by one.&lt;/p&gt;
+
+&lt;p&gt;A number can be defined as being either zero, or the successor of another
+number. Let’s define a number which represents how many times an operation will
+be repeated:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;zero is [s, z, acc] =&amp;gt; z[acc]
+succ is [pred] =&amp;gt; [s, z, acc] =&amp;gt; pred[s, z, s[acc]]
+
+three is succ[succ[succ[zero]]]
+
+bangs is three[
+  [acc] =&amp;gt; acc:concat[&quot;!&quot;],
+  [acc] =&amp;gt; acc,
+  &quot;&quot;
+]
+
+print[bangs]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This prints three bangs. Let’s get more adventurous: addition!&lt;/p&gt;
+
+&lt;p&gt;…wait, no, let’s not, this is getting dangerously indulgent now. Suffice it
+to say at this point, whilst it’s possible to represent numbers - or, for that
+matter, any data type - this way, it’s not very practical. I think it’s time
+to sum up a bit.&lt;/p&gt;
+
+&lt;h3 id=&quot;summing-up-a-bit&quot;&gt;Summing up a bit&lt;/h3&gt;
+
+&lt;p&gt;Ultimately, of Minima’s features, we can represent most of them using functions.
+We can create datatypes, remove the need for traditional variables, and remove
+the need to group multiple expressions into one. What we do need - the tools we
+keep going back to - are those three fundamental operations:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Define a function&lt;/li&gt;
+  &lt;li&gt;Invoke a function&lt;/li&gt;
+  &lt;li&gt;Read a variable&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If we wanted a truly minimal language, that would be it. There’s a name for
+that language: the lambda calculus. Anything you can express in Minima can also be
+expressed in the lambda calculus: for that matter, anything you can express in
+any language can also be expressed in the lambda calculus.&lt;/p&gt;
+
+&lt;p&gt;So why do we need any other languages? Because the lambda calculus is a pain in
+the ass to work with. Every time we remove a feature from Minima, the code ended
+up worse. A lot worse.&lt;/p&gt;
+
+&lt;p&gt;Removing the ability to bind variables or group expressions twists our code
+into awkward contortions that don’t logically flow. It looked pretty bad
+in small snippets, but having to introduce nested components just for access to
+variables breaks down incredibly quickly as program size increases. Try writing
+a program which defines four functions, each in terms of the prior, using
+parameters as your only variables, and you’ll see what I mean.&lt;/p&gt;
+
+&lt;p&gt;We can do some interesting things using functions to represent data-types - and
+probably will - but it’s not a good general-purpose approach: there are plenty
+of cases where we need objects and would really prefer not to have to build
+our own. As for removing numbers: well, we were never seriously considering that.&lt;/p&gt;
+
+&lt;p&gt;So, back to the original purpose of Minima. It’s not here to be as small as it
+can possibly be - it’s here to be as small as it can get away with being, whilst
+still being reasonable to actually program in, so we can use it as a meaningful
+base.&lt;/p&gt;
+
+&lt;p&gt;So whilst it’s been interesting to see what’s &lt;em&gt;technically&lt;/em&gt; redundant, and why,
+now is the time to make peace with our feature-set and start seeing what we can
+do with this language.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 03 Sep 2017 00:00:00 +0100</pubDate>
+				<link>/2017/09/c-how-minimal-is-minima</link>
+				<guid isPermaLink="true">/2017/09/c-how-minimal-is-minima</guid>
+			</item>
+		
+			<item>
+				<title>Syntactic Overloading in Minima</title>
+				<description>&lt;p&gt;This is the second in a series of posts on the &lt;a href=&quot;https://github.com/writeoncereadmany/minimalang&quot;&gt;Minima language&lt;/a&gt;. &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/a-minima&quot;&gt;Here’s the first&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;There are a few things I’ve made a very conscious decision to try to enforce
+in the design of Minima.&lt;/p&gt;
+
+&lt;p&gt;These include, but are not limited to:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;No nulls/uninitialised state&lt;/li&gt;
+  &lt;li&gt;No inheritance&lt;/li&gt;
+  &lt;li&gt;No reflection&lt;/li&gt;
+  &lt;li&gt;No overloading&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The first three are simple: I just don’t introduce those features. There’s no
+way to define a variable without its initial value: the syntax doesn’t support
+it. There’s no concept of classes, let alone subclasses. And there’s no way
+to introspect an object or function.&lt;/p&gt;
+
+&lt;p&gt;What happens if you try to access an undefined field of an object, you ask?
+Not null, that’s for damn sure. You get a type error. At runtime, yes. We’ll
+do something better about that later.&lt;/p&gt;
+
+&lt;p&gt;Overloading of functions is similarly not supported - any one given name
+resolves to exactly one value - but I didn’t just say no overloading of
+functions. I’m also concerned about overloading of &lt;em&gt;syntax&lt;/em&gt;.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;For example, in Java, parens &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; are used in two contexts: method invocation and
+precedence of (eg arithmetic) sub-expressions. The period &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; is used in two
+contexts: a separator for floating-point numerals, and field/method access on
+objects. Angle brackets &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&amp;gt;&lt;/code&gt; are used individually to delimit type arguments,
+and also as the less-than and greater-than mathematical operators.&lt;/p&gt;
+
+&lt;p&gt;I don’t want to do that. It makes code much simpler and clearer when a given
+symbol can only mean one thing. There are four sorts of grouping: arguments,
+groups, objects, and precedence - and a standard ASCII keyboard
+has three sets of brackets: &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; (excluding &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&amp;gt;&lt;/code&gt;, on the basis
+we value &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; higher as mathematical operators).&lt;/p&gt;
+
+&lt;p&gt;This gives us two dilemmas. The first is what to use where; the second is we
+have more use-cases than tools available.&lt;/p&gt;
+
+&lt;p&gt;In terms of what gets first pick of the cherry, there’s a symbology which has
+priority over any programming conventions - and that’s maths. Regardless of in what
+context we’ll be using whatever language Minima develops into, we’ll need to
+support basic arithmetic. That means the basic set of operators: &lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; for precedence. That’s also how parentheses are
+used generally (in English): to define subclauses, evaluated in their own right
+and then incorporated into the larger context.&lt;/p&gt;
+
+&lt;p&gt;More than anything, that’s what readers are used to believing parentheses are &lt;em&gt;for&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;That leaves arguments, groups and objects. Groups, or blocks, generally use
+one of two syntaxes: &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt; in curly-brace languages, and significant whitespace
+in languages like Python and Haskell. Objects and classes generally use one of
+two syntaxes: &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt; in curly-brace languages, and significant whitespace in others.&lt;/p&gt;
+
+&lt;p&gt;This makes one decision easy: what to use for arguments. We don’t have anything
+competing for &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt;, so we can use that there. Generally, languages use &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; for
+indexing into arrays, but we don’t have arrays or lists as a language-level
+concept.&lt;/p&gt;
+
+&lt;p&gt;So let’s get back to &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt; - who gets that, groups or objects? Fortunately, there’s
+a cool trick here that makes our problem go away. If we define a group as being
+a sequence of expressions which are all evaluated, returning the value of the
+last expression (which we did), then &lt;em&gt;a group of one expression is equivalent
+to a parenthesised expression&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;That leaves &lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt; free for objects.&lt;/p&gt;
+
+&lt;p&gt;We don’t want to overload &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt;, and there isn’t really a sensible alternative for
+numeric literals, so it’s out for object field access. So we use &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; instead.&lt;/p&gt;
+
+&lt;h3 id=&quot;syntactic-symmetry&quot;&gt;Syntactic symmetry&lt;/h3&gt;
+
+&lt;p&gt;Now, that means that technically speaking, we have two overloaded sets of symbols.
+The &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; square brackets can mean something is an &lt;em&gt;argument&lt;/em&gt; list or a &lt;em&gt;parameter&lt;/em&gt;
+list, and the &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operator can be used both to &lt;em&gt;define&lt;/em&gt; a key-value pair in an
+object and to &lt;em&gt;access&lt;/em&gt; an object’s field via the key.&lt;/p&gt;
+
+&lt;p&gt;In each of these cases, though, whilst they’re distinct syntactic constructs,
+they’re symmetrical views on the same concept. Square brackets &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; can be used to
+define or invoke a function, but they always refer to the input to a function.
+The colon &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; can be used to define or access a field, but it’s always defining
+how a given value relates to an object.&lt;/p&gt;
+
+&lt;p&gt;That’s not an ambiguity. Quite the opposite: it reinforces the syntax.&lt;/p&gt;
+
+&lt;h3 id=&quot;point-free-programming&quot;&gt;Point free programming&lt;/h3&gt;
+
+&lt;p&gt;This shortage of bracket types would just go away, if we didn’t need brackets
+for function invocation - if we used the point-free style. Haskell doesn’t need
+them, so why should we?&lt;/p&gt;
+
+&lt;p&gt;Well, let’s take this function as an example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet is [] =&amp;gt; println[&quot;Hello, World!&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In the point-free style, how would you invoke such a function? It’d just be&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;And how would you reference such a function to, for example, pass it into
+another function as a callback? It’d just be:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;maybeDoSomething[greet]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;But when we evaluate &lt;code class=&quot;highlighter-rouge&quot;&gt;greet&lt;/code&gt; to pass it into &lt;code class=&quot;highlighter-rouge&quot;&gt;maybeDoSomething&lt;/code&gt;, that’s an
+invocation, right? Or is it? &lt;em&gt;How should the language know?&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Herein lies the problem. The point free style is fine when there’s no difference
+between a function invocation and an uninvoked function, to be invoked later.
+There’s a name for that concept: &lt;em&gt;referential transparency&lt;/em&gt;, and it’s only true
+of pure programming languages.&lt;/p&gt;
+
+&lt;p&gt;Haskell is pure: there &lt;em&gt;is no distinction&lt;/em&gt; between a zero-arg function and its
+result after invoking. Minima is, quite deliberately, not pure.&lt;/p&gt;
+
+&lt;p&gt;Whilst I believe purity is an important concept, I have other ideas about how
+to deal with it, which will come up as we build atop Minima.&lt;/p&gt;
+
+&lt;p&gt;In a language which is not point-free, it’s easy to differentiate between
+an invocation of a zero-arg method, and an uninvoked zero-arg method: &lt;code class=&quot;highlighter-rouge&quot;&gt;greet[]&lt;/code&gt;
+is an invocation, and &lt;code class=&quot;highlighter-rouge&quot;&gt;greet&lt;/code&gt; is a function.&lt;/p&gt;
+
+&lt;p&gt;Plus, the shortage of brackets isn’t really a problem, not since we understood
+how parenthesisation can be viewed as a special case of grouping.&lt;/p&gt;
+
+&lt;h3 id=&quot;maths&quot;&gt;Maths!&lt;/h3&gt;
+
+&lt;p&gt;One thing you can’t do in Minima is this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[2 + 5]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;That’s because there’s no syntactic support for mathematical operators. It’s
+not super complicated to add that - and indeed, that’ll be one of the features
+we add to Minima in the future. Never fear, though, because we can still do
+maths. It’s just not quite as readable:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[2:plus[5]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Numbers are objects, which means they can have fields - and fields can be
+methods. Numbers support the following methods: &lt;code class=&quot;highlighter-rouge&quot;&gt;plus&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;minus&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;multiplyBy&lt;/code&gt;,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;divideBy&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;show&lt;/code&gt; - which returns a String representation of the number.&lt;/p&gt;
+
+&lt;p&gt;They don’t support any comparison operators right at the moment. We’re probably
+going to need those, but they open up some interesting questions for another
+day.&lt;/p&gt;
+
+&lt;h3 id=&quot;a-note-on-equality-and-assignment&quot;&gt;A note on equality and assignment&lt;/h3&gt;
+
+&lt;p&gt;It’s important not just to avoid overloading syntax, but also to avoid
+overloading &lt;em&gt;expectations&lt;/em&gt; on syntax.&lt;/p&gt;
+
+&lt;p&gt;I get particularly annoyed with the approach taken to the use of &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt;. Many
+languages use &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; for assignment, which means they end up using &lt;code class=&quot;highlighter-rouge&quot;&gt;==&lt;/code&gt; (and
+sometimes even &lt;code class=&quot;highlighter-rouge&quot;&gt;===&lt;/code&gt; too!) for testing for equality.&lt;/p&gt;
+
+&lt;p&gt;One language which gets this right is Prolog, where testing for equality and
+assignment are just different views on the same operation: unification. It’s
+reasonable to use one symbol for one concept! And that’s what lies closest
+to the meaning of the &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; symbol as used in mathematics: these two things are
+conceptually equivalent.&lt;/p&gt;
+
+&lt;p&gt;My approach is to use &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; for testing for equality (although that’s not
+syntactically supported yet, it will be). For assignment, instead, I use &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt;.
+This is, like much of Minima, forward-looking: assignment uses &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt;, so
+&lt;em&gt;re&lt;/em&gt;-assignment (not currently supported) can use &lt;code class=&quot;highlighter-rouge&quot;&gt;becomes&lt;/code&gt;, because updating
+a variable in-place is fundamentally different to creating a new variable and
+deserves distinct syntax.&lt;/p&gt;
+
+&lt;p&gt;And that distinct syntax should require more typing, so people have an
+opportunity to &lt;em&gt;really think about what they’re doing&lt;/em&gt; when they use it.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 03 Sep 2017 00:00:00 +0100</pubDate>
+				<link>/2017/09/b-overloading-in-minima</link>
+				<guid isPermaLink="true">/2017/09/b-overloading-in-minima</guid>
+			</item>
+		
+			<item>
+				<title>Minima</title>
+				<description>&lt;p&gt;Minima is a programming language. There are two things that it’s important
+to know about Minima.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;It’s a very small language&lt;/li&gt;
+  &lt;li&gt;It’s not a very good language&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/writeoncereadmany/minimalang&quot;&gt;You can find a Java implementation of it here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;It’s called Minima because it’s small. It’s not as small as it &lt;em&gt;could&lt;/em&gt; be - it’s
+not &lt;em&gt;technically&lt;/em&gt; minimal. But it’s pretty small.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;Minima is a language that should only be used in one circumstance: as a tool
+to better understand programming languages. Its raison d’etre is to be used as
+a base on to which language features are added, with as little complication as
+possible. Then, once a given feature has been added, it is then removed and
+for the next feature, we start with a blank slate again.&lt;/p&gt;
+
+&lt;p&gt;Let’s start with a quick tour of Minima.&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[&quot;Hello, World!&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;It’s traditional to start any introduction to a language with the archetypal
+“Hello, World!” program. This is Minima’s. It’s pretty minimal. Let’s break it down.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt; is a variable, bound to a function defined in the Prelude - a collection
+of pre-defined utility functions and objects, available in all programs. In fact,
+&lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt; is the &lt;em&gt;only&lt;/em&gt; function in the Prelude.&lt;/p&gt;
+
+&lt;p&gt;“Hello, World!” is a string literal. Anything enclosed in double-quotes is
+converted by the runtime into a string value.&lt;/p&gt;
+
+&lt;p&gt;Square brackets are used for function invocation. I acknowledge square brackets
+are an unconventional choice here, but there are good reasons for that. I’ll
+get into that in the next post.&lt;/p&gt;
+
+&lt;p&gt;Anything within the brackets - be it one argument like “Hello, World!” here,
+multiple comma-separated arguments, or even no arguments at all - is passed to
+the function, which then uses those to do whatever that function does. In the
+case of &lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt;, it displays the text in the console and returns &lt;code class=&quot;highlighter-rouge&quot;&gt;SUCCESS&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;SUCCESS&lt;/code&gt; is an object defined in the Prelude. In fact, it’s the &lt;em&gt;only&lt;/em&gt; object in
+the Prelude. We’ll get to objects in a bit.&lt;/p&gt;
+
+&lt;p&gt;We can also define our own functions:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[first, second] =&amp;gt; first
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;This is a function which takes two arguments, and returns the first of them. Why
+would you ever bother defining a function like that? There are reasons, which
+I’ll get to in a moment.&lt;/p&gt;
+
+&lt;p&gt;Everything in square brackets is the parameter list, then you have the fat-arrow
+symbol, and then you have another expression. When the function is called, the
+arguments are bound to the parameters, which are then available as variables in
+the body of the function. The expression is evaluated, then returned to the
+caller.&lt;/p&gt;
+
+&lt;p&gt;Every function returns a value - there’s no concept of a void function. When
+we don’t have any information to return - like in the &lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt; function - we
+return &lt;code class=&quot;highlighter-rouge&quot;&gt;SUCCESS&lt;/code&gt;. This is akin to returning &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; in many functional languages -
+it’s a type which conveys no information, which has only one possible value.&lt;/p&gt;
+
+&lt;p&gt;We’ve seen variables, both from the Prelude and inside function bodies. We
+can also define our own variables:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;message is &quot;Hello, World!&quot;
+print[message]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;We can define a variable by introducing a name - &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; in this case - and
+then binding an expression to it with the &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt; keyword. From here on, any use
+of &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; will be resolved to “Hello, World!”.&lt;/p&gt;
+
+&lt;p&gt;We also see we can have multiple expressions in a program. This also allows us
+to do things like this:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[&quot;Hello, World!&quot;]
+print[&quot;Oh, just one more thing...&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;What if we wanted to do that in a function? A function just takes a single
+expression as its body. For that, we use the &lt;em&gt;group&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;printBoth is [first, second] =&amp;gt; (print[first], print[second])
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Here we’re defining a variable and assigning a function to it - so far so good,
+we know all about that. The body does something new though: it groups two
+expressions together, comma separated within parentheses.&lt;/p&gt;
+
+&lt;p&gt;A group is an expression composed of a sequence of expressions. When evaluated,
+each expression in turn is evaluated, and the value of the group is the value
+of the last expression in the group.&lt;/p&gt;
+
+&lt;p&gt;The evaluated values of the expressions prior to the last expression are
+discarded, so it only makes sense to group expressions which have side effects -
+such as introducing new variables or printing to the screen.&lt;/p&gt;
+
+&lt;p&gt;We can also do this:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;point is { x : 2, y : 3}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;This creates a new object: a set of key-value pairs, using &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; to separate the
+key from the value and &lt;code class=&quot;highlighter-rouge&quot;&gt;,&lt;/code&gt; to separate the pairs, enclosed by curly braces (&lt;code class=&quot;highlighter-rouge&quot;&gt;&lt;span class=&quot;p&quot;&gt;{}&lt;/span&gt;&lt;/code&gt;).
+We also see that we can put numeric literals in our programs - we’ll talk more
+about those in a moment.&lt;/p&gt;
+
+&lt;p&gt;We can then access the fields, also using the &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operator:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;printX is [point] =&amp;gt; print[point:x]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;We can use objects to build larger data structures from smaller ones, but we can
+also use them to bundle &lt;em&gt;behaviours&lt;/em&gt;. For example:&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet is [name] =&amp;gt; print[&quot;Hello, &quot;:concat[name]]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Here, &lt;code class=&quot;highlighter-rouge&quot;&gt;concat&lt;/code&gt; is a field on the string “Hello, “, and it’s a function which
+takes another string and concatenates it on the end of “Hello, “. We can use
+this philosophy to build bundles, not of state, but of &lt;em&gt;behaviour&lt;/em&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greeter is [intro] =&amp;gt; {
+  greet : [name] =&amp;gt; print[intro:concat[name]]
+}
+french is greeter[&quot;Bonjour, &quot;]
+french:greet[&quot;Jacques&quot;]
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;You may wish to call fields that are functions “methods”. They’re not exactly
+the same, but then two given features with the same name across two different
+languages aren’t often the same thing anyway.&lt;/p&gt;
+
+&lt;p&gt;That’s the entirety of Minima. Summing up, we have:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Declaration and evaluation of variables&lt;/li&gt;
+  &lt;li&gt;Definition of and invocation of functions&lt;/li&gt;
+  &lt;li&gt;Definition of and accessing of objects&lt;/li&gt;
+  &lt;li&gt;Grouping many expressions into a single compound expression&lt;/li&gt;
+  &lt;li&gt;String and number literals&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;print&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;SUCCESS&lt;/code&gt; in the Prelude&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;And that’s pretty much the entirety of Minima.&lt;/p&gt;
+</description>
+				<pubDate>Sun, 03 Sep 2017 00:00:00 +0100</pubDate>
+				<link>/2017/09/a-minima</link>
+				<guid isPermaLink="true">/2017/09/a-minima</guid>
+			</item>
+		
+			<item>
 				<title>Reflections on Equality</title>
 				<description>&lt;p&gt;As always, it started with a bug. We’d been extending the capabilities
 of one of our services, to allow filtering deals on a new concept. While

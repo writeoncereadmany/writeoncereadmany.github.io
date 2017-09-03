@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
+        
+          <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
+        
+          <li><a href="/2017/09/a-minima">Minima</a></li>
+        
           <li><a href="/2017/08/reflections-on-equality">Reflections on Equality</a></li>
         
           <li><a href="/2017/03/safety-subtypes-and-inference">Safety, subtypes and inference</a></li>
-        
-          <li><a href="/2017/02/failure-is-not-right">Failure is not Right</a></li>
-        
-          <li><a href="/2017/01/optionals-and-other-options">Optionals, and other options</a></li>
-        
-          <li><a href="/2016/12/smell-o-vision">Smell-O-Vision</a></li>
         
     </ul>
 </div>
@@ -86,16 +86,124 @@ ruminations on software development
             
 <div class="article">
     <div class="well">
-        <h1><a href="/2016/11/refactoring-to-functionality">Nov 11, 2016 - Refactoring towards a Functional Style</a></h1>
+        <h1><a href="/2017/01/optionals-and-other-options">Jan 22, 2017 - Optionals, and other options</a></h1>
         
         <div class="content">
-            <p>Yesterday, I refactored a method.</p>
+            <p>So I was recently talking about how much better than <code class="highlighter-rouge">null</code> <code class="highlighter-rouge">Optional</code> is, and the importance of using it correctly in order to get the most out of what they offer over <code class="highlighter-rouge">null</code>.</p>
 
-<p>Nothing unusual about that - we refactor code constantly. Code is, after all, better described as something grown than something built, and a large part of gardening is keeping the weeds in check. Normally, I wouldn’t have given it a second thought.</p>
+<p>What I didn’t talk about, though, was why you’d use either in the first place. Turns out that when you look at that, with a critical eye, <code class="highlighter-rouge">Optional</code> doesn’t <em>entirely</em> solve the problem we have.</p>
 
-<p>What was unusual, though, was this was my first time pairing with Sarah, who’s relatively new to Java 8 constructs like Optionals. Pairing with someone new often leads to more discussion of what’s being done and why, which can provoke some interesting reflections.</p>
+<p>Let’s take the example of the King of Spain’s beard.</p>
 
-<p>As we stepped through the refactorings, I noticed a few simple pressures were guiding us towards a functional approach. Each one only made a small, incremental improvement. Together, they had a huge effect on the code.</p>
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
+        <h1><a href="/2016/12/smell-o-vision">Dec 29, 2016 - Smell-O-Vision</a></h1>
+        
+        <div class="content">
+            <p>Take a look at this code snippet - a Java puzzler from the classic book of the same name by Josh Bloch and Neal Grafter:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">String</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">String</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The answer is: it does nothing, and if you try to run it as a main method, you’ll get:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>Exception in thread "main": java.lang.NoSuchMethodError: main
+</code></pre>
+</div>
+
+<p>Why? Because a main method has to take an array of String, and ours takes an array of <em>String</em>, and…</p>
+
+<p>Talking about code can often be imprecise. At times like that it’s nice to show the actual code, and also show what I want to talk about in it. Like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class=pink><span class="n">String</span></span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class=pink><span class="n">String</span></span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class=pink><span class="kd">class</span> <span class="nc">String</span></span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The problem is there are two String classes here: <code class="highlighter-rouge">java.lang.String</code> (in blue) and our own <code class="highlighter-rouge">String</code> class (in pink). <code class="highlighter-rouge">main()</code> requires a blue <code class="highlighter-rouge">String</code>, but it gets a pink <code class="highlighter-rouge">String</code>, so it’s not a <code class="highlighter-rouge">main()</code> method. But I don’t really care about the puzzler here: I want to talk about the highlighting.</p>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
+        <h1><a href="/2016/12/optional-get-considered-harmful">Dec 21, 2016 - Optional.get() considered harmful</a></h1>
+        
+        <div class="content">
+            <blockquote>
+  <p>I call it my billion-dollar mistake. It was the invention of the null reference in 1965… <strong>My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler</strong>. But I couldn’t resist the temptation to put in a null reference, simply because it was so easy to implement. This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.</p>
+</blockquote>
+
+<p><em>– Tony Hoare</em></p>
+
+<p>Nulls are terrible. They’re dangerous and sneaky and they’re <a href="http://io.livecode.ch/learn/namin/unsound">why Java’s type system is unsound</a>. Ideally, we’d never use them, but we can’t do much about twenty years of libraries which might return nulls. At least we can try to stop returning them in our own APIs, because Java 8 gave us <code class="highlighter-rouge">Optional</code>s.</p>
+
+<p>What’s an <code class="highlighter-rouge">Optional</code>? It’s a data type which represents either a value, or… not a value. This allows us to represent the possibility of an absence of the value in the type system. So, instead of code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Cat</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We can write code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The latter code is, to my mind, indisputably better than the former. The possibility of nullity is encoded in the types, and we can’t do anything to the cat without making a conscious decision to remove it from the <code class="highlighter-rouge">Optional</code>.</p>
+
+<p>Intent is clearer. Mistakes are less likely. These are good things.</p>
+
+<p>That said, <strong>don’t write code like this</strong>. Just because it’s better than the null-exposed version doesn’t make it <em>good</em>.</p>
 
 
         </div>
@@ -109,7 +217,9 @@ ruminations on software development
         <a class="btn btn-default" href="/page2" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 3 of 3</span>
+  <span class="page_number ">Page: 3 of 4</span>
+  
+    <a class="btn btn-default" href="/page4" class="next">Older</a>
   
 </div>
 

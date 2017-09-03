@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
+        
+          <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
+        
+          <li><a href="/2017/09/a-minima">Minima</a></li>
+        
+          <li><a href="/2017/08/reflections-on-equality">Reflections on Equality</a></li>
+        
+          <li><a href="/2017/03/safety-subtypes-and-inference">Safety, subtypes and inference</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2017/09/a-minima">Sep 3, 2017 - Minima</a></h1>
+            
+            <div class="post-content">
+            <p>Minima is a programming language. There are two things that it’s important
+to know about Minima.</p>
+<ul>
+  <li>It’s a very small language</li>
+  <li>It’s not a very good language</li>
+</ul>
+
+<p><a href="https://github.com/writeoncereadmany/minimalang">You can find a Java implementation of it here</a>.</p>
+
+<p>It’s called Minima because it’s small. It’s not as small as it <em>could</em> be - it’s
+not <em>technically</em> minimal. But it’s pretty small.</p>
+
+<!--more-->
+
+<p>Minima is a language that should only be used in one circumstance: as a tool
+to better understand programming languages. Its raison d’etre is to be used as
+a base on to which language features are added, with as little complication as
+possible. Then, once a given feature has been added, it is then removed and
+for the next feature, we start with a blank slate again.</p>
+
+<p>Let’s start with a quick tour of Minima.</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>print["Hello, World!"]
+</code></pre>
+</div>
+<p>It’s traditional to start any introduction to a language with the archetypal
+“Hello, World!” program. This is Minima’s. It’s pretty minimal. Let’s break it down.</p>
+
+<p><code class="highlighter-rouge">print</code> is a variable, bound to a function defined in the Prelude - a collection
+of pre-defined utility functions and objects, available in all programs. In fact,
+<code class="highlighter-rouge">print</code> is the <em>only</em> function in the Prelude.</p>
+
+<p>“Hello, World!” is a string literal. Anything enclosed in double-quotes is
+converted by the runtime into a string value.</p>
+
+<p>Square brackets are used for function invocation. I acknowledge square brackets
+are an unconventional choice here, but there are good reasons for that. I’ll
+get into that in the next post.</p>
+
+<p>Anything within the brackets - be it one argument like “Hello, World!” here,
+multiple comma-separated arguments, or even no arguments at all - is passed to
+the function, which then uses those to do whatever that function does. In the
+case of <code class="highlighter-rouge">print</code>, it displays the text in the console and returns <code class="highlighter-rouge">SUCCESS</code>.</p>
+
+<p><code class="highlighter-rouge">SUCCESS</code> is an object defined in the Prelude. In fact, it’s the <em>only</em> object in
+the Prelude. We’ll get to objects in a bit.</p>
+
+<p>We can also define our own functions:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>[first, second] =&gt; first
+</code></pre>
+</div>
+<p>This is a function which takes two arguments, and returns the first of them. Why
+would you ever bother defining a function like that? There are reasons, which
+I’ll get to in a moment.</p>
+
+<p>Everything in square brackets is the parameter list, then you have the fat-arrow
+symbol, and then you have another expression. When the function is called, the
+arguments are bound to the parameters, which are then available as variables in
+the body of the function. The expression is evaluated, then returned to the
+caller.</p>
+
+<p>Every function returns a value - there’s no concept of a void function. When
+we don’t have any information to return - like in the <code class="highlighter-rouge">print</code> function - we
+return <code class="highlighter-rouge">SUCCESS</code>. This is akin to returning <code class="highlighter-rouge">()</code> in many functional languages -
+it’s a type which conveys no information, which has only one possible value.</p>
+
+<p>We’ve seen variables, both from the Prelude and inside function bodies. We
+can also define our own variables:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>message is "Hello, World!"
+print[message]
+</code></pre>
+</div>
+<p>We can define a variable by introducing a name - <code class="highlighter-rouge">message</code> in this case - and
+then binding an expression to it with the <code class="highlighter-rouge">is</code> keyword. From here on, any use
+of <code class="highlighter-rouge">message</code> will be resolved to “Hello, World!”.</p>
+
+<p>We also see we can have multiple expressions in a program. This also allows us
+to do things like this:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>print["Hello, World!"]
+print["Oh, just one more thing..."]
+</code></pre>
+</div>
+<p>What if we wanted to do that in a function? A function just takes a single
+expression as its body. For that, we use the <em>group</em>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>printBoth is [first, second] =&gt; (print[first], print[second])
+</code></pre>
+</div>
+
+<p>Here we’re defining a variable and assigning a function to it - so far so good,
+we know all about that. The body does something new though: it groups two
+expressions together, comma separated within parentheses.</p>
+
+<p>A group is an expression composed of a sequence of expressions. When evaluated,
+each expression in turn is evaluated, and the value of the group is the value
+of the last expression in the group.</p>
+
+<p>The evaluated values of the expressions prior to the last expression are
+discarded, so it only makes sense to group expressions which have side effects -
+such as introducing new variables or printing to the screen.</p>
+
+<p>We can also do this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>point is { x : 2, y : 3}
+</code></pre>
+</div>
+
+<p>This creates a new object: a set of key-value pairs, using <code class="highlighter-rouge">:</code> to separate the
+key from the value and <code class="highlighter-rouge">,</code> to separate the pairs, enclosed by curly braces (<code class="highlighter-rouge"><span class="p">{}</span></code>).
+We also see that we can put numeric literals in our programs - we’ll talk more
+about those in a moment.</p>
+
+<p>We can then access the fields, also using the <code class="highlighter-rouge">:</code> operator:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>printX is [point] =&gt; print[point:x]
+</code></pre>
+</div>
+
+<p>We can use objects to build larger data structures from smaller ones, but we can
+also use them to bundle <em>behaviours</em>. For example:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; print["Hello, ":concat[name]]
+</code></pre>
+</div>
+
+<p>Here, <code class="highlighter-rouge">concat</code> is a field on the string “Hello, “, and it’s a function which
+takes another string and concatenates it on the end of “Hello, “. We can use
+this philosophy to build bundles, not of state, but of <em>behaviour</em>.</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>greeter is [intro] =&gt; {
+  greet : [name] =&gt; print[intro:concat[name]]
+}
+french is greeter["Bonjour, "]
+french:greet["Jacques"]
+</code></pre>
+</div>
+
+<p>You may wish to call fields that are functions “methods”. They’re not exactly
+the same, but then two given features with the same name across two different
+languages aren’t often the same thing anyway.</p>
+
+<p>That’s the entirety of Minima. Summing up, we have:</p>
+<ul>
+  <li>Declaration and evaluation of variables</li>
+  <li>Definition of and invocation of functions</li>
+  <li>Definition of and accessing of objects</li>
+  <li>Grouping many expressions into a single compound expression</li>
+  <li>String and number literals</li>
+  <li><code class="highlighter-rouge">print</code> and <code class="highlighter-rouge">SUCCESS</code> in the Prelude</li>
+</ul>
+
+<p>And that’s pretty much the entirety of Minima.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+                <a class="btn btn-default" href="/2017/09/b-overloading-in-minima" class="next">Newer Post</a>
+              
+              
+                <a class="btn btn-default" href="/2017/08/reflections-on-equality" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+
