@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
+        
+          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
+        
+          <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
+        
+          <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
+        
+          <li><a href="/2017/09/a-minima">Minima</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2017/10/intermittency-and-interference">Oct 18, 2017 - Intermittency, Interference and Isolation</a></h1>
+            
+            <div class="post-content">
+            <blockquote>
+  <p>We disabled the tests because they were intermittent.</p>
+</blockquote>
+
+<p>I was somewhat alarmed to hear this.</p>
+
+<p>To an extent, it was understandable - these particular tests were failing
+really <em>quite a lot</em>, and they were preventing us from deploying some basic
+maintenance updates. Also, they were doing things we hadn’t been doing
+before, so it was possible the approach was flawed - fixing them would require
+some investigation.</p>
+
+<p>But these tests were <em>important</em> - they were a brand new regression test suite,
+a last line of sanity-checks against unexpected changes in our journal formats.
+So putting them back was a high priority.</p>
+
+<!-- more -->
+
+<p>The tests were quite simple: we write journals of various events out, and these
+files are then handed over to a pipeline which processes them for reporting
+purposes. We want to make sure that journal format is consistent, and to be
+aware of exactly what changes we’re making when we’re doing so intentionally.</p>
+
+<p>So, our tests were quite simple. We take a snapshot of the journals, then we
+perform some action, then we look at the journals again, filter anything out
+we’d already seen, and compare what’s left to what we expect to be left.</p>
+
+<p>When they failed, we were seeing nothing in the actual output. It was as if the
+events didn’t happen. We had some theories - were we trying to read from the
+logs before buffers had been flushed? Were we seeing journal rotation happening
+between our action and our read operation? We couldn’t reproduce any of these
+cases.</p>
+
+<p>The key was that these tests were failing <em>a lot</em> in the full build, but it was
+difficult to work out what was going on because they were passing when we
+debugged them. They were also passing when we just ran them in the IDE.</p>
+
+<p>Those are not the characteristics of an intermittent test.</p>
+
+<p>Those are the characteristics of an <em>interferent</em> test.</p>
+
+<p>Our tests each reused basically the exact same input, and then ran different
+assertions on the outcome. Our journals contained timestamps, but only with
+second granularity.</p>
+
+<p>So, when we ran the full suite of tests, we’d run a test, add some lines to the
+journal, sample that journal, run the same scenario again <em>generating the exact
+same output</em>, remove lines which matched what we’d seen before (including what
+had just been generated), and hey, no log lines for this action.</p>
+
+<p>Our tests were interfering with each other.</p>
+
+<p>The solution was quite simple - make sure the tests each generated different
+output. Seed the input with a different characteristic piece of data, and then
+the output from each test case will be distinct and identifiable.</p>
+
+<p>Furthermore, if rather than <em>filtering out</em> lines not associated with an
+individual event, we can <em>select for</em> them - that enables the possibility of
+running such tests in parallel in the future.</p>
+
+<h3 id="in-summation">In summation</h3>
+
+<p>If your tests pass in isolation, but not en masse, they’re interfering with
+each other. Somewhere, you have a shared dependence on mutable state - and
+for end-to-end tests, that could mean files, databases, other services, all the
+sorts of mutable state applications exist to manage.</p>
+
+<p>If your tests are interfering with each other, then you need to find some way
+of isolating them - of ensuring the bits of state that this test case interacts
+with are distinctly separable from all other state.</p>
+
+<p>If your tests aren’t interfering with each other, there’s a good possibility
+they will in the future. Any time you’re generating persistent state in tests,
+work out on what basis you want to isolate one test from another.</p>
+
+<p>Ideally, isolate on something you can randomly generate at runtime, so that when
+people copy-and-paste an existing test to do something new in the future, the
+right sort of isolation just magically happens.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+                <a class="btn btn-default" href="/2017/11/most-code-fails-badly" class="next">Newer Post</a>
+              
+              
+                <a class="btn btn-default" href="/2017/09/c-how-minimal-is-minima" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+
