@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
+        
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
         
           <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
         
           <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
-        
-          <li><a href="/2017/09/a-minima">Minima</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,269 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/09/c-how-minimal-is-minima">Sep 3, 2017 - How Minimal is Minima?</a></h1>
+        
+        <div class="content">
+            <p>This is the third in a series of posts on the <a href="https://github.com/writeoncereadmany/minimalang">Minima language</a>. <a href="https://writeoncereadmany.github.io/2017/09/a-minima">Here’s the first</a>,
+and <a href="https://writeoncereadmany.github.io/2017/09/b-overloading-in-minima">here’s the second</a>.</p>
+
+<p>One of the motivating factors behind Minima is to make it as small as possible,
+so that when it comes time to add features to it, those changes are easy.</p>
+
+<p>But Minima isn’t as small as possible. It’s quite small, but some of its
+features are implementable in terms of other features.</p>
+
+<h3 id="variables">Variables</h3>
+
+<p>Let’s start with variables. We need to be able to access variables, but we have
+two ways of defining them: with <code class="highlighter-rouge">is</code> declarations, and as function parameters.</p>
+
+<p>We can’t really get rid of function parameters, but we can rewrite any code
+which uses <code class="highlighter-rouge">is</code> to use function parameters instead. For example:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; (
+  start is "Hello, ",
+  print[start:concat[name]]  
+)
+</code></pre>
+</div>
+<p>We could eliminate the variable <code class="highlighter-rouge">start</code> by inlining it, but for demonstrative
+purposes, we want to give it a name. So instead we can do:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; (
+  ([start] =&gt; print[start:concat[name]])["Hello, "]
+)
+</code></pre>
+</div>
+
+<h3 id="grouping">Grouping</h3>
+
+<p>Let’s say we want to write a function which prints three things:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>visit is [name] =&gt; (
+  print["Hello, ":concat[name]]
+  print[name:concat[", may I take your coat?"]
+  print["Goodbye, ":concat[name]]  
+)
+</code></pre>
+</div>
+
+<p>We can do that without grouping, by creating a function which takes and ignores
+three parameters, and immediately invoking it with our three side-effecting
+expressions:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>visit is [name] =&gt; (
+  ([ignore1, ignore2, ignore3] =&gt; SUCCESS)[
+    print["Hello, ":concat[name]],
+    print[name:concat[", may I take your coat?"]],
+    print["Goodbye, ":concat[name]]
+  ]  
+)
+</code></pre>
+</div>
+
+<p>This achieves both purposes of grouping: allowing side effects, and creating
+variables bound to locally evaluated values.</p>
+
+<p>It’s worth noting that whilst this obviates the need for sequencing expressions
+in a group, we still do need parentheses for precedence - otherwise, we’d be
+trying to invoke <code class="highlighter-rouge">SUCCESS</code> instead of our locally declared function.</p>
+
+<p>An expression like: <code class="highlighter-rouge">apply is [a, b] =&gt; a[b]</code> can be interpreted in two ways:
+either as <code class="highlighter-rouge">(apply is [a, b] =&gt; a)[b]</code>, or as <code class="highlighter-rouge">apply is ([a, b] =&gt; a[b])</code>. Here,
+we clearly mean the former, but that’s only obvious as a reader from context.</p>
+
+<p>We can apply various precedence rules: access binds the most tightly, then
+invocation, then implication and then assignment the most weakly - and that will
+usually do what we want. But sometimes we want invocation to apply after
+implication, and for that we need control of precedence.</p>
+
+<p>This means we can’t entirely get rid of grouping, at least not with this
+syntax - but we could downgrade it to only taking a single expression: ie
+regular parenthesisation.</p>
+
+<h3 id="objects">Objects</h3>
+
+<p>Objects are how we build larger data structures out of smaller ones. For example,
+if we want to represent a 2D vector, and we had access to both a <code class="highlighter-rouge">square</code> and
+a <code class="highlighter-rouge">sqrt</code> function:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vector is { x : 2, y : 5 }
+
+length is [vector] =&gt; (
+  x is vector:x,
+  y is vector:y,
+  sqrt[square[x]:plus[square[y]]]
+)  
+
+print[length[vector]]
+</code></pre>
+</div>
+
+<p>But we can also represent that with a function:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+
+length is [vector] =&gt; (
+  calc is [x, y] =&gt; sqrt[square[x]:plus[square[y]]],
+  vector[calc]
+)
+
+print[length[vector]]
+</code></pre>
+</div>
+
+<p>That’s just one way of interacting with a function datatype. We may
+prefer to do this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+getX is [x, y] =&gt; x
+getY is [x, y] =&gt; y
+
+length is [vector] =&gt; (
+  x is vector[getX],
+  y is vector[getY],
+  sqrt[square[x]:plus[square[y]]]
+)
+
+print[length[vector]]
+</code></pre>
+</div>
+
+<p>This is just another way of binding the values together. It’s interesting to
+note how instead of performing operations <em>on</em> the vector, we give
+operations <em>to</em> the vector - which is a bit counterintuitive with how we usually
+use functions, but is surprisingly analagous to the field access. Just compare
+<code class="highlighter-rouge">vector:x</code> to <code class="highlighter-rouge">vector[getX]</code> - it’s basically the same semantics.</p>
+
+<p>This approach has its problems, though.</p>
+
+<p>Particularly, there’s no association of name to position - we could easily
+confuse ourselves if we were to do something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+
+height is vector[[h, w] =&gt; h]
+</code></pre>
+</div>
+
+<p>Our <em>intention</em> was that width is the x-component and height is the y-component,
+and we list those components in the order x, y. But we don’t have any way of
+enforcing that, or even documenting it well.</p>
+
+<p>Where an object is a mapping of <em>name</em> to value, here it’s just a mapping of
+<em>position</em> to value, so contextual mistakes like this are easy to make.</p>
+
+<p>Also, this is all well and good when we’re concerned about representing a concise
+bundle of data like a 2D point, but it quickly becomes unwieldly when dealing
+with something which has a lot of fields - such as a rich object like a number,
+with many methods.</p>
+
+<h3 id="polymorphism-and-abstraction">Polymorphism and abstraction</h3>
+
+<p>There’s a bigger problem, too: we don’t just want to represent objects as a
+fixed set of fields/methods. We want to enable polymorphism - for example,
+<code class="highlighter-rouge">print</code> is a function which should be able to render anything with a <code class="highlighter-rouge">show</code>
+method. Function datatypes don’t provide an obvious approach to this.</p>
+
+<p>What we could do, instead, is build a datatype that is just a mapping from
+name to value, build some useful functions around it, and use that instead.
+Like, well, a map.</p>
+
+<p>At this point I’m going to skip ahead and make two assertions: firstly, that’s
+something we can do, and secondly, it ends up being a lot more verbose. The best
+case scenario is something like this:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>vector is mapOf["x", 2, mapOf["y", 5, empty]]
+
+length is [vector] =&gt; (
+  x is get[vector, "x"],
+  y is get[vector, "y"],
+  sqrt[square[x]:plus[square[y]]]
+)
+</code></pre>
+</div>
+
+<p>Effectively, we can build an object system in our code. It doesn’t <em>feel</em> like
+an object system, but it gives us the capabilities we need, albeit clunkily. In
+fact, that’s pretty much what the Java implementation of Minima does.</p>
+
+<h3 id="numbers">Numbers</h3>
+
+<p>We don’t need numbers in our language either. We can build our own, using just
+functions. Let’s start with the natural numbers: counting numbers, starting
+with zero and going up by one.</p>
+
+<p>A number can be defined as being either zero, or the successor of another
+number. Let’s define a number which represents how many times an operation will
+be repeated:</p>
+
+<div class="highlighter-rouge"><pre class="highlight"><code>zero is [s, z, acc] =&gt; z[acc]
+succ is [pred] =&gt; [s, z, acc] =&gt; pred[s, z, s[acc]]
+
+three is succ[succ[succ[zero]]]
+
+bangs is three[
+  [acc] =&gt; acc:concat["!"],
+  [acc] =&gt; acc,
+  ""
+]
+
+print[bangs]
+</code></pre>
+</div>
+
+<p>This prints three bangs. Let’s get more adventurous: addition!</p>
+
+<p>…wait, no, let’s not, this is getting dangerously indulgent now. Suffice it
+to say at this point, whilst it’s possible to represent numbers - or, for that
+matter, any data type - this way, it’s not very practical. I think it’s time
+to sum up a bit.</p>
+
+<h3 id="summing-up-a-bit">Summing up a bit</h3>
+
+<p>Ultimately, of Minima’s features, we can represent most of them using functions.
+We can create datatypes, remove the need for traditional variables, and remove
+the need to group multiple expressions into one. What we do need - the tools we
+keep going back to - are those three fundamental operations:</p>
+<ul>
+  <li>Define a function</li>
+  <li>Invoke a function</li>
+  <li>Read a variable</li>
+</ul>
+
+<p>If we wanted a truly minimal language, that would be it. There’s a name for
+that language: the lambda calculus. Anything you can express in Minima can also be
+expressed in the lambda calculus: for that matter, anything you can express in
+any language can also be expressed in the lambda calculus.</p>
+
+<p>So why do we need any other languages? Because the lambda calculus is a pain in
+the ass to work with. Every time we remove a feature from Minima, the code ended
+up worse. A lot worse.</p>
+
+<p>Removing the ability to bind variables or group expressions twists our code
+into awkward contortions that don’t logically flow. It looked pretty bad
+in small snippets, but having to introduce nested components just for access to
+variables breaks down incredibly quickly as program size increases. Try writing
+a program which defines four functions, each in terms of the prior, using
+parameters as your only variables, and you’ll see what I mean.</p>
+
+<p>We can do some interesting things using functions to represent data-types - and
+probably will - but it’s not a good general-purpose approach: there are plenty
+of cases where we need objects and would really prefer not to have to build
+our own. As for removing numbers: well, we were never seriously considering that.</p>
+
+<p>So, back to the original purpose of Minima. It’s not here to be as small as it
+can possibly be - it’s here to be as small as it can get away with being, whilst
+still being reasonable to actually program in, so we can use it as a meaningful
+base.</p>
+
+<p>So whilst it’s been interesting to see what’s <em>technically</em> redundant, and why,
+now is the time to make peace with our feature-set and start seeing what we can
+do with this language.</p>
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/09/b-overloading-in-minima">Sep 3, 2017 - Syntactic Overloading in Minima</a></h1>
@@ -142,31 +405,6 @@ not <em>technically</em> minimal. But it’s pretty small.</p>
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/08/reflections-on-equality">Aug 12, 2017 - Reflections on Equality</a></h1>
-        
-        <div class="content">
-            <p>As always, it started with a bug. We’d been extending the capabilities
-of one of our services, to allow filtering deals on a new concept. While
-introducing that new concept, some classes had new fields added. One of those
-classes implemented <code class="highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
-the new field.</p>
-
-<p>The first-order fix was easy: just re-generate the <code class="highlighter-rouge">equals()</code> method. Trying to
-protect against this class of problem reoccurring, though, is a really
-interesting question.</p>
-
-<p>Not because it’s difficult to come up with a broader solution, but because
-so many solutions are available. And they’re all terrible in different ways.</p>
-
-<p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -174,7 +412,7 @@ so many solutions are available. And they’re all terrible in different ways.</
         <a class="btn btn-default" href="/index.html" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 2 of 4</span>
+  <span class="page_number ">Page: 2 of 5</span>
   
     <a class="btn btn-default" href="/page3" class="next">Older</a>
   

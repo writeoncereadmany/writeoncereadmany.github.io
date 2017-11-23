@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
+        
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
         
           <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
         
           <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
-        
-          <li><a href="/2017/09/a-minima">Minima</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,31 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/08/reflections-on-equality">Aug 12, 2017 - Reflections on Equality</a></h1>
+        
+        <div class="content">
+            <p>As always, it started with a bug. We’d been extending the capabilities
+of one of our services, to allow filtering deals on a new concept. While
+introducing that new concept, some classes had new fields added. One of those
+classes implemented <code class="highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
+the new field.</p>
+
+<p>The first-order fix was easy: just re-generate the <code class="highlighter-rouge">equals()</code> method. Trying to
+protect against this class of problem reoccurring, though, is a really
+interesting question.</p>
+
+<p>Not because it’s difficult to come up with a broader solution, but because
+so many solutions are available. And they’re all terrible in different ways.</p>
+
+<p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/03/safety-subtypes-and-inference">Mar 19, 2017 - Safety, subtypes and inference</a></h1>
@@ -116,22 +141,6 @@ ruminations on software development
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/01/optionals-and-other-options">Jan 22, 2017 - Optionals, and other options</a></h1>
-        
-        <div class="content">
-            <p>So I was recently talking about how much better than <code class="highlighter-rouge">null</code> <code class="highlighter-rouge">Optional</code> is, and the importance of using it correctly in order to get the most out of what they offer over <code class="highlighter-rouge">null</code>.</p>
-
-<p>What I didn’t talk about, though, was why you’d use either in the first place. Turns out that when you look at that, with a critical eye, <code class="highlighter-rouge">Optional</code> doesn’t <em>entirely</em> solve the problem we have.</p>
-
-<p>Let’s take the example of the King of Spain’s beard.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -139,7 +148,7 @@ ruminations on software development
         <a class="btn btn-default" href="/page2" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 3 of 4</span>
+  <span class="page_number ">Page: 3 of 5</span>
   
     <a class="btn btn-default" href="/page4" class="next">Older</a>
   

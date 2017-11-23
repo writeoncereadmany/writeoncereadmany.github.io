@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
+        
+          <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
+        
+          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
+        
+          <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
+        
+          <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2017/11/how-to-fail-in-java">Nov 20, 2017 - How to Fail in Java</a></h1>
+            
+            <div class="post-content">
+            <p>This is the second in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>.</p>
+
+<p>The library all revolves around a single central concept: the <code class="highlighter-rouge">Result</code> class.
+A large part of the reason to use <code class="highlighter-rouge">Result</code> is how it can be manipulated,
+allowing error-handling to be separated from core logic. But before we get to
+that, there’s another important reason to use <code class="highlighter-rouge">Result</code>: it fills an important
+gap in Java’s API.</p>
+
+<p>Namely, to represent the outcome of an operation which may fail.</p>
+
+<p>This may seem like kind of a huge oversight, seeing as many operations can
+potentially fail - there’s definitely a <em>need</em> for a tool for that job. That’s
+not to say Java doesn’t have ways of handling potential failure - it does, just
+that they’re all bad.</p>
+
+<!--more-->
+
+<p>Let’s start with the low-hanging fruit.</p>
+
+<h2 id="returning-null">Returning null</h2>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Coat</span> <span class="nf">illGetMyCoat</span><span class="o">(</span><span class="n">CloakroomTicket</span> <span class="n">ticket</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">coats</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Do I really need to talk about why null-as-failure is a bad idea? I could
+requote the inventor of null:</p>
+
+<blockquote>
+  <p>I call it my billion-dollar mistake… I couldn’t resist
+the temptation to put in a null reference, simply because it was so easy to
+implement. This has led to innumerable errors, vulnerabilities, and system
+crashes, which have probably caused a billion dollars of pain and damage
+in the last forty years.
+– Tony Hoare, inventor of ALGOL W.</p>
+</blockquote>
+
+<p>But it’s pertinent to talk about why null-as-failure is bad, for comparison
+purposes:</p>
+
+<h3 id="1-nulls-are-insidious">1: Nulls are insidious</h3>
+
+<p>Nulls can get anywhere. It’s possible for any (ok, any non-primitive) variable
+to actually be null. In order to have confidence that a value is non-null, you
+need to make yourself comfortable not just with the functions you call but also
+the functions <em>they</em> call, recursively.</p>
+
+<h3 id="2-unhandled-nulls-manifest-late">2: Unhandled nulls manifest late</h3>
+
+<p>When you have a variable that’s null, there’s a good chance you’ll pass it
+around a fair bit before trying to do anything with it. When you do, you’ll get
+a <code class="highlighter-rouge">NullPointerException</code>, but the real problem isn’t the accessing code, it’s the
+code which generated the null in the first place - which can be a long way away
+from the problematic code.</p>
+
+<h3 id="3-nulls-carry-no-information">3: Nulls carry no information</h3>
+
+<p>When you have a null, that represents a failure of some sort - maybe a failure to
+find a suitable value, maybe a failure to initialise. But it’s important to
+recognise that failures <em>have</em> sorts: when something fails, you inevitably want
+to know why. Null values do not carry that information.</p>
+
+<p>Let’s move on.</p>
+
+<h2 id="return-codes">Return codes</h2>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="kt">boolean</span> <span class="n">actuallyRemovedSomething</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>Return codes aren’t frequently used in Java, but they do exist. They’re more
+common as a pattern in Unix utilities. Using the return value of a function to
+indicate success or failure opens up a whole world of possibilities.</p>
+
+<p>The example above just returns a boolean, and Unix utilities return ints, but
+in principle we don’t have to restrict ourselves to such types. We can return
+rich types with failure details, or highly domain-specific reports. There are
+just two main problems with this approach:</p>
+
+<h3 id="1-it-only-works-with-naturally-void-methods">1: It only works with naturally-void methods</h3>
+
+<p>You can only use the return type to indicate the success or failure of a method
+when you’re <em>not using it for anything else</em>. That means we can only apply this
+approach when we’re not interested in returning a value, but instead in the
+side effects of the method.</p>
+
+<h3 id="2-its-easily-ignored">2: It’s easily ignored</h3>
+
+<p>It’s super easy, when writing code like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="kt">boolean</span> <span class="n">actuallyRemovedSomething</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>to instead do this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>It may be that the failure case doesn’t need handling. That’s often true when
+removing items from a set - less so when persisting a new record to a
+database.</p>
+
+<p>This probably isn’t an ideal approach unless we really, really don’t care (in
+general) whether the error is handled or not.</p>
+
+<h2 id="sentinel-values">Sentinel values</h2>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">String</span> <span class="nf">findName</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">,</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+  <span class="k">if</span><span class="o">(</span><span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="s">"Text does not include name"</span><span class="o">;</span>
+  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="s">"Text includes name starting at index "</span> <span class="o">+</span> <span class="n">index</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>In the above code, -1 is a sentinel value: it’s part of the return type, but
+it signifies failure instead of a location in a string. This approach has two
+key problems:</p>
+
+<h3 id="1-failures-look-like-successes">1: Failures look like successes</h3>
+
+<p>When this code fails, it returns a value which can theoretically be used for
+computation as if it were a success. If the caller isn’t aware of the possibility
+of failure, this could cause all sorts of interesting behaviour, which could be
+just subtly wrong instead of blow-up-the-world type wrong.</p>
+
+<h3 id="2-failures-arent-rich">2: Failures aren’t rich</h3>
+
+<p>If I want to find out where in a string I can find a substring, an int is an
+ideal type to represent that. If I’ve failed to find a substring, int isn’t
+particularly helpful. Sure, it’s possible to map one type to another, but that’s
+an extra step which requires consulting the documentation, as opposed to being
+self-describing.</p>
+
+<h2 id="multiple-return-values">Multiple Return values</h2>
+
+<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ETPhoneHome</span><span class="p">(</span><span class="s">"I can't fly this bike forever!"</span><span class="p">)</span><span class="x">
+</span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
+    </span><span class="c">// handle the error, often:</span><span class="x">
+    </span><span class="k">return</span><span class="x"> </span><span class="n">err</span><span class="x">
+</span><span class="p">}</span><span class="x">
+</span><span class="c">// do something with response</span><span class="x">
+</span></code></pre>
+</div>
+
+<p>This isn’t common in Java, but it’s a standard pattern in Go. It’s really
+just syntactic sugar around returning a tuple and then destructuring it - we
+could choose to implement it in Java with something like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Result</span> <span class="o">{</span>
+  <span class="kd">public</span> <span class="kd">final</span> <span class="n">Response</span> <span class="n">response</span><span class="o">;</span>
+  <span class="kd">public</span> <span class="kd">final</span> <span class="n">Failure</span> <span class="n">err</span><span class="o">;</span>
+
+  <span class="kd">public</span> <span class="nf">Result</span><span class="o">(</span><span class="n">Response</span> <span class="n">response</span><span class="o">,</span> <span class="n">Failure</span> <span class="n">err</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">;</span>
+    <span class="k">this</span><span class="o">.</span><span class="na">err</span> <span class="o">=</span> <span class="n">err</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">ETPhoneHome</span><span class="o">(</span><span class="s">"I can't fly this bike forever!"</span><span class="o">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="na">err</span> <span class="o">!=</span> <span class="n">nil</span> <span class="o">{</span>
+    <span class="c1">// handle the error, often:</span>
+    <span class="k">return</span> <span class="n">err</span>
+<span class="o">}</span>
+<span class="c1">// do something with result.response</span>
+</code></pre>
+</div>
+
+<p>This solves some of the problems we had above:</p>
+<ul>
+  <li>It allows a rich type to our failure cases</li>
+  <li>The wrapping in a Result draws the programmer’s attention to the possibility
+ of failure</li>
+</ul>
+
+<p>But we still have an issue where it’s easy to neglect the failure case - here,
+it would be sloppiness on the caller’s part rather than an insufficiently clear
+API, but it’s permitted. And it’s an approach which still requires the usual
+boilerplate around explicit checks.</p>
+
+<h2 id="exceptions">Exceptions</h2>
+
+<p>Well, this is the elephant in the room. Exceptions are probably the most common
+and de-facto default way of handling errors in Java. There’s a lot that’s good
+about them:</p>
+
+<ul>
+  <li>They manifest immediately - none of the late manifestation of nulls</li>
+  <li>They can represent arbitrarily rich failure types, decoupled from success types</li>
+  <li>Handling is optional, but continuing past failure is impossible</li>
+</ul>
+
+<p>But there are some important downsides too:</p>
+
+<ul>
+  <li>Handling is optional - exceptions can be ignored, leading to program crashes</li>
+  <li>They must be handled <em>locally</em>, in the code immediately surrounding the error-handling</li>
+  <li>They don’t integrate with functional constructs like lambdas and streams well</li>
+  <li>They’re expensive and heavyweight</li>
+  <li>They don’t advertise themselves (we’ll talk checked exceptions separately)</li>
+  <li>Exception handling requires clunky boilerplate</li>
+</ul>
+
+<p>Optional handling can be a boon in cases where we really don’t want to handle
+an error - it represents being in a state where there is no sensible forward-
+moving option. This is a good mechanism when the error-case is truly exceptional.</p>
+
+<p>But when it’s more standard, then there are issues: you can’t easily defer
+handling to another system, their sphere of influence (ie the code which needs
+to be prepared to handle them) grows as you defer handling by layers, it’s easy
+to overlook the need to handle them, and handling them is expensive both in
+terms of runtime performance and readability.</p>
+
+<h2 id="checked-exceptions">Checked Exceptions</h2>
+
+<p>Checked exceptions are intriguing from a design perspective, because they exist
+for a very good reason: you want to document (and enforce handling of) the errors
+a user of a method should anticipate.</p>
+
+<p>Or, to paraphrase, checked exceptions are <em>exceptions for non-exceptional
+circumstances</em>. This trades off one weakness of runtime exceptions - the risk of
+overlooking them - at the cost of virally propagating boilerplate requirements,
+and a standard control mechanism using very expensive objects.</p>
+
+<p>There is one other big problem with checked exceptions, and that’s functional
+programming. Runtime exceptions integrate poorly with functional programming
+using lambdas and streams, but checked exceptions don’t integrate with it at
+all.</p>
+
+<h3 id="exceptions-and-streams">Exceptions and streams</h3>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="o">&lt;</span><span class="n">body</span> <span class="n">elided</span><span class="o">&gt;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Response</span><span class="o">&gt;</span> <span class="nf">updateEmails</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">requestBodies</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+   <span class="k">return</span> <span class="n">requestBodies</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">updateEmail</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is the sort of thing you might want to do using Java’s streams: you have a
+method for dealing with one of an object, and so you take a stream and you map
+that method over it.</p>
+
+<p>Only thing is: you can’t do this. It won’t compile.</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+    <span class="o">&lt;</span><span class="n">body</span> <span class="n">elided</span><span class="o">&gt;</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Response</span><span class="o">&gt;</span> <span class="nf">updateEmails</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">requestBodies</span><span class="o">)</span> <span class=blue><span class="kd">throws</span> <span class="n">IOException</span></span> <span class="o">{</span>
+   <span class="k">return</span> <span class="n">requestBodies</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class=pink><span class="k">this</span><span class="o">::</span><span class="n">updateEmail</span></span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt; Unhandled exception: java.io.IOException
+</code></pre>
+</div>
+<p>So, it’s telling us we have an unhandled exception in <code class="highlighter-rouge">this::updateEmail</code>, even
+though we’ve declared our method as <code class="highlighter-rouge">throws IOException</code>?</p>
+
+<p>Well, yes, because <em>it’s not that method which throws</em>. We won’t actually execute
+<code class="highlighter-rouge">updateEmail</code> on out stream until we call a terminal method (eg, <code class="highlighter-rouge">toList()</code>),
+and that happens outside the <code class="highlighter-rouge">updateEmails</code> method. This is where
+exception-handling having to be local to the <em>code</em> which throws, rather than
+generating a <em>value</em>, really starts to hurt us.</p>
+
+<p>If we’re going to be using lambdas and streams, we can’t really make that
+interface with exception-throwing code. Which is a real problem, because many
+Java libraries, including large swathes of the JDK itself, throw exceptions for
+error-handling.</p>
+
+<h2 id="optional">Optional</h2>
+
+<p>Optional has often been introduced as “a better <code class="highlighter-rouge">null</code>”, which is true - but it
+massively understates its usefulness.</p>
+
+<p>An <code class="highlighter-rouge">Optional&lt;T&gt;</code> represents a value which either contains a (guaranteed
+non-null) <code class="highlighter-rouge">T</code>, or doesn’t. So, conceptually, it represents the same data as a
+nullable value. The difference comes in how you interact with it, because of
+course an <code class="highlighter-rouge">Optional</code> isn’t of the type you actually care about, it’s just a
+wrapper.</p>
+
+<p>There are three methods to get a value out of an <code class="highlighter-rouge">Optional</code>:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">defaultValue</span><span class="o">);</span>
+<span class="n">optional</span><span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">value</span><span class="o">);</span>
+<span class="n">optional</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">exception</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>Each of these requires that you specify what to return if the <code class="highlighter-rouge">Optional</code> is in
+fact empty. In other words, it forces you to handle the failure case, in a
+clear and concise manner.</p>
+
+<p>There is also a fourth case:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+</code></pre>
+</div>
+<p>This should never be used, and considered a mistake in the API, an alias for:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">BadAtProgrammingException</span><span class="o">());</span>
+</code></pre>
+</div>
+
+<p>So, <code class="highlighter-rouge">Optional</code> addresses many of the concerns we’ve raised above:</p>
+<ul>
+  <li>It advertises the risk of failure</li>
+  <li>It enforces handling of failures, in a clean, concise manner</li>
+  <li>It supports composition (I’ll get into that in the next post)</li>
+</ul>
+
+<p>There’s just one thing it doesn’t do. Unfortunately, it’s something quite
+important.</p>
+
+<p>It doesn’t convey any information on failure.</p>
+
+<p>Well, we can fix that.</p>
+
+<h2 id="result">Result!</h2>
+
+<p>If an <code class="highlighter-rouge">Optional</code> is either a success, carrying a value, or a failure, carrying
+nothing, then a <code class="highlighter-rouge">Result</code> is the logical next step: either a success, carrying a
+value, or a failure, <em>also</em> carrying a value.</p>
+
+<p>A minimal implementation might look something like this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="n">Result</span><span class="o">&lt;&gt;();</span> <span class="c1">// private constructor prevents new subtypes being added</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Success</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">S</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Success</span><span class="o">(</span><span class="n">S</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Failure</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">F</span> <span class="n">failure</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Failure</span><span class="o">(</span><span class="n">F</span> <span class="n">failure</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">failure</span> <span class="o">=</span> <span class="n">failure</span><span class="o">;</span> <span class="o">}</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is just about how to construct such a data type, without worrying about
+interacting with it yet. We can construct a <code class="highlighter-rouge">Result</code> that’s a <code class="highlighter-rouge">Success</code>, carrying
+any type we want, or a <code class="highlighter-rouge">Failure</code>, carrying a separate failure type. And when it
+comes to interacting with it, we can cover all bases like so:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="n">Result</span><span class="o">&lt;&gt;();</span> <span class="c1">// private constructor prevents new subtypes being added</span>
+  <span class=blue><span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onSuccess</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onFailure</span><span class="o">);</span></span>
+  <span class=pink><span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">success</span><span class="o">(</span><span class="n">S</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Success</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
+  <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">failure</span><span class="o">(</span><span class="n">F</span> <span class="n">failure</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Failure</span><span class="o">(</span><span class="n">failure</span><span class="o">);</span> <span class="o">}</span></span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Success</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">S</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Success</span><span class="o">(</span><span class="n">S</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
+    <span class=blue><span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onSuccess</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onFailure</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">onSuccess</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span></span>
+  <span class="o">}</span>
+
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Failure</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">F</span> <span class="n">failure</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Failure</span><span class="o">(</span><span class="n">F</span> <span class="n">failure</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">failure</span> <span class="o">=</span> <span class="n">failure</span><span class="o">;</span> <span class="o">}</span>
+    <span class=blue><span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onSuccess</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onFailure</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">return</span> <span class="n">onFailure</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">failure</span><span class="o">);</span>
+    <span class="o">}</span></span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>The pink edits mean that the <code class="highlighter-rouge">Success</code> and <code class="highlighter-rouge">Failure</code> types are an abstraction
+unavailable to the user: all they can know is they’re dealing with a <code class="highlighter-rouge">Result</code>.</p>
+
+<p>The blue additions mean that the only way they can interact with a <code class="highlighter-rouge">Result</code> is
+by giving it two alternative behaviours - one for when it’s a success, and one
+for when it’s a failure, and they both have to return the same type.</p>
+
+<p>You can find a version of <code class="highlighter-rouge">Result</code> following this design - only more fully-
+featured - in the <a href="https://github.com/unruly/control">co.unruly.control</a> library.</p>
+
+<p>So, for example, we might write some <code class="highlighter-rouge">Result</code>-handling code like this:</p>
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">actually42</span> <span class="o">=</span> <span class="n">success</span><span class="o">(</span><span class="mi">42</span><span class="o">);</span>
+  <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">notPi</span> <span class="o">=</span> <span class="n">failure</span><span class="o">(</span><span class="s">"Pi is not an integer"</span><span class="o">);</span>
+
+  <span class="n">maybePrint</span><span class="o">(</span><span class="n">actually42</span><span class="o">);</span>
+  <span class="n">maybePrint</span><span class="o">(</span><span class="n">notPi</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">static</span> <span class="kt">void</span> <span class="nf">maybePrint</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">potentialNumber</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">potentialNumber</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
+      <span class="n">success</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"My favourite number is %d"</span><span class="o">,</span> <span class="n">success</span><span class="o">),</span>
+      <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>It’s worth noting that this approach has only really been practical since the
+introduction of Java 8, and the ability to provide lambdas - otherwise our
+handling code would look like the far more unwieldly:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">void</span> <span class="nf">maybePrint</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">potentialNumber</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">potentialNumber</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
+      <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">apply</span><span class="o">(</span><span class="kt">int</span> <span class="n">success</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"My favourite number is %d"</span><span class="o">,</span> <span class="n">success</span><span class="o">);</span>
+        <span class="o">}</span>
+      <span class="o">},</span>
+      <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">apply</span><span class="o">(</span><span class="n">String</span> <span class="n">failure</span><span class="o">)</span> <span class="o">{</span>
+          <span class="k">return</span> <span class="n">failure</span><span class="o">;</span>
+        <span class="o">}</span>
+      <span class="o">}</span>
+    <span class="o">);</span>
+    <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Ugh. Nobody wants to be doing that.</p>
+
+<h2 id="summing-up-result">Summing up Result</h2>
+
+<p>So what does <code class="highlighter-rouge">Result</code> give us?</p>
+
+<ul>
+  <li>Advertises the risk of failure</li>
+  <li>Forces safe handling - can’t ignore the error paths</li>
+  <li>Supports arbitrarily rich failures</li>
+  <li>Is not constrained by the locality issues of exceptions</li>
+  <li>Lightweight and serialisable</li>
+</ul>
+
+<p>There are also some very significant benefits in terms of programming patterns
+that allow multiple operations on <code class="highlighter-rouge">Result</code> to be combined together effectively
+and clearly - and that’s what I’ll be moving on to shortly.</p>
+
+<p>Without <code class="highlighter-rouge">Result</code>, there are many ways to represent the outcome of a potentially-
+failing operation, and all of them are inadequate in at least some situations.</p>
+
+<p>There’s a lot more to programming with <code class="highlighter-rouge">Result</code> than what I’ve shown here. But
+<em>even if there wasn’t, it would still be a better way of dealing with failure
+than the alternatives</em>.</p>
+
+<p>But that’s not the fun part. Coming up next, we’ll dip our toes into the
+waters of composing operations by taking a closer look at <code class="highlighter-rouge">Optionals</code> and a
+paradigm I call “Carpet-oriented Programming”.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2017/11/most-code-fails-badly" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+
