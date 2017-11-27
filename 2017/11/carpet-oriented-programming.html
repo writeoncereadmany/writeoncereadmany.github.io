@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
+        
+          <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
+        
+          <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
+        
+          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
+        
+          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2017/11/carpet-oriented-programming">Nov 23, 2017 - Carpet-Oriented Programming</a></h1>
+            
+            <div class="post-content">
+            <p>This is the third in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>, and
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>.</p>
+
+<p>Before we look at railway-oriented programming with <code class="highlighter-rouge">Result</code>, it’ll help if we
+start with the similar, but simpler case of carpet-oriented programming with
+<code class="highlighter-rouge">Optional</code>. And we’ll illustrate this with the King of Spain’s Beard.</p>
+
+<!--more-->
+
+<h3 id="the-king-of-spains-beard">The King of Spain’s Beard</h3>
+
+<p>So we want to know the colour of the King of Spain’s beard, for reasons too
+obvious to go into. Disregarding error handling, we might write something like
+this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Person</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="n">Beard</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">getBeard</span><span class="o">();</span>
+  <span class="n">Color</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">getColour</span><span class="o">();</span>
+  <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                       <span class="n">country</span><span class="o">,</span>
+                       <span class="n">beardColour</span><span class="o">.</span><span class="na">describe</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>The problems here are twofold:</p>
+<ul>
+  <li>The country may not have a monarch</li>
+  <li>If it does, the monarch may not have a beard</li>
+  <li>That said: if they do have a beard, it will have a describable colour</li>
+</ul>
+
+<p>So we could represent this by returning null from the respective methods,
+and then checking for it before proceeding:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Person</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="k">if</span><span class="o">(</span><span class="n">king</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a monarch"</span><span class="o">,</span> <span class="n">country</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">Beard</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">getBeard</span><span class="o">();</span>
+  <span class="k">if</span><span class="o">(</span><span class="n">beard</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a beard"</span><span class="o">,</span> <span class="n">king</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">Color</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">getColour</span><span class="o">();</span>
+  <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                       <span class="n">country</span><span class="o">,</span>
+                       <span class="n">beardColour</span><span class="o">.</span><span class="na">describe</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>Ugh, look at all that null-handling. We’re using Java 8, we could use
+<code class="highlighter-rouge">Optional</code> instead!</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="k">if</span><span class="o">(!</span><span class="n">king</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a monarch"</span><span class="o">,</span> <span class="n">country</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getBeard</span><span class="o">();</span>
+  <span class="k">if</span><span class="o">(!</span><span class="n">beard</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a beard"</span><span class="o">,</span> <span class="n">king</span><span class="o">);</span>
+  <span class="o">}</span>
+  <span class="n">Color</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">getColour</span><span class="o">();</span>
+  <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                       <span class="n">country</span><span class="o">,</span>
+                       <span class="n">beardColour</span><span class="o">.</span><span class="na">describe</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p><em>No. Bad programmer, no twinkie.</em> That is <strong>not</strong> how to use <code class="highlighter-rouge">Optional</code>.</p>
+
+<h3 id="look-ma-no-ifs">Look ma, no ifs!</h3>
+
+<p>It’s common to want to perform operations on <code class="highlighter-rouge">Optional</code> values - so common that
+there’s a handy method to help you do that without having to check for presence,
+getting the value out, and then manipulating it. It’s called <code class="highlighter-rouge">map()</code>:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">maybeBeard</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="k">new</span> <span class="n">Goatee</span><span class="o">());</span>
+<span class="n">Optional</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">maybeBeard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
+</code></pre>
+</div>
+<p>This will return a new <code class="highlighter-rouge">Optional</code> containing the result of the operation on the
+value, if it was present, or an empty <code class="highlighter-rouge">Optional</code> if the original was empty.</p>
+
+<p><code class="highlighter-rouge">map()</code> <em>encapsulates the conditional</em>.</p>
+
+<p>This is all well and good, but it’s not quite enough. Sometimes, the method you
+want to map over can fail - it returns an <code class="highlighter-rouge">Optional</code> itself. Mapping over it
+would give us this:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">maybePerson</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">queenElizabeth2</span><span class="o">);</span>
+<span class="n">Optional</span><span class="o">&lt;</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;&gt;</span> <span class="n">maybeBeard</span> <span class="o">=</span> <span class="n">maybePerson</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>An <code class="highlighter-rouge">Optional</code> of an <code class="highlighter-rouge">Optional</code>, huh? We’d really like just a regular <code class="highlighter-rouge">Optional</code>:</p>
+<ul>
+  <li>if <code class="highlighter-rouge">maybePerson</code> is empty, we want an empty <code class="highlighter-rouge">Optional</code> at the end</li>
+  <li>if <code class="highlighter-rouge">maybePerson</code> is present, but has no beard, we want an empty <code class="highlighter-rouge">Optional</code></li>
+  <li>if <code class="highlighter-rouge">maybePerson</code> is present and bearded, we want an <code class="highlighter-rouge">Optional</code> of that beard</li>
+</ul>
+
+<p>Rather than nested <code class="highlighter-rouge">Optional</code>s, we’d prefer to flatten them into a single
+<code class="highlighter-rouge">Optional</code>. Fortunately, there’s something which will conveniently map and then
+flatten for us - <code class="highlighter-rouge">flatMap()</code>:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">maybePerson</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">queenElizabeth2</span><span class="o">);</span>
+<span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">maybeBeard</span> <span class="o">=</span> <span class="n">maybePerson</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+</code></pre>
+</div>
+
+<p>As a rule of thumb: use <code class="highlighter-rouge">flatMap</code> when an operation might fail, and <code class="highlighter-rouge">map</code> when
+it won’t.</p>
+
+<p>So let’s apply that to our whole method:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
+  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">beardColour</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span>
+    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()));</span>
+  <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+<p>Now, I’ve written that all out so you can see the types, but in general I find
+it’s more readable if you just inline everything:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
+      <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                                   <span class="n">country</span><span class="o">,</span>
+                                   <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This is a model I like to call <strong>Carpet-oriented Programming</strong>.</p>
+
+<h3 id="carpet-oriented-programming">Carpet-Oriented Programming</h3>
+
+<p>The key concept of carpet-oriented programming is: you set up a sequence of
+operations, assuming everything works. Then you run through the operations, and
+if any of them fail, you just… sweep it under the carpet, carry on, and trust
+you’ll deal with it later.</p>
+
+<p>For example, let’s track the progression of values in a successful case - Spain:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>                 <span class="c1">// country = Spain</span>
+  <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>                                       <span class="c1">// gets Felipe VI</span>
+      <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>                                    <span class="c1">// neatly trimmed</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>                                        <span class="c1">// salt &amp; pepper</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="c1">// describe it, and...</span>
+                                   <span class="n">country</span><span class="o">,</span>
+                                   <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>        <span class="c1">// n/m, we succeeded</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>And then contrast it with one failure case - England, which has a monarch without a beard:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>                 <span class="c1">// country = England</span>
+  <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>                                       <span class="c1">// gets Elizabeth II</span>
+      <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>                                    <span class="c1">// no. sweep under the carpet</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>                                        <span class="c1">// nothing to see here</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="c1">// still nope</span>
+                                   <span class="n">country</span><span class="o">,</span>
+                                   <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>        <span class="c1">// ...ok, i pick else</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>And another - France, which has no monarch:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>                 <span class="c1">// country = France</span>
+  <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>                                       <span class="c1">// vive la revolution: carpet</span>
+      <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>                                    <span class="c1">// le non</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>                                        <span class="c1">// ceci n'est pas un beard</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="c1">// je ne sais pas</span>
+                                   <span class="n">country</span><span class="o">,</span>
+                                   <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>        <span class="c1">// ...l'autre</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>We don’t let worries about failure bother us. Rather than have our error
+handling constantly interrupt our train of thought…</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">Person</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class=pink><span class="k">if</span><span class="o">(</span><span class="n">king</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a monarch"</span><span class="o">,</span> <span class="n">country</span><span class="o">);</span>
+  <span class="o">}</span></span>
+  <span class="n">Beard</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">getBeard</span><span class="o">();</span>
+  <span class=pink><span class="k">if</span><span class="o">(</span><span class="n">beard</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%s does not have a beard"</span><span class="o">,</span> <span class="n">king</span><span class="o">);</span>
+  <span class="o">}</span></span>
+  <span class="n">Color</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">getColour</span><span class="o">();</span>
+  <span class="k">return</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                       <span class="n">country</span><span class="o">,</span>
+                       <span class="n">beardColour</span><span class="o">.</span><span class="na">describe</span><span class="o">());</span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>…we put all those concerns to one side, until we resolve a final result:</p>
+
+<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
+      <span class=pink><span class="o">.</span><span class="na">flatMap</span></span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
+      <span class=pink><span class="o">.</span><span class="na">map</span></span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>
+      <span class=pink><span class="o">.</span><span class="na">map</span></span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+                                   <span class="n">country</span><span class="o">,</span>
+                                   <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
+      <span class=pink><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span></span>
+<span class="o">}</span>
+</code></pre>
+</div>
+
+<p>This gives us something simpler, something easier to read.</p>
+
+<p>It’s not a perfect solution. In doing so, we’ve lost any detail to our failures.
+We can’t distinguish a failure because the country has no monarch from one where
+the monarch is unbearded, as an empty <code class="highlighter-rouge">Optional</code> carries no information.</p>
+
+<p>But now we understand the basic principles of abstracting and encapsulating
+control flow, we can adapt it to <code class="highlighter-rouge">Result</code>, support both success and failure
+details, and move from carpet-oriented to railway-oriented programming.</p>
+
+<p>Before we do that, though, I first want to talk a little about the difference
+between methods and functions.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2017/11/how-to-fail-in-java" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

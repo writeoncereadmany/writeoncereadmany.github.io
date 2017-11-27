@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
+        
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
         
           <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
         
-          <li><a href="/2017/09/c-how-minimal-is-minima">How Minimal is Minima?</a></li>
-        
-          <li><a href="/2017/09/b-overloading-in-minima">Syntactic Overloading in Minima</a></li>
+          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -131,14 +131,14 @@ in the last forty years.
 <p>But it’s pertinent to talk about why null-as-failure is bad, for comparison
 purposes:</p>
 
-<h3 id="1-nulls-are-insidious">1: Nulls are insidious</h3>
+<h3 id="nulls-are-insidious">1: Nulls are insidious</h3>
 
 <p>Nulls can get anywhere. It’s possible for any (ok, any non-primitive) variable
 to actually be null. In order to have confidence that a value is non-null, you
 need to make yourself comfortable not just with the functions you call but also
 the functions <em>they</em> call, recursively.</p>
 
-<h3 id="2-unhandled-nulls-manifest-late">2: Unhandled nulls manifest late</h3>
+<h3 id="unhandled-nulls-manifest-late">2: Unhandled nulls manifest late</h3>
 
 <p>When you have a variable that’s null, there’s a good chance you’ll pass it
 around a fair bit before trying to do anything with it. When you do, you’ll get
@@ -146,7 +146,7 @@ a <code class="highlighter-rouge">NullPointerException</code>, but the real prob
 code which generated the null in the first place - which can be a long way away
 from the problematic code.</p>
 
-<h3 id="3-nulls-carry-no-information">3: Nulls carry no information</h3>
+<h3 id="nulls-carry-no-information">3: Nulls carry no information</h3>
 
 <p>When you have a null, that represents a failure of some sort - maybe a failure to
 find a suitable value, maybe a failure to initialise. But it’s important to
@@ -171,14 +171,14 @@ in principle we don’t have to restrict ourselves to such types. We can return
 rich types with failure details, or highly domain-specific reports. There are
 just two main problems with this approach:</p>
 
-<h3 id="1-it-only-works-with-naturally-void-methods">1: It only works with naturally-void methods</h3>
+<h3 id="it-only-works-with-naturally-void-methods">1: It only works with naturally-void methods</h3>
 
 <p>You can only use the return type to indicate the success or failure of a method
 when you’re <em>not using it for anything else</em>. That means we can only apply this
 approach when we’re not interested in returning a value, but instead in the
 side effects of the method.</p>
 
-<h3 id="2-its-easily-ignored">2: It’s easily ignored</h3>
+<h3 id="its-easily-ignored">2: It’s easily ignored</h3>
 
 <p>It’s super easy, when writing code like this:</p>
 
@@ -218,14 +218,14 @@ general) whether the error is handled or not.</p>
 it signifies failure instead of a location in a string. This approach has two
 key problems:</p>
 
-<h3 id="1-failures-look-like-successes">1: Failures look like successes</h3>
+<h3 id="failures-look-like-successes">1: Failures look like successes</h3>
 
 <p>When this code fails, it returns a value which can theoretically be used for
 computation as if it were a success. If the caller isn’t aware of the possibility
 of failure, this could cause all sorts of interesting behaviour, which could be
 just subtly wrong instead of blow-up-the-world type wrong.</p>
 
-<h3 id="2-failures-arent-rich">2: Failures aren’t rich</h3>
+<h3 id="failures-arent-rich">2: Failures aren’t rich</h3>
 
 <p>If I want to find out where in a string I can find a substring, an int is an
 ideal type to represent that. If I’ve failed to find a substring, int isn’t
@@ -554,6 +554,8 @@ paradigm I call “Carpet-oriented Programming”.</p>
             </div>
           </div>
           <div class="pagination">
+              
+                <a class="btn btn-default" href="/2017/11/carpet-oriented-programming" class="next">Newer Post</a>
               
               
                 <a class="btn btn-default" href="/2017/11/most-code-fails-badly" class="previous">Older Post</a>
