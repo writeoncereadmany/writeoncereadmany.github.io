@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
+        
           <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
           <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
         
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
-        
-          <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,69 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2016/12/smell-o-vision">Dec 29, 2016 - Smell-O-Vision</a></h1>
+        
+        <div class="content">
+            <p>Take a look at this code snippet - a Java puzzler from the classic book of the same name by Josh Bloch and Neal Grafter:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">class</span> <span class="nc">String</span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="nf">String</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The answer is: it does nothing, and if you try to run it as a main method, you’ll get:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Exception in thread "main": java.lang.NoSuchMethodError: main
+</code></pre></div></div>
+
+<p>Why? Because a main method has to take an array of String, and ours takes an array of <em>String</em>, and…</p>
+
+<p>Talking about code can often be imprecise. At times like that it’s nice to show the actual code, and also show what I want to talk about in it. Like this:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class=pink><span class="n">String</span></span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class=pink><span class="n">String</span></span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class=pink><span class="kd">class</span> <span class="nc">String</span></span> <span class="o">{</span>
+	<span class="kd">private</span> <span class="kd">final</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>The problem is there are two String classes here: <code class="highlighter-rouge">java.lang.String</code> (in blue) and our own <code class="highlighter-rouge">String</code> class (in pink). <code class="highlighter-rouge">main()</code> requires a blue <code class="highlighter-rouge">String</code>, but it gets a pink <code class="highlighter-rouge">String</code>, so it’s not a <code class="highlighter-rouge">main()</code> method. But I don’t really care about the puzzler here: I want to talk about the highlighting.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2016/12/optional-get-considered-harmful">Dec 21, 2016 - Optional.get() considered harmful</a></h1>

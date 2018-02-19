@@ -3,8 +3,242 @@
 	<channel>
 		<title>write once, read many</title>
 		<description>ruminations on software development</description>
-		<link></link>
-		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
+		<link>http://localhost:4000</link>
+		<atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>What About The Rest Of The World?</title>
+				<description>&lt;p&gt;This is the seventh in a series of posts introducing &lt;a href=&quot;https://github.com/unruly/control&quot;&gt;co.unruly.control&lt;/a&gt;,
+a functional control library for Java. Previous parts:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/most-code-fails-badly&quot;&gt;Most code fails badly&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java&quot;&gt;How to fail in Java&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming&quot;&gt;Carpet-oriented programming&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods&quot;&gt;The difference between functions and methods&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern&quot;&gt;The Applicable Pattern&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming&quot;&gt;Railway-Oriented Programming&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;I should apologise. In the last post, I cheated slightly.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;We started with this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectMapper&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accountId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;canonicalise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;E-mail address updated&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then we noted that we weren’t handling any errors, so we added in handling:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;throws&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;request&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectMapper&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accountId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;account&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Account not found&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;canonicalise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;request&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isValid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Invalid e-mail: &quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;updated&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(!&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;updated&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;internalServerError&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to update account&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;E-mail address updated&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Could not parse request&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This is obviously awful, so we replaced it with a railway-oriented approach:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectMapper&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;validateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Email:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;canonicalise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;change&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;accountRepository:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Response:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ifFailed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Which is obviously (to my eye, at least) much easier to read, understand, and maintain.
+There’s just one thing I’ve sort of skirted around.&lt;/p&gt;
+
+&lt;p&gt;That railway-oriented code assumes all those methods return &lt;code class=&quot;highlighter-rouge&quot;&gt;Results&lt;/code&gt; - but they
+don’t. They do all the messy things that Java usually does, like throw exceptions
+or return null.&lt;/p&gt;
+
+&lt;p&gt;I could argue “well, just refactor them to return &lt;code class=&quot;highlighter-rouge&quot;&gt;Results&lt;/code&gt;”, and sometimes that’ll
+be a perfectly cromulent approach. Other times refactoring that signature will
+hit 20 other points in your codebase, and you don’t want to make a change of that
+scale right now. And other times you &lt;em&gt;can’t&lt;/em&gt; change the signature because it isn’t
+your signature, it’s on an object provided by Spring or Jersey or some other
+framework where you can’t change anything.&lt;/p&gt;
+
+&lt;p&gt;Good news. That doesn’t matter. Functions compose.&lt;/p&gt;
+
+&lt;h3 id=&quot;composing-our-way-out-of-the-problem&quot;&gt;Composing our way out of the problem&lt;/h3&gt;
+
+&lt;p&gt;Let’s take the example of &lt;code class=&quot;highlighter-rouge&quot;&gt;accountRepository.update()&lt;/code&gt; to start with. Currently,
+that looks like this:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* internal distractions */&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;What we &lt;em&gt;want&lt;/em&gt; is something which looks like:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateAccount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/*whatever */&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The simplest thing we could do is build something super-specific:&lt;/p&gt;
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateAccount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;account&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;succeeded&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;succeeded&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Failed to update account&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And that would work. We could build these little translation-layer functions
+close to the use-site of our railways. It would end up pretty verbose, but at
+least there’s a layer of abstraction so we can concentrate on the control flow
+at the base and only look at these details when we really need to.&lt;/p&gt;
+
+&lt;p&gt;But we can do better, and go generic:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failWhenFalse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Predicate&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;op&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;test&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And perform that operation inline:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectMapper&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;validateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Email:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;canonicalise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;change&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;!!blue!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failWhenFalse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;accountRepository:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Failed to update database&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Response:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ifFailed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Or maybe we don’t want to perform it inline, in which case we can extract out
+the wrapping, which at least is declarative about its intent:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;objectMapper&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readValue&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;requestBody&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;EmailChangeRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;::&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;validateEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Email:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;canonicalise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;accountRepository&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;req&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;setEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pair&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;change&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;newEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;updateAccount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onSuccess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Response:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ok&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ifFailed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Response&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;badRequest&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;reason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Account&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;updateAccount&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failWhenFalse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;accountRepository:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;update&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Failed to update database&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;theres-more&quot;&gt;There’s more!&lt;/h3&gt;
+
+&lt;p&gt;We can write a whole bunch of similar generic translators:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Note: only handles runtime exceptions. This can be extended to handle&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;// checked exceptions too.&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failIfThrows&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RuntimeException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failIfNull&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;failIfEmpty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Optional&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;OS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+     &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;Result:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+     &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;orElse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And in doing so, we can build up a set of shims to convert from the real world’s
+messy, inconsistent failure modes, to our idealised world using only the One
+True Failure Representation.&lt;/p&gt;
+
+&lt;p&gt;We can build them each once, and add them to our toolset to be reused over and
+over again. And if it turns out we missed something, it’s easy enough to extend
+the generic toolset locally, and pop it in a pull request for the library later.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, we can do this &lt;em&gt;locally&lt;/em&gt;, without having to propagate our ideas
+any further than we’re ready to. We don’t need to change anything outside the
+body of the method in question.&lt;/p&gt;
+
+&lt;p&gt;Heck, if we need to write a callback for a framework which expects an exception
+on error: that’s OK. I’ll feel a little dirty, but we can convert a &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt; into
+a success or a thrown exception:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;throwIfFailed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Supplier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;?&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;extends&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RuntimeException&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;either&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And it all slots together neatly, because everything’s built out of higher-order
+functions, which (unlike methods) compose.&lt;/p&gt;
+
+&lt;h3 id=&quot;summing-up&quot;&gt;Summing up&lt;/h3&gt;
+
+&lt;p&gt;It’s a pain that everyone doesn’t represent the possibility of failure using
+something as clean and principled as &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt;s. But that’s OK - we can convert any
+function which fails in any way to instead fail with &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt;s cleanly, easily,
+and locally. And if we need to, we can convert a &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt; back into whatever messy
+failure mode circumstances require.&lt;/p&gt;
+
+&lt;p&gt;So that’s one less excuse!&lt;/p&gt;
+</description>
+				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
+				<link>http://localhost:4000/2018/02/d-what-about-the-rest-of-the-world</link>
+				<guid isPermaLink="true">http://localhost:4000/2018/02/d-what-about-the-rest-of-the-world</guid>
+			</item>
 		
 			<item>
 				<title>Railway-Oriented Programming</title>
@@ -240,8 +474,8 @@ And these three primary functions are all you need to know.&lt;/p&gt;
 interesting and powerful stuff…&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>/2018/02/c-railway-oriented-programming</link>
-				<guid isPermaLink="true">/2018/02/c-railway-oriented-programming</guid>
+				<link>http://localhost:4000/2018/02/c-railway-oriented-programming</link>
+				<guid isPermaLink="true">http://localhost:4000/2018/02/c-railway-oriented-programming</guid>
 			</item>
 		
 			<item>
@@ -558,8 +792,8 @@ become apparent once we get into railway-oriented programming with &lt;code clas
 the good stuff.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>/2018/02/b-pipe-dreams-or-the-applicable-pattern</link>
-				<guid isPermaLink="true">/2018/02/b-pipe-dreams-or-the-applicable-pattern</guid>
+				<link>http://localhost:4000/2018/02/b-pipe-dreams-or-the-applicable-pattern</link>
+				<guid isPermaLink="true">http://localhost:4000/2018/02/b-pipe-dreams-or-the-applicable-pattern</guid>
 			</item>
 		
 			<item>
@@ -778,8 +1012,8 @@ There’s a second part to implementing this well (in Java, anyway): the
 Applicable Pattern, which I’ll discuss in the next post.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>/2018/02/a-the-difference-between-functions-and-methods</link>
-				<guid isPermaLink="true">/2018/02/a-the-difference-between-functions-and-methods</guid>
+				<link>http://localhost:4000/2018/02/a-the-difference-between-functions-and-methods</link>
+				<guid isPermaLink="true">http://localhost:4000/2018/02/a-the-difference-between-functions-and-methods</guid>
 			</item>
 		
 			<item>
@@ -1016,8 +1250,8 @@ details, and move from carpet-oriented to railway-oriented programming.&lt;/p&gt
 between methods and functions.&lt;/p&gt;
 </description>
 				<pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
-				<link>/2017/11/carpet-oriented-programming</link>
-				<guid isPermaLink="true">/2017/11/carpet-oriented-programming</guid>
+				<link>http://localhost:4000/2017/11/carpet-oriented-programming</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/11/carpet-oriented-programming</guid>
 			</item>
 		
 			<item>
@@ -1467,8 +1701,8 @@ waters of composing operations by taking a closer look at &lt;code class=&quot;h
 paradigm I call “Carpet-oriented Programming”.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 20 Nov 2017 00:00:00 +0000</pubDate>
-				<link>/2017/11/how-to-fail-in-java</link>
-				<guid isPermaLink="true">/2017/11/how-to-fail-in-java</guid>
+				<link>http://localhost:4000/2017/11/how-to-fail-in-java</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/11/how-to-fail-in-java</guid>
 			</item>
 		
 			<item>
@@ -1719,8 +1953,8 @@ the following in upcoming posts:&lt;/p&gt;
 &lt;/ul&gt;
 </description>
 				<pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
-				<link>/2017/11/most-code-fails-badly</link>
-				<guid isPermaLink="true">/2017/11/most-code-fails-badly</guid>
+				<link>http://localhost:4000/2017/11/most-code-fails-badly</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/11/most-code-fails-badly</guid>
 			</item>
 		
 			<item>
@@ -1805,8 +2039,8 @@ people copy-and-paste an existing test to do something new in the future, the
 right sort of isolation just magically happens.&lt;/p&gt;
 </description>
 				<pubDate>Wed, 18 Oct 2017 00:00:00 +0100</pubDate>
-				<link>/2017/10/intermittency-and-interference</link>
-				<guid isPermaLink="true">/2017/10/intermittency-and-interference</guid>
+				<link>http://localhost:4000/2017/10/intermittency-and-interference</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/10/intermittency-and-interference</guid>
 			</item>
 		
 			<item>
@@ -2175,8 +2409,8 @@ But similarly clearly, it’s capable as a foundation.&lt;/p&gt;
 of recursion and decision actually &lt;em&gt;are&lt;/em&gt;.&lt;/p&gt;
 </description>
 				<pubDate>Sat, 09 Sep 2017 00:00:00 +0100</pubDate>
-				<link>/2017/09/doing-stuff-in-minima</link>
-				<guid isPermaLink="true">/2017/09/doing-stuff-in-minima</guid>
+				<link>http://localhost:4000/2017/09/doing-stuff-in-minima</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/09/doing-stuff-in-minima</guid>
 			</item>
 		
 			<item>
@@ -2426,195 +2660,8 @@ now is the time to make peace with our feature-set and start seeing what we can
 do with this language.&lt;/p&gt;
 </description>
 				<pubDate>Sun, 03 Sep 2017 00:00:00 +0100</pubDate>
-				<link>/2017/09/c-how-minimal-is-minima</link>
-				<guid isPermaLink="true">/2017/09/c-how-minimal-is-minima</guid>
-			</item>
-		
-			<item>
-				<title>Syntactic Overloading in Minima</title>
-				<description>&lt;p&gt;This is the second in a series of posts on the &lt;a href=&quot;https://github.com/writeoncereadmany/minimalang&quot;&gt;Minima language&lt;/a&gt;. &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/a-minima&quot;&gt;Here’s the first&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;There are a few things I’ve made a very conscious decision to try to enforce
-in the design of Minima.&lt;/p&gt;
-
-&lt;p&gt;These include, but are not limited to:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;No nulls/uninitialised state&lt;/li&gt;
-  &lt;li&gt;No inheritance&lt;/li&gt;
-  &lt;li&gt;No reflection&lt;/li&gt;
-  &lt;li&gt;No overloading&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;The first three are simple: I just don’t introduce those features. There’s no
-way to define a variable without its initial value: the syntax doesn’t support
-it. There’s no concept of classes, let alone subclasses. And there’s no way
-to introspect an object or function.&lt;/p&gt;
-
-&lt;p&gt;What happens if you try to access an undefined field of an object, you ask?
-Not null, that’s for damn sure. You get a type error. At runtime, yes. We’ll
-do something better about that later.&lt;/p&gt;
-
-&lt;p&gt;Overloading of functions is similarly not supported - any one given name
-resolves to exactly one value - but I didn’t just say no overloading of
-functions. I’m also concerned about overloading of &lt;em&gt;syntax&lt;/em&gt;.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;p&gt;For example, in Java, parens &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; are used in two contexts: method invocation and
-precedence of (eg arithmetic) sub-expressions. The period &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt; is used in two
-contexts: a separator for floating-point numerals, and field/method access on
-objects. Angle brackets &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&amp;gt;&lt;/code&gt; are used individually to delimit type arguments,
-and also as the less-than and greater-than mathematical operators.&lt;/p&gt;
-
-&lt;p&gt;I don’t want to do that. It makes code much simpler and clearer when a given
-symbol can only mean one thing. There are four sorts of grouping: arguments,
-groups, objects, and precedence - and a standard ASCII keyboard
-has three sets of brackets: &lt;code class=&quot;highlighter-rouge&quot;&gt;{}&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; (excluding &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&amp;gt;&lt;/code&gt;, on the basis
-we value &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; higher as mathematical operators).&lt;/p&gt;
-
-&lt;p&gt;This gives us two dilemmas. The first is what to use where; the second is we
-have more use-cases than tools available.&lt;/p&gt;
-
-&lt;p&gt;In terms of what gets first pick of the cherry, there’s a symbology which has
-priority over any programming conventions - and that’s maths. Regardless of in what
-context we’ll be using whatever language Minima develops into, we’ll need to
-support basic arithmetic. That means the basic set of operators: &lt;code class=&quot;highlighter-rouge&quot;&gt;+&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;-&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;*&lt;/code&gt;,
-&lt;code class=&quot;highlighter-rouge&quot;&gt;/&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;()&lt;/code&gt; for precedence. That’s also how parentheses are
-used generally (in English): to define subclauses, evaluated in their own right
-and then incorporated into the larger context.&lt;/p&gt;
-
-&lt;p&gt;More than anything, that’s what readers are used to believing parentheses are &lt;em&gt;for&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;That leaves arguments, groups and objects. Groups, or blocks, generally use
-one of two syntaxes: &lt;code class=&quot;highlighter-rouge&quot;&gt;{}&lt;/code&gt; in curly-brace languages, and significant whitespace
-in languages like Python and Haskell. Objects and classes generally use one of
-two syntaxes: &lt;code class=&quot;highlighter-rouge&quot;&gt;{}&lt;/code&gt; in curly-brace languages, and significant whitespace in others.&lt;/p&gt;
-
-&lt;p&gt;This makes one decision easy: what to use for arguments. We don’t have anything
-competing for &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt;, so we can use that there. Generally, languages use &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; for
-indexing into arrays, but we don’t have arrays or lists as a language-level
-concept.&lt;/p&gt;
-
-&lt;p&gt;So let’s get back to &lt;code class=&quot;highlighter-rouge&quot;&gt;{}&lt;/code&gt; - who gets that, groups or objects? Fortunately, there’s
-a cool trick here that makes our problem go away. If we define a group as being
-a sequence of expressions which are all evaluated, returning the value of the
-last expression (which we did), then &lt;em&gt;a group of one expression is equivalent
-to a parenthesised expression&lt;/em&gt;.&lt;/p&gt;
-
-&lt;p&gt;That leaves &lt;code class=&quot;highlighter-rouge&quot;&gt;{}&lt;/code&gt; free for objects.&lt;/p&gt;
-
-&lt;p&gt;We don’t want to overload &lt;code class=&quot;highlighter-rouge&quot;&gt;.&lt;/code&gt;, and there isn’t really a sensible alternative for
-numeric literals, so it’s out for object field access. So we use &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; instead.&lt;/p&gt;
-
-&lt;h3 id=&quot;syntactic-symmetry&quot;&gt;Syntactic symmetry&lt;/h3&gt;
-
-&lt;p&gt;Now, that means that technically speaking, we have two overloaded sets of symbols.
-The &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; square brackets can mean something is an &lt;em&gt;argument&lt;/em&gt; list or a &lt;em&gt;parameter&lt;/em&gt;
-list, and the &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; operator can be used both to &lt;em&gt;define&lt;/em&gt; a key-value pair in an
-object and to &lt;em&gt;access&lt;/em&gt; an object’s field via the key.&lt;/p&gt;
-
-&lt;p&gt;In each of these cases, though, whilst they’re distinct syntactic constructs,
-they’re symmetrical views on the same concept. Square brackets &lt;code class=&quot;highlighter-rouge&quot;&gt;[]&lt;/code&gt; can be used to
-define or invoke a function, but they always refer to the input to a function.
-The colon &lt;code class=&quot;highlighter-rouge&quot;&gt;:&lt;/code&gt; can be used to define or access a field, but it’s always defining
-how a given value relates to an object.&lt;/p&gt;
-
-&lt;p&gt;That’s not an ambiguity. Quite the opposite: it reinforces the syntax.&lt;/p&gt;
-
-&lt;h3 id=&quot;point-free-programming&quot;&gt;Point free programming&lt;/h3&gt;
-
-&lt;p&gt;This shortage of bracket types would just go away, if we didn’t need brackets
-for function invocation - if we used the point-free style. Haskell doesn’t need
-them, so why should we?&lt;/p&gt;
-
-&lt;p&gt;Well, let’s take this function as an example:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet is [] =&amp;gt; println[&quot;Hello, World!&quot;]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;In the point-free style, how would you invoke such a function? It’d just be&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;greet
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And how would you reference such a function to, for example, pass it into
-another function as a callback? It’d just be:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;maybeDoSomething[greet]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;But when we evaluate &lt;code class=&quot;highlighter-rouge&quot;&gt;greet&lt;/code&gt; to pass it into &lt;code class=&quot;highlighter-rouge&quot;&gt;maybeDoSomething&lt;/code&gt;, that’s an
-invocation, right? Or is it? &lt;em&gt;How should the language know?&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Herein lies the problem. The point free style is fine when there’s no difference
-between a function invocation and an uninvoked function, to be invoked later.
-There’s a name for that concept: &lt;em&gt;referential transparency&lt;/em&gt;, and it’s only true
-of pure programming languages.&lt;/p&gt;
-
-&lt;p&gt;Haskell is pure: there &lt;em&gt;is no distinction&lt;/em&gt; between a zero-arg function and its
-result after invoking. Minima is, quite deliberately, not pure.&lt;/p&gt;
-
-&lt;p&gt;Whilst I believe purity is an important concept, I have other ideas about how
-to deal with it, which will come up as we build atop Minima.&lt;/p&gt;
-
-&lt;p&gt;In a language which is not point-free, it’s easy to differentiate between
-an invocation of a zero-arg method, and an uninvoked zero-arg method: &lt;code class=&quot;highlighter-rouge&quot;&gt;greet[]&lt;/code&gt;
-is an invocation, and &lt;code class=&quot;highlighter-rouge&quot;&gt;greet&lt;/code&gt; is a function.&lt;/p&gt;
-
-&lt;p&gt;Plus, the shortage of brackets isn’t really a problem, not since we understood
-how parenthesisation can be viewed as a special case of grouping.&lt;/p&gt;
-
-&lt;h3 id=&quot;maths&quot;&gt;Maths!&lt;/h3&gt;
-
-&lt;p&gt;One thing you can’t do in Minima is this:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[2 + 5]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;That’s because there’s no syntactic support for mathematical operators. It’s
-not super complicated to add that - and indeed, that’ll be one of the features
-we add to Minima in the future. Never fear, though, because we can still do
-maths. It’s just not quite as readable:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;print[2:plus[5]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Numbers are objects, which means they can have fields - and fields can be
-methods. Numbers support the following methods: &lt;code class=&quot;highlighter-rouge&quot;&gt;plus&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;minus&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;multiplyBy&lt;/code&gt;,
-&lt;code class=&quot;highlighter-rouge&quot;&gt;divideBy&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;show&lt;/code&gt; - which returns a String representation of the number.&lt;/p&gt;
-
-&lt;p&gt;They don’t support any comparison operators right at the moment. We’re probably
-going to need those, but they open up some interesting questions for another
-day.&lt;/p&gt;
-
-&lt;h3 id=&quot;a-note-on-equality-and-assignment&quot;&gt;A note on equality and assignment&lt;/h3&gt;
-
-&lt;p&gt;It’s important not just to avoid overloading syntax, but also to avoid
-overloading &lt;em&gt;expectations&lt;/em&gt; on syntax.&lt;/p&gt;
-
-&lt;p&gt;I get particularly annoyed with the approach taken to the use of &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt;. Many
-languages use &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; for assignment, which means they end up using &lt;code class=&quot;highlighter-rouge&quot;&gt;==&lt;/code&gt; (and
-sometimes even &lt;code class=&quot;highlighter-rouge&quot;&gt;===&lt;/code&gt; too!) for testing for equality.&lt;/p&gt;
-
-&lt;p&gt;One language which gets this right is Prolog, where testing for equality and
-assignment are just different views on the same operation: unification. It’s
-reasonable to use one symbol for one concept! And that’s what lies closest
-to the meaning of the &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; symbol as used in mathematics: these two things are
-conceptually equivalent.&lt;/p&gt;
-
-&lt;p&gt;My approach is to use &lt;code class=&quot;highlighter-rouge&quot;&gt;=&lt;/code&gt; for testing for equality (although that’s not
-syntactically supported yet, it will be). For assignment, instead, I use &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt;.
-This is, like much of Minima, forward-looking: assignment uses &lt;code class=&quot;highlighter-rouge&quot;&gt;is&lt;/code&gt;, so
-&lt;em&gt;re&lt;/em&gt;-assignment (not currently supported) can use &lt;code class=&quot;highlighter-rouge&quot;&gt;becomes&lt;/code&gt;, because updating
-a variable in-place is fundamentally different to creating a new variable and
-deserves distinct syntax.&lt;/p&gt;
-
-&lt;p&gt;And that distinct syntax should require more typing, so people have an
-opportunity to &lt;em&gt;really think about what they’re doing&lt;/em&gt; when they use it.&lt;/p&gt;
-</description>
-				<pubDate>Sun, 03 Sep 2017 00:00:00 +0100</pubDate>
-				<link>/2017/09/b-overloading-in-minima</link>
-				<guid isPermaLink="true">/2017/09/b-overloading-in-minima</guid>
+				<link>http://localhost:4000/2017/09/c-how-minimal-is-minima</link>
+				<guid isPermaLink="true">http://localhost:4000/2017/09/c-how-minimal-is-minima</guid>
 			</item>
 		
 	</channel>
