@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -110,11 +110,10 @@ that they’re all bad.</p>
 
 <h2 id="returning-null">Returning null</h2>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Coat</span> <span class="nf">illGetMyCoat</span><span class="o">(</span><span class="n">CloakroomTicket</span> <span class="n">ticket</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Coat</span> <span class="nf">illGetMyCoat</span><span class="o">(</span><span class="n">CloakroomTicket</span> <span class="n">ticket</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">coats</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">ticket</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Do I really need to talk about why null-as-failure is a bad idea? I could
 requote the inventor of null:</p>
@@ -131,14 +130,14 @@ in the last forty years.
 <p>But it’s pertinent to talk about why null-as-failure is bad, for comparison
 purposes:</p>
 
-<h3 id="nulls-are-insidious">1: Nulls are insidious</h3>
+<h3 id="1-nulls-are-insidious">1: Nulls are insidious</h3>
 
 <p>Nulls can get anywhere. It’s possible for any (ok, any non-primitive) variable
 to actually be null. In order to have confidence that a value is non-null, you
 need to make yourself comfortable not just with the functions you call but also
 the functions <em>they</em> call, recursively.</p>
 
-<h3 id="unhandled-nulls-manifest-late">2: Unhandled nulls manifest late</h3>
+<h3 id="2-unhandled-nulls-manifest-late">2: Unhandled nulls manifest late</h3>
 
 <p>When you have a variable that’s null, there’s a good chance you’ll pass it
 around a fair bit before trying to do anything with it. When you do, you’ll get
@@ -146,7 +145,7 @@ a <code class="highlighter-rouge">NullPointerException</code>, but the real prob
 code which generated the null in the first place - which can be a long way away
 from the problematic code.</p>
 
-<h3 id="nulls-carry-no-information">3: Nulls carry no information</h3>
+<h3 id="3-nulls-carry-no-information">3: Nulls carry no information</h3>
 
 <p>When you have a null, that represents a failure of some sort - maybe a failure to
 find a suitable value, maybe a failure to initialise. But it’s important to
@@ -157,10 +156,9 @@ to know why. Null values do not carry that information.</p>
 
 <h2 id="return-codes">Return codes</h2>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
 <span class="kt">boolean</span> <span class="n">actuallyRemovedSomething</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Return codes aren’t frequently used in Java, but they do exist. They’re more
 common as a pattern in Unix utilities. Using the return value of a function to
@@ -171,28 +169,26 @@ in principle we don’t have to restrict ourselves to such types. We can return
 rich types with failure details, or highly domain-specific reports. There are
 just two main problems with this approach:</p>
 
-<h3 id="it-only-works-with-naturally-void-methods">1: It only works with naturally-void methods</h3>
+<h3 id="1-it-only-works-with-naturally-void-methods">1: It only works with naturally-void methods</h3>
 
 <p>You can only use the return type to indicate the success or failure of a method
 when you’re <em>not using it for anything else</em>. That means we can only apply this
 approach when we’re not interested in returning a value, but instead in the
 side effects of the method.</p>
 
-<h3 id="its-easily-ignored">2: It’s easily ignored</h3>
+<h3 id="2-its-easily-ignored">2: It’s easily ignored</h3>
 
 <p>It’s super easy, when writing code like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
 <span class="kt">boolean</span> <span class="n">actuallyRemovedSomething</span> <span class="o">=</span> <span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>to instead do this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">names</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;();</span>
 <span class="n">names</span><span class="o">.</span><span class="na">remove</span><span class="o">(</span><span class="s">"Timmy"</span><span class="o">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>It may be that the failure case doesn’t need handling. That’s often true when
 removing items from a set - less so when persisting a new record to a
@@ -203,7 +199,7 @@ general) whether the error is handled or not.</p>
 
 <h2 id="sentinel-values">Sentinel values</h2>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">String</span> <span class="nf">findName</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">,</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="nf">findName</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">,</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
   <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="na">indexOf</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
   <span class="k">if</span><span class="o">(</span><span class="n">index</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="s">"Text does not include name"</span><span class="o">;</span>
@@ -211,21 +207,20 @@ general) whether the error is handled or not.</p>
     <span class="k">return</span> <span class="s">"Text includes name starting at index "</span> <span class="o">+</span> <span class="n">index</span><span class="o">;</span>
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>In the above code, -1 is a sentinel value: it’s part of the return type, but
 it signifies failure instead of a location in a string. This approach has two
 key problems:</p>
 
-<h3 id="failures-look-like-successes">1: Failures look like successes</h3>
+<h3 id="1-failures-look-like-successes">1: Failures look like successes</h3>
 
 <p>When this code fails, it returns a value which can theoretically be used for
 computation as if it were a success. If the caller isn’t aware of the possibility
 of failure, this could cause all sorts of interesting behaviour, which could be
 just subtly wrong instead of blow-up-the-world type wrong.</p>
 
-<h3 id="failures-arent-rich">2: Failures aren’t rich</h3>
+<h3 id="2-failures-arent-rich">2: Failures aren’t rich</h3>
 
 <p>If I want to find out where in a string I can find a substring, an int is an
 ideal type to represent that. If I’ve failed to find a substring, int isn’t
@@ -235,20 +230,19 @@ self-describing.</p>
 
 <h2 id="multiple-return-values">Multiple Return values</h2>
 
-<div class="language-go highlighter-rouge"><pre class="highlight"><code><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ETPhoneHome</span><span class="p">(</span><span class="s">"I can't fly this bike forever!"</span><span class="p">)</span><span class="x">
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">response</span><span class="p">,</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">:=</span><span class="x"> </span><span class="n">ETPhoneHome</span><span class="p">(</span><span class="s">"I can't fly this bike forever!"</span><span class="p">)</span><span class="x">
 </span><span class="k">if</span><span class="x"> </span><span class="n">err</span><span class="x"> </span><span class="o">!=</span><span class="x"> </span><span class="no">nil</span><span class="x"> </span><span class="p">{</span><span class="x">
     </span><span class="c">// handle the error, often:</span><span class="x">
     </span><span class="k">return</span><span class="x"> </span><span class="n">err</span><span class="x">
 </span><span class="p">}</span><span class="x">
 </span><span class="c">// do something with response</span><span class="x">
-</span></code></pre>
-</div>
+</span></code></pre></div></div>
 
 <p>This isn’t common in Java, but it’s a standard pattern in Go. It’s really
 just syntactic sugar around returning a tuple and then destructuring it - we
 could choose to implement it in Java with something like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Result</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">Result</span> <span class="o">{</span>
   <span class="kd">public</span> <span class="kd">final</span> <span class="n">Response</span> <span class="n">response</span><span class="o">;</span>
   <span class="kd">public</span> <span class="kd">final</span> <span class="n">Failure</span> <span class="n">err</span><span class="o">;</span>
 
@@ -264,8 +258,7 @@ could choose to implement it in Java with something like this:</p>
     <span class="k">return</span> <span class="n">err</span>
 <span class="o">}</span>
 <span class="c1">// do something with result.response</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This solves some of the problems we had above:</p>
 <ul>
@@ -330,15 +323,14 @@ all.</p>
 
 <h3 id="exceptions-and-streams">Exceptions and streams</h3>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="o">&lt;</span><span class="n">body</span> <span class="n">elided</span><span class="o">&gt;</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Response</span><span class="o">&gt;</span> <span class="nf">updateEmails</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">requestBodies</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
    <span class="k">return</span> <span class="n">requestBodies</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">updateEmail</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This is the sort of thing you might want to do using Java’s streams: you have a
 method for dealing with one of an object, and so you take a stream and you map
@@ -346,18 +338,16 @@ that method over it.</p>
 
 <p>Only thing is: you can’t do this. It won’t compile.</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Response</span> <span class="nf">updateEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">requestBody</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
     <span class="o">&lt;</span><span class="n">body</span> <span class="n">elided</span><span class="o">&gt;</span>
 <span class="o">}</span>
 
 <span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Response</span><span class="o">&gt;</span> <span class="nf">updateEmails</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">requestBodies</span><span class="o">)</span> <span class=blue><span class="kd">throws</span> <span class="n">IOException</span></span> <span class="o">{</span>
    <span class="k">return</span> <span class="n">requestBodies</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class=pink><span class="k">this</span><span class="o">::</span><span class="n">updateEmail</span></span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
-<div class="highlighter-rouge"><pre class="highlight"><code>&gt;&gt; Unhandled exception: java.io.IOException
-</code></pre>
-</div>
+</code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt; Unhandled exception: java.io.IOException
+</code></pre></div></div>
 <p>So, it’s telling us we have an unhandled exception in <code class="highlighter-rouge">this::updateEmail</code>, even
 though we’ve declared our method as <code class="highlighter-rouge">throws IOException</code>?</p>
 
@@ -384,24 +374,21 @@ course an <code class="highlighter-rouge">Optional</code> isn’t of the type yo
 wrapper.</p>
 
 <p>There are three methods to get a value out of an <code class="highlighter-rouge">Optional</code>:</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">defaultValue</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">defaultValue</span><span class="o">);</span>
 <span class="n">optional</span><span class="o">.</span><span class="na">orElseGet</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">value</span><span class="o">);</span>
 <span class="n">optional</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">exception</span><span class="o">);</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Each of these requires that you specify what to return if the <code class="highlighter-rouge">Optional</code> is in
 fact empty. In other words, it forces you to handle the failure case, in a
 clear and concise manner.</p>
 
 <p>There is also a fourth case:</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
-</code></pre>
-</div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+</code></pre></div></div>
 <p>This should never be used, and considered a mistake in the API, an alias for:</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">BadAtProgrammingException</span><span class="o">());</span>
-</code></pre>
-</div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">optional</span><span class="o">.</span><span class="na">orElseThrow</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="k">new</span> <span class="n">BadAtProgrammingException</span><span class="o">());</span>
+</code></pre></div></div>
 
 <p>So, <code class="highlighter-rouge">Optional</code> addresses many of the concerns we’ve raised above:</p>
 <ul>
@@ -425,7 +412,7 @@ value, or a failure, <em>also</em> carrying a value.</p>
 
 <p>A minimal implementation might look something like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="n">Result</span><span class="o">&lt;&gt;();</span> <span class="c1">// private constructor prevents new subtypes being added</span>
 
   <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Success</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
@@ -438,15 +425,14 @@ value, or a failure, <em>also</em> carrying a value.</p>
     <span class="kd">public</span> <span class="nf">Failure</span><span class="o">(</span><span class="n">F</span> <span class="n">failure</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">failure</span> <span class="o">=</span> <span class="n">failure</span><span class="o">;</span> <span class="o">}</span>
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This is just about how to construct such a data type, without worrying about
 interacting with it yet. We can construct a <code class="highlighter-rouge">Result</code> that’s a <code class="highlighter-rouge">Success</code>, carrying
 any type we want, or a <code class="highlighter-rouge">Failure</code>, carrying a separate failure type. And when it
 comes to interacting with it, we can cover all bases like so:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="n">Result</span><span class="o">&lt;&gt;();</span> <span class="c1">// private constructor prevents new subtypes being added</span>
   <span class=blue><span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onSuccess</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">onFailure</span><span class="o">);</span></span>
   <span class=pink><span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">success</span><span class="o">(</span><span class="n">S</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Success</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
@@ -468,8 +454,7 @@ comes to interacting with it, we can cover all bases like so:</p>
     <span class="o">}</span></span>
   <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>The pink edits mean that the <code class="highlighter-rouge">Success</code> and <code class="highlighter-rouge">Failure</code> types are an abstraction
 unavailable to the user: all they can know is they’re dealing with a <code class="highlighter-rouge">Result</code>.</p>
 
@@ -481,7 +466,7 @@ for when it’s a failure, and they both have to return the same type.</p>
 featured - in the <a href="https://github.com/unruly/control">co.unruly.control</a> library.</p>
 
 <p>So, for example, we might write some <code class="highlighter-rouge">Result</code>-handling code like this:</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">...</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">actually42</span> <span class="o">=</span> <span class="n">success</span><span class="o">(</span><span class="mi">42</span><span class="o">);</span>
   <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">notPi</span> <span class="o">=</span> <span class="n">failure</span><span class="o">(</span><span class="s">"Pi is not an integer"</span><span class="o">);</span>
 
@@ -495,14 +480,13 @@ featured - in the <a href="https://github.com/unruly/control">co.unruly.control<
       <span class="n">failure</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">);</span>
     <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>It’s worth noting that this approach has only really been practical since the
 introduction of Java 8, and the ability to provide lambdas - otherwise our
 handling code would look like the far more unwieldly:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">void</span> <span class="nf">maybePrint</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">potentialNumber</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">static</span> <span class="kt">void</span> <span class="nf">maybePrint</span><span class="o">(</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">potentialNumber</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="n">potentialNumber</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
       <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;&gt;()</span> <span class="o">{</span>
         <span class="kd">public</span> <span class="n">String</span> <span class="nf">apply</span><span class="o">(</span><span class="kt">int</span> <span class="n">success</span><span class="o">)</span> <span class="o">{</span>
@@ -517,8 +501,7 @@ handling code would look like the far more unwieldly:</p>
     <span class="o">);</span>
     <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Ugh. Nobody wants to be doing that.</p>
 
@@ -570,7 +553,7 @@ paradigm I call “Carpet-oriented Programming”.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

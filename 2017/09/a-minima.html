@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -109,9 +109,8 @@ possible. Then, once a given feature has been added, it is then removed and
 for the next feature, we start with a blank slate again.</p>
 
 <p>Let’s start with a quick tour of Minima.</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>print["Hello, World!"]
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print["Hello, World!"]
+</code></pre></div></div>
 <p>It’s traditional to start any introduction to a language with the archetypal
 “Hello, World!” program. This is Minima’s. It’s pretty minimal. Let’s break it down.</p>
 
@@ -135,9 +134,8 @@ case of <code class="highlighter-rouge">print</code>, it displays the text in th
 the Prelude. We’ll get to objects in a bit.</p>
 
 <p>We can also define our own functions:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>[first, second] =&gt; first
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[first, second] =&gt; first
+</code></pre></div></div>
 <p>This is a function which takes two arguments, and returns the first of them. Why
 would you ever bother defining a function like that? There are reasons, which
 I’ll get to in a moment.</p>
@@ -155,26 +153,23 @@ it’s a type which conveys no information, which has only one possible value.</
 
 <p>We’ve seen variables, both from the Prelude and inside function bodies. We
 can also define our own variables:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>message is "Hello, World!"
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>message is "Hello, World!"
 print[message]
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>We can define a variable by introducing a name - <code class="highlighter-rouge">message</code> in this case - and
 then binding an expression to it with the <code class="highlighter-rouge">is</code> keyword. From here on, any use
 of <code class="highlighter-rouge">message</code> will be resolved to “Hello, World!”.</p>
 
 <p>We also see we can have multiple expressions in a program. This also allows us
 to do things like this:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>print["Hello, World!"]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print["Hello, World!"]
 print["Oh, just one more thing..."]
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>What if we wanted to do that in a function? A function just takes a single
 expression as its body. For that, we use the <em>group</em>.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>printBoth is [first, second] =&gt; (print[first], print[second])
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>printBoth is [first, second] =&gt; (print[first], print[second])
+</code></pre></div></div>
 
 <p>Here we’re defining a variable and assigning a function to it - so far so good,
 we know all about that. The body does something new though: it groups two
@@ -190,39 +185,35 @@ such as introducing new variables or printing to the screen.</p>
 
 <p>We can also do this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>point is { x : 2, y : 3}
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>point is { x : 2, y : 3}
+</code></pre></div></div>
 
 <p>This creates a new object: a set of key-value pairs, using <code class="highlighter-rouge">:</code> to separate the
-key from the value and <code class="highlighter-rouge">,</code> to separate the pairs, enclosed by curly braces (<code class="highlighter-rouge"><span class="p">{}</span></code>).
+key from the value and <code class="highlighter-rouge">,</code> to separate the pairs, enclosed by curly braces (<code class="highlighter-rouge">{}</code>).
 We also see that we can put numeric literals in our programs - we’ll talk more
 about those in a moment.</p>
 
 <p>We can then access the fields, also using the <code class="highlighter-rouge">:</code> operator:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>printX is [point] =&gt; print[point:x]
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>printX is [point] =&gt; print[point:x]
+</code></pre></div></div>
 
 <p>We can use objects to build larger data structures from smaller ones, but we can
 also use them to bundle <em>behaviours</em>. For example:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; print["Hello, ":concat[name]]
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; print["Hello, ":concat[name]]
+</code></pre></div></div>
 
 <p>Here, <code class="highlighter-rouge">concat</code> is a field on the string “Hello, “, and it’s a function which
 takes another string and concatenates it on the end of “Hello, “. We can use
 this philosophy to build bundles, not of state, but of <em>behaviour</em>.</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>greeter is [intro] =&gt; {
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greeter is [intro] =&gt; {
   greet : [name] =&gt; print[intro:concat[name]]
 }
 french is greeter["Bonjour, "]
 french:greet["Jacques"]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>You may wish to call fields that are functions “methods”. They’re not exactly
 the same, but then two given features with the same name across two different
@@ -261,7 +252,7 @@ languages aren’t often the same thing anyway.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

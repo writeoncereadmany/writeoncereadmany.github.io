@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -90,7 +90,7 @@ ruminations on software development
             <div class="post-content">
             <p>Take a look at this code snippet - a Java puzzler from the classic book of the same name by Josh Bloch and Neal Grafter:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
 	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
@@ -108,20 +108,18 @@ ruminations on software development
 		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
 	<span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The answer is: it does nothing, and if you try to run it as a main method, you’ll get:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>Exception in thread "main": java.lang.NoSuchMethodError: main
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Exception in thread "main": java.lang.NoSuchMethodError: main
+</code></pre></div></div>
 
 <p>Why? Because a main method has to take an array of String, and ours takes an array of <em>String</em>, and…</p>
 
 <p>Talking about code can often be imprecise. At times like that it’s nice to show the actual code, and also show what I want to talk about in it. Like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
 	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class=pink><span class="n">String</span></span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class=pink><span class="n">String</span></span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
@@ -139,8 +137,7 @@ ruminations on software development
 		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
 	<span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The problem is there are two String classes here: <code class="highlighter-rouge">java.lang.String</code> (in blue) and our own <code class="highlighter-rouge">String</code> class (in pink). <code class="highlighter-rouge">main()</code> requires a blue <code class="highlighter-rouge">String</code>, but it gets a pink <code class="highlighter-rouge">String</code>, so it’s not a <code class="highlighter-rouge">main()</code> method. But I don’t really care about the puzzler here: I want to talk about the highlighting.
 <!--more--></p>
@@ -180,80 +177,73 @@ ruminations on software development
 
 <p>My first attempts were to introduce some markup that was clearly not Java: for example, <code class="highlighter-rouge">$pink$</code> and <code class="highlighter-rouge">$end$</code> for the beginning and end of a range to be highlighted in pink. This would have worked a treat if I was highlighting preformatted text, like this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> ```
- public static void main(String[] args) {
-	 System.out.println("Cheeseburgers!");
- }
- ```
-</code></pre>
-</div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
+<p>public static void main(String[] args) {
+	 System.out.println(“Cheeseburgers!”);
+ }</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>
 
 <p>But I wasn’t. I was highlighting <em>Java code</em>, specified as so:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> ```java
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```java
  public static void main(String[] args) {
  	 System.out.println("Cheeseburgers!");
  }
- ```
-</code></pre>
-</div>
-<p>Which generates:</p>
+</code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Which generates:
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-	<span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Cheeseburgers!"</span><span class="o">);</span>
-<span class="o">}</span>
-</code></pre>
-</div>
+```java
+public static void main(String[] args) {
+	System.out.println("Cheeseburgers!");
+}
+</code></pre></div></div>
 
 <p>That’s all formatted, on the expectation that what I give it is Java. So what happens when I introduce some non-Java markup to that? For example:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code> ```java
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ```java
  public static void main(String[] args) {
  	 $pink$System.out.println$end$("Cheeseburgers!");
  }
- ```
-</code></pre>
-</div>
-<p>The generated HTML for the print line looks something like:</p>
+</code></pre></div></div>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>The generated HTML for the print line looks something like:
 
-<div class="highlighter-rouge"><pre class="highlight"><code>&lt;span class="n"&gt;$pink$System&lt;/span&gt;
-&lt;span class="o"&gt;.&lt;/span&gt;
-&lt;span class="na"&gt;out&lt;/span&gt;
-&lt;span class="o"&gt;.&lt;/span&gt;
-&lt;span class="na"&gt;println&lt;/span&gt;
-&lt;span class="n"&gt;$end&lt;/span&gt;
-&lt;span class="err"&gt;$&lt;/span&gt;
-&lt;span class="o"&gt;(&lt;/span&gt;
-&lt;span class="s"&gt;"Cheeseburgers!"&lt;/span&gt;
-&lt;span class="o"&gt;);&lt;/span&gt;
-</code></pre>
-</div>
+</code></pre></div></div>
+<p><span class="n">$pink$System</span>
+<span class="o">.</span>
+<span class="na">out</span>
+<span class="o">.</span>
+<span class="na">println</span>
+<span class="n">$end</span>
+<span class="err">$</span>
+<span class="o">(</span>
+<span class="s">“Cheeseburgers!”</span>
+<span class="o">);</span></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+That's not going to play nicely with an automated post-processor. The start tag is part of a larger element, and the end tag is split between two elements. That's just this case: I don't know what I need to prepare for in the general case.
 
-<p>That’s not going to play nicely with an automated post-processor. The start tag is part of a larger element, and the end tag is split between two elements. That’s just this case: I don’t know what I need to prepare for in the general case.</p>
+What we ideally want is our markup to be rendered by the syntax highlighter into a single element within its own span, in a consistent way.
 
-<p>What we ideally want is our markup to be rendered by the syntax highlighter into a single element within its own span, in a consistent way.</p>
+The issue here is: that's dependent on how exactly the syntax highlighter works. I started working on the assumption it was a pure lexer, on the basis that parsing was probably overkill for syntax highlighting and is made more complex than usual as snippets are supported, meaning you don't know what the root element is.
 
-<p>The issue here is: that’s dependent on how exactly the syntax highlighter works. I started working on the assumption it was a pure lexer, on the basis that parsing was probably overkill for syntax highlighting and is made more complex than usual as snippets are supported, meaning you don’t know what the root element is.</p>
+So I picked the only thing I could think of which would consistently be a single output regardless of context, and yet contain arbitrary payloads: a `String`. To ensure that I don't accidentally post-process regular `Strings`, require an unusual formulation which I can consistently avoid in the code I want to publish. For example, `"!!pink!!"` to open a pink block and `"!!end!!"` to close it.
 
-<p>So I picked the only thing I could think of which would consistently be a single output regardless of context, and yet contain arbitrary payloads: a <code class="highlighter-rouge">String</code>. To ensure that I don’t accidentally post-process regular <code class="highlighter-rouge">Strings</code>, require an unusual formulation which I can consistently avoid in the code I want to publish. For example, <code class="highlighter-rouge">"!!pink!!"</code> to open a pink block and <code class="highlighter-rouge">"!!end!!"</code> to close it.</p>
+So I build the following post-processor (in Python, because I know it and it's good at this sort of job):
 
-<p>So I build the following post-processor (in Python, because I know it and it’s good at this sort of job):</p>
+```python
+import fileinput
+import sys
+import re
 
-<div class="language-python highlighter-rouge"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">fileinput</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">re</span>
+def span(match):
+    arg = match.group(1)
+    if arg == 'end':
+        return '&lt;/span&gt;'
+    else:
+        return '&lt;span class="{}"&gt;'.format(arg)
 
-<span class="k">def</span> <span class="nf">span</span><span class="p">(</span><span class="n">match</span><span class="p">):</span>
-    <span class="n">arg</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">arg</span> <span class="o">==</span> <span class="s">'end'</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">'&lt;/span&gt;'</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="s">'&lt;span class="{}"&gt;'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fileinput</span><span class="o">.</span><span class="nb">input</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">backup</span><span class="o">=</span><span class="s">'.bak'</span><span class="p">):</span>
-    <span class="k">print</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">'&lt;span class="s"&gt;"!!([^!]*)!!"&lt;/span&gt;'</span><span class="p">,</span> <span class="n">span</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">())</span>
-</code></pre>
-</div>
+for line in fileinput.input(inplace=True, backup='.bak'):
+    print re.sub('&lt;span class="s"&gt;"!!([^!]*)!!"&lt;/span&gt;', span, line.rstrip())
+</code></pre></div></div>
 
 <p>That seemed to work pretty well for the first couple of blogposts I used it on. I wasn’t encountering any rendering problems with it: it handled all the cases I threw at it. It was a hassle having to re-run the script on my output after each build, but a huge step forward from doing the job manually.</p>
 
@@ -275,7 +265,7 @@ ruminations on software development
 
 <p>So, after a little (well, a lot of) experimentation and reading around the API, I ended up with the following plugin:</p>
 
-<div class="language-ruby highlighter-rouge"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_smell</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">extract_smell</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
   <span class="n">content</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="sr">/&lt;span class="s"&gt;"!!(?&lt;smell&gt;[^!]*)!!"&lt;\/span&gt;/</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">match</span><span class="o">|</span>
     <span class="n">smell</span> <span class="o">=</span> <span class="vg">$1</span>
     <span class="k">if</span> <span class="n">smell</span> <span class="o">==</span> <span class="s1">'end'</span> <span class="k">then</span> <span class="s1">'&lt;/span&gt;'</span> <span class="k">else</span> <span class="s2">"&lt;span class=</span><span class="si">#{</span><span class="n">smell</span><span class="si">}</span><span class="s2">&gt;"</span> <span class="k">end</span>
@@ -286,8 +276,7 @@ ruminations on software development
    <span class="n">post</span><span class="p">.</span><span class="nf">output</span> <span class="o">=</span> <span class="n">extract_smell</span><span class="p">(</span><span class="n">post</span><span class="p">.</span><span class="nf">output</span><span class="p">)</span>
    <span class="n">post</span><span class="p">.</span><span class="nf">data</span><span class="p">[</span><span class="s2">"excerpt"</span><span class="p">].</span><span class="nf">output</span> <span class="o">=</span> <span class="n">extract_smell</span><span class="p">(</span><span class="n">post</span><span class="p">.</span><span class="nf">data</span><span class="p">[</span><span class="s2">"excerpt"</span><span class="p">].</span><span class="nf">output</span><span class="p">)</span>
 <span class="k">end</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>And this does what I need, so I can run a Jekyll server and update the posts as I go, and just have smell-o-vision built in to my processing pipeline. Job done, right?</p>
 
@@ -318,7 +307,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

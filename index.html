@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -86,6 +86,63 @@ ruminations on software development
             
 <div class="article">
     <div class="well">
+        <h1><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Feb 19, 2018 - Pipe Dreams, or - The Applicable Pattern</a></h1>
+        
+        <div class="content">
+            <p>This is the fifth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>,
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
+an <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>,
+and <a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">an argument for implementing rich behaviour on datatypes using standalone
+functions instead of methods here</a>.</p>
+
+<p>So. You’re on board with using functions instead of methods, and you start applying
+that approach. Most likely, you’ll find that your code is bitty and clunky - it
+just doesn’t flow like it did when you were happily chaining methods.</p>
+
+<p>Let’s explore that.</p>
+
+<h3 id="functions-more-like-clunk-tions">Functions? More like clunk-tions!</h3>
+
+<p>Using functions instead of methods looks fine in isolation, but the moment
+you want to do something more complex - like building a carpet-oriented programming
+pipe - the functional approach starts to get much harder to read.</p>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/a-the-difference-between-functions-and-methods">Feb 19, 2018 - The Difference Between Functions And Methods</a></h1>
+        
+        <div class="content">
+            <p>This is the fourth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>,
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
+and <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>.</p>
+
+<p>Java 8 introduced <code class="highlighter-rouge">Optional</code>, along with lambdas and method references. There
+was quite a lot of debate on its API - some wanted it to be just a null-safe
+container, whereas others lobbied for methods like <code class="highlighter-rouge">map()</code> and <code class="highlighter-rouge">flatMap()</code>.</p>
+
+<p>Getting the API right for foundational types like <code class="highlighter-rouge">Optional</code> is really hard. Too
+many capabilities and the clarity of purpose is obscured; too few and you miss
+opportunities for powerful constructs.</p>
+
+<p><code class="highlighter-rouge">Optional</code> got it wrong in both directions: it has methods it shouldn’t, and it
+doesn’t have methods it should. This is a near-unavoidable consequence of a
+fundamental design mistake: the API of <code class="highlighter-rouge">Optional</code> is made of methods instead
+of functions.</p>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
         <h1><a href="/2017/11/carpet-oriented-programming">Nov 23, 2017 - Carpet-Oriented Programming</a></h1>
         
         <div class="content">
@@ -102,56 +159,10 @@ start with the similar, but simpler case of carpet-oriented programming with
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/11/how-to-fail-in-java">Nov 20, 2017 - How to Fail in Java</a></h1>
-        
-        <div class="content">
-            <p>This is the second in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>.</p>
-
-<p>The library all revolves around a single central concept: the <code class="highlighter-rouge">Result</code> class.
-A large part of the reason to use <code class="highlighter-rouge">Result</code> is how it can be manipulated,
-allowing error-handling to be separated from core logic. But before we get to
-that, there’s another important reason to use <code class="highlighter-rouge">Result</code>: it fills an important
-gap in Java’s API.</p>
-
-<p>Namely, to represent the outcome of an operation which may fail.</p>
-
-<p>This may seem like kind of a huge oversight, seeing as many operations can
-potentially fail - there’s definitely a <em>need</em> for a tool for that job. That’s
-not to say Java doesn’t have ways of handling potential failure - it does, just
-that they’re all bad.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/11/most-code-fails-badly">Nov 17, 2017 - Most Code Fails Badly - The Case for Results</a></h1>
-        
-        <div class="content">
-            <p>In the real world, most code fails. That’s not a bad thing per se:
-the real world is hairy and complex, and occasionally things will
-happen that aren’t as expected.</p>
-
-<p>Failures happen. There’s not much we can do about that. What we
-can do, though, is try and ensure our handling of failures is
-as good as possible.</p>
-
-<p>However, most code that fails, fails badly.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
-  <span class="page_number ">Page: 1 of 5</span>
+  <span class="page_number ">Page: 1 of 6</span>
   
     <a class="btn btn-default" href="/page2" class="next">Older</a>
   
@@ -164,7 +175,7 @@ as good as possible.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

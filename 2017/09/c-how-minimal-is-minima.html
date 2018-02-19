@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -104,43 +104,39 @@ two ways of defining them: with <code class="highlighter-rouge">is</code> declar
 
 <p>We can’t really get rid of function parameters, but we can rewrite any code
 which uses <code class="highlighter-rouge">is</code> to use function parameters instead. For example:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; (
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
   start is "Hello, ",
   print[start:concat[name]]  
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 <p>We could eliminate the variable <code class="highlighter-rouge">start</code> by inlining it, but for demonstrative
 purposes, we want to give it a name. So instead we can do:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>greet is [name] =&gt; (
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
   ([start] =&gt; print[start:concat[name]])["Hello, "]
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <h3 id="grouping">Grouping</h3>
 
 <p>Let’s say we want to write a function which prints three things:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>visit is [name] =&gt; (
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
   print["Hello, ":concat[name]]
   print[name:concat[", may I take your coat?"]
   print["Goodbye, ":concat[name]]  
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>We can do that without grouping, by creating a function which takes and ignores
 three parameters, and immediately invoking it with our three side-effecting
 expressions:</p>
-<div class="highlighter-rouge"><pre class="highlight"><code>visit is [name] =&gt; (
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
   ([ignore1, ignore2, ignore3] =&gt; SUCCESS)[
     print["Hello, ":concat[name]],
     print[name:concat[", may I take your coat?"]],
     print["Goodbye, ":concat[name]]
   ]  
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This achieves both purposes of grouping: allowing side effects, and creating
 variables bound to locally evaluated values.</p>
@@ -168,7 +164,7 @@ regular parenthesisation.</p>
 if we want to represent a 2D vector, and we had access to both a <code class="highlighter-rouge">square</code> and
 a <code class="highlighter-rouge">sqrt</code> function:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>vector is { x : 2, y : 5 }
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is { x : 2, y : 5 }
 
 length is [vector] =&gt; (
   x is vector:x,
@@ -177,12 +173,11 @@ length is [vector] =&gt; (
 )  
 
 print[length[vector]]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>But we can also represent that with a function:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 
 length is [vector] =&gt; (
   calc is [x, y] =&gt; sqrt[square[x]:plus[square[y]]],
@@ -190,13 +185,12 @@ length is [vector] =&gt; (
 )
 
 print[length[vector]]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>That’s just one way of interacting with a function datatype. We may
 prefer to do this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 getX is [x, y] =&gt; x
 getY is [x, y] =&gt; y
 
@@ -207,8 +201,7 @@ length is [vector] =&gt; (
 )
 
 print[length[vector]]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This is just another way of binding the values together. It’s interesting to
 note how instead of performing operations <em>on</em> the vector, we give
@@ -221,11 +214,10 @@ use functions, but is surprisingly analagous to the field access. Just compare
 <p>Particularly, there’s no association of name to position - we could easily
 confuse ourselves if we were to do something like this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 
 height is vector[[h, w] =&gt; h]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Our <em>intention</em> was that width is the x-component and height is the y-component,
 and we list those components in the order x, y. But we don’t have any way of
@@ -254,15 +246,14 @@ Like, well, a map.</p>
 something we can do, and secondly, it ends up being a lot more verbose. The best
 case scenario is something like this:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>vector is mapOf["x", 2, mapOf["y", 5, empty]]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is mapOf["x", 2, mapOf["y", 5, empty]]
 
 length is [vector] =&gt; (
   x is get[vector, "x"],
   y is get[vector, "y"],
   sqrt[square[x]:plus[square[y]]]
 )
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Effectively, we can build an object system in our code. It doesn’t <em>feel</em> like
 an object system, but it gives us the capabilities we need, albeit clunkily. In
@@ -278,7 +269,7 @@ with zero and going up by one.</p>
 number. Let’s define a number which represents how many times an operation will
 be repeated:</p>
 
-<div class="highlighter-rouge"><pre class="highlight"><code>zero is [s, z, acc] =&gt; z[acc]
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zero is [s, z, acc] =&gt; z[acc]
 succ is [pred] =&gt; [s, z, acc] =&gt; pred[s, z, s[acc]]
 
 three is succ[succ[succ[zero]]]
@@ -290,8 +281,7 @@ bangs is three[
 ]
 
 print[bangs]
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This prints three bangs. Let’s get more adventurous: addition!</p>
 
@@ -363,7 +353,7 @@ do with this language.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

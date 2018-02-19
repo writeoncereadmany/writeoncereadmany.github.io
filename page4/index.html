@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -86,96 +86,57 @@ ruminations on software development
             
 <div class="article">
     <div class="well">
+        <h1><a href="/2017/09/a-minima">Sep 3, 2017 - Minima</a></h1>
+        
+        <div class="content">
+            <p>Minima is a programming language. There are two things that it’s important
+to know about Minima.</p>
+<ul>
+  <li>It’s a very small language</li>
+  <li>It’s not a very good language</li>
+</ul>
+
+<p><a href="https://github.com/writeoncereadmany/minimalang">You can find a Java implementation of it here</a>.</p>
+
+<p>It’s called Minima because it’s small. It’s not as small as it <em>could</em> be - it’s
+not <em>technically</em> minimal. But it’s pretty small.</p>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/08/reflections-on-equality">Aug 12, 2017 - Reflections on Equality</a></h1>
+        
+        <div class="content">
+            <p>As always, it started with a bug. We’d been extending the capabilities
+of one of our services, to allow filtering deals on a new concept. While
+introducing that new concept, some classes had new fields added. One of those
+classes implemented <code class="highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
+the new field.</p>
+
+<p>The first-order fix was easy: just re-generate the <code class="highlighter-rouge">equals()</code> method. Trying to
+protect against this class of problem reoccurring, though, is a really
+interesting question.</p>
+
+<p>Not because it’s difficult to come up with a broader solution, but because
+so many solutions are available. And they’re all terrible in different ways.</p>
+
+<p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
+
+
+        </div>
+    </div>
+</div>
+
+<div class="article">
+    <div class="well">
         <h1><a href="/2017/03/safety-subtypes-and-inference">Mar 19, 2017 - Safety, subtypes and inference</a></h1>
         
         <div class="content">
             <p>Using <code class="highlighter-rouge">Result</code> to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to <em>allow</em> sensible handling of them.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/02/failure-is-not-right">Feb 27, 2017 - Failure is not Right</a></h1>
-        
-        <div class="content">
-            <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="highlighter-rouge">Either</code> is:</p>
-
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
-</code></pre>
-</div>
-
-<p>All this means is an instance of <code class="highlighter-rouge">Either a b</code> is a <code class="highlighter-rouge">Left a</code>, or it’s a <code class="highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
-
-<p>What that means is: for an <code class="highlighter-rouge">Either a b</code>, the success type is <code class="highlighter-rouge">b</code> and the failure type is <code class="highlighter-rouge">a</code>. This is true for two reasons.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2016/12/smell-o-vision">Dec 29, 2016 - Smell-O-Vision</a></h1>
-        
-        <div class="content">
-            <p>Take a look at this code snippet - a Java puzzler from the classic book of the same name by Josh Bloch and Neal Grafter:</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">String</span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class="kd">class</span> <span class="nc">String</span> <span class="o">{</span>
-	<span class="kd">private</span> <span class="kd">final</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">;</span>
-
-	<span class="kd">public</span> <span class="nf">String</span><span class="o">(</span><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
-	<span class="o">}</span>
-
-	<span class="kd">public</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span> <span class="nf">toString</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
-	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-</div>
-
-<p>The answer is: it does nothing, and if you try to run it as a main method, you’ll get:</p>
-
-<div class="highlighter-rouge"><pre class="highlight"><code>Exception in thread "main": java.lang.NoSuchMethodError: main
-</code></pre>
-</div>
-
-<p>Why? Because a main method has to take an array of String, and ours takes an array of <em>String</em>, and…</p>
-
-<p>Talking about code can often be imprecise. At times like that it’s nice to show the actual code, and also show what I want to talk about in it. Like this:</p>
-
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">StrungOut</span> <span class="o">{</span>
-	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class=pink><span class="n">String</span></span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
-        <span class=pink><span class="n">String</span></span> <span class="n">s</span> <span class="o">=</span> <span class="k">new</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class="s">"Hello World"</span><span class="o">);</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">s</span><span class="o">);</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-
-<span class=pink><span class="kd">class</span> <span class="nc">String</span></span> <span class="o">{</span>
-	<span class="kd">private</span> <span class="kd">final</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">;</span>
-
-	<span class="kd">public</span> <span class=pink><span class="n">String</span></span><span class="o">(</span><span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">s</span><span class="o">)</span> <span class="o">{</span>
-		<span class="k">this</span><span class="o">.</span><span class="na">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">;</span>
-	<span class="o">}</span>
-
-	<span class="kd">public</span> <span class=blue><span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span></span> <span class="n">toString</span><span class="o">()</span> <span class="o">{</span>
-		<span class="k">return</span> <span class="n">s</span><span class="o">;</span>
-	<span class="o">}</span>
-<span class="o">}</span>
-</code></pre>
-</div>
-
-<p>The problem is there are two String classes here: <code class="highlighter-rouge">java.lang.String</code> (in blue) and our own <code class="highlighter-rouge">String</code> class (in pink). <code class="highlighter-rouge">main()</code> requires a blue <code class="highlighter-rouge">String</code>, but it gets a pink <code class="highlighter-rouge">String</code>, so it’s not a <code class="highlighter-rouge">main()</code> method. But I don’t really care about the puzzler here: I want to talk about the highlighting.</p>
 
 
         </div>
@@ -189,7 +150,7 @@ ruminations on software development
         <a class="btn btn-default" href="/page3" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 4 of 5</span>
+  <span class="page_number ">Page: 4 of 6</span>
   
     <a class="btn btn-default" href="/page5" class="next">Older</a>
   
@@ -202,7 +163,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

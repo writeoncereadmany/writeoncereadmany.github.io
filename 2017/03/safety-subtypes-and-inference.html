@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -94,7 +94,7 @@ ruminations on software development
 
 <p>For example, this code is perfectly fine:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="nf">divideExactlyByTwo</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">isPrime</span><span class="o">));</span>
 <span class="o">}</span>
@@ -111,11 +111,10 @@ ruminations on software development
             <span class="o">?</span> <span class="n">Result</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="n">number</span><span class="o">)</span>
             <span class="o">:</span> <span class="n">Result</span><span class="o">.</span><span class="na">failure</span><span class="o">(</span><span class="n">number</span> <span class="o">+</span> <span class="s">" is not prime"</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>But this code isn’t:</p>
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Object</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Object</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">foo</span> <span class="o">=</span> <span class=blue><span class="n">divideExactlyByTwo</span><span class="o">(</span><span class="mi">4</span><span class="o">)</span></span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class=pink><span class="k">this</span><span class="o">::</span><span class="n">listFactors</span></span><span class="o">));</span>
 <span class="o">}</span>
@@ -137,8 +136,7 @@ ruminations on software development
         <span class="o">?</span> <span class="n">Result</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="n">number</span><span class="o">)</span>
         <span class="o">:</span> <span class="n">Result</span><span class="o">.</span><span class="na">failure</span><span class="o">(</span><span class="n">primeFactors</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>In the latter case, the blue function returns a <code class="highlighter-rouge">Result&lt;Integer, String&gt;</code>, then we <code class="highlighter-rouge">flatMap</code> over the pink function, which returns a <code class="highlighter-rouge">Result&lt;Integer, List&lt;String&gt;&gt;</code>. That means we have an inconsistent idea of what type a failure is, and therefore can’t do anything reasonable with it.</p>
 
@@ -158,17 +156,16 @@ ruminations on software development
 
 <p>Fortunately, the compiler is our friend, and tells us when we get such type errors: even when we’re not picky about what we return, <code class="highlighter-rouge">isHalfNPrime</code> does not compile. There are various ways of fixing this: we could say we want our failure case to be a list of strings:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">divideExactlyByTwo</span><span class="o">(</span><span class="mi">4</span><span class="o">)</span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">mapFailures</span><span class="o">(</span><span class="nl">Collections:</span><span class="o">:</span><span class="n">singletonList</span><span class="o">))</span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">listFactors</span><span class="o">));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Or we could say we want our failure case to be a single string:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">divideExactlyByTwo</span><span class="o">(</span><span class="mi">4</span><span class="o">)</span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">listFactors</span><span class="o">));</span>
 <span class="o">}</span>
@@ -184,8 +181,7 @@ ruminations on software development
         <span class="o">?</span> <span class="n">Result</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="n">number</span><span class="o">)</span>
         <span class="o">:</span> <span class="n">Result</span><span class="o">.</span><span class="na">failure</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">primeFactors</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>But in order to make this compile, we need to be conscious of what type we use to represent successes and failures at each point in the computation, and ensure they line up properly. This is entirely desirable, because otherwise we can’t deal with the failure cases sensibly. It’s also desirable that we catch this error at the point our types diverge: the earlier and more specifically that we can locate our errors, the better.</p>
 
@@ -217,7 +213,7 @@ ruminations on software development
 
 <p>Oftentimes we want to run validations as part of a functional pipeline of steps: we might do some simple validations on our initial input object, then do some transformations, then validate the result of that, then persist it (persistence is <em>almost always</em> a potentially-failing-operation). For example, we may want to do something like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -233,14 +229,13 @@ ruminations on software development
             <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">.</span><span class="na">errors</span><span class="o">)))</span>
         <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>The only trouble here is: <code class="highlighter-rouge">FailedValidation&lt;T, E&gt;</code> is not a useful failure type in this sort of pipeline. If we validate, transform to another type, then validate again, we can’t have a consistent failure type, because the <code class="highlighter-rouge">T</code> parameter is different before and after the transformation. Here, we’d be happy with just the list of errors, which is one of the two ubiquitous failure types (the other being <code class="highlighter-rouge">Exception</code>).</p>
 
 <p>There are various approaches here. One is to take the output of the validation and map failures to just the list of errors:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -258,8 +253,7 @@ ruminations on software development
             <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">)))</span>
         <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>This works, but it’s not super approachable or discoverable.</p>
 
@@ -273,7 +267,7 @@ ruminations on software development
 
 <p>What if our <code class="highlighter-rouge">FailedValidation&lt;T, E&gt;</code> <em>was</em> a <code class="highlighter-rouge">List&lt;E&gt;</code>? It contains a list, so surely we can present it as one? It’s even pretty simple to do using a cool pattern that takes advantage of default methods:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ForwardingList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">ForwardingList</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
 
     <span class="n">List</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="nf">delegate</span><span class="o">();</span>
 
@@ -283,8 +277,7 @@ ruminations on software development
 
     <span class="o">...</span> <span class="n">etc</span> <span class="k">for</span> <span class="n">the</span> <span class="n">other</span> <span class="mi">28</span><span class="o">(!)</span> <span class="n">methods</span> <span class="n">on</span> <span class="n">the</span> <span class="n">List</span> <span class="kd">interface</span> <span class="err">...</span>
 <span class="err">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Just implement <code class="highlighter-rouge">ForwardingList</code> on your type, and implement the <code class="highlighter-rouge">delegate()</code> method which presents the object as a list, and you’re done.</p>
 
@@ -314,17 +307,16 @@ ruminations on software development
 
 <p>Well, good news everybody! That’s entirely possible! Let’s start by looking at the original implementation of <code class="highlighter-rouge">flatMap</code>:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">f</span><span class="o">,</span> <span class="nl">Result:</span><span class="o">:</span><span class="n">failure</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Super simple: it takes in a function which takes a success and outputs a success or failure, and then returns a function which takes a <code class="highlighter-rouge">Result</code> and, if it’s a success, returns the output of running the input function on the success value, otherwise it returns the original failure.</p>
 
 <p>Let’s see how we can make it do what we want with generalising to lists:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">IS</span><span class="o">,</span> <span class="n">OS</span><span class="o">,</span> <span class="n">OF</span><span class="o">,</span> <span class="n">IF</span> <span class="kd">extends</span> <span class="n">OF</span><span class="o">,</span> <span class="n">FF</span> <span class="kd">extends</span> <span class="n">OF</span><span class="o">&gt;</span> 
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">IS</span><span class="o">,</span> <span class="n">OS</span><span class="o">,</span> <span class="n">OF</span><span class="o">,</span> <span class="n">IF</span> <span class="kd">extends</span> <span class="n">OF</span><span class="o">,</span> <span class="n">FF</span> <span class="kd">extends</span> <span class="n">OF</span><span class="o">&gt;</span> 
     <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">IS</span><span class="o">,</span> <span class="n">IF</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">OS</span><span class="o">,</span> <span class="n">OF</span><span class="o">&gt;&gt;</span> <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">IS</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">OS</span><span class="o">,</span> <span class="n">FF</span><span class="o">&gt;&gt;</span> <span class="n">f</span><span class="o">)</span> 
 <span class="o">{</span>
     <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
@@ -335,8 +327,7 @@ ruminations on software development
 <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">,</span> <span class="n">T</span> <span class="kd">extends</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">upcast</span><span class="o">(</span><span class="n">T</span> <span class="n">fv</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">fv</span><span class="o">;</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Oookay, that’s a little harder to grok. We have input and output success and failure types (IS, OS, IF, OF), and an additional failure type FF which comes from the mapping function. Furthermore, we have relationships between types: the output failure type is a supertype of both the input failure type and the mapping function’s failure type.</p>
 
@@ -344,7 +335,7 @@ ruminations on software development
 
 <p>Yeah, that’s what happens. Fortunately the compiler does some appropriate magic and finds the most appropriate (read: specific) type for the failure type, and converges on that. And with that implementation, our originating example compiles (and, of course, does exactly what we want):</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -359,8 +350,7 @@ ruminations on software development
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">mapFailure</span><span class="o">(</span><span class="n">f</span> <span class="o">-&gt;</span> <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">)))</span>
         <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>So, now we can handle this particularly awkward case, by finding situations where the types might not align <em>exactly</em>, but we can go to the most specific common supertype and use that instead.</p>
 
@@ -376,7 +366,7 @@ ruminations on software development
 
 <p>One thing this change does is it makes this compile:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="nf">isHalfNPrime</span><span class="o">()</span> <span class="o">{</span>
     <span class="n">Result</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">foo</span> <span class="o">=</span> <span class="n">divideExactlyByTwo</span><span class="o">(</span><span class="mi">4</span><span class="o">)</span>
         <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">listFactors</span><span class="o">));</span>
 <span class="o">}</span>
@@ -398,8 +388,7 @@ ruminations on software development
         <span class="o">?</span> <span class="n">Result</span><span class="o">.</span><span class="na">success</span><span class="o">(</span><span class="n">number</span><span class="o">)</span>
         <span class="o">:</span> <span class="n">Result</span><span class="o">.</span><span class="na">failure</span><span class="o">(</span><span class="n">primeFactors</span><span class="o">);</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>And we started off by saying how having this fail to compile, due to incoherent failure types, was a desirable thing.</p>
 
@@ -434,7 +423,7 @@ ruminations on software development
 
 <p>Okay. So, it’d be nice if we could allow our magic to work in cases 1, 2 and 3, but not 4. Our original, simple version of <code class="highlighter-rouge">flatMap</code> does 1 already. Now we know the tricks, it’s easy to write it so it does 2:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">FF</span> <span class="kd">extends</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> 
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">FF</span> <span class="kd">extends</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> 
     <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">FF</span><span class="o">&gt;&gt;</span> <span class="n">f</span><span class="o">)</span> 
 <span class="o">{</span>
     <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
@@ -446,12 +435,11 @@ ruminations on software development
 <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">,</span> <span class="n">T</span> <span class="kd">extends</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">upcast</span><span class="o">(</span><span class="n">T</span> <span class="n">fv</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">fv</span><span class="o">;</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>And it’s easy to write it so it does 3:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">IF</span> <span class="kd">extends</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">IF</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> 
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">,</span> <span class="n">IF</span> <span class="kd">extends</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">IF</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> 
     <span class="nf">flatMap</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S1</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="n">f</span><span class="o">)</span> 
 <span class="o">{</span>
     <span class="k">return</span> <span class="n">r</span> <span class="o">-&gt;</span> <span class="n">r</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
@@ -463,8 +451,7 @@ ruminations on software development
 <span class="kd">private</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">,</span> <span class="n">T</span> <span class="kd">extends</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">upcast</span><span class="o">(</span><span class="n">T</span> <span class="n">fv</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">fv</span><span class="o">;</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>But it’s not possible, as far as I can see, to write it so it does 2 and 3 at the same time, but <em>doesn’t</em> do 4. Well, I can’t see a way: it would be the height of hubris to say it’s not possible just because I can’t see a way of doing it. That’s never stopped me before, though.</p>
 
@@ -476,7 +463,7 @@ ruminations on software development
 
 <p>We already have one way of transforming types: we map the failures. We had an example of this when we just had simple <code class="highlighter-rouge">FailedValidation</code> objects, and we decided we didn’t like it because it introduced a level of nesting. Well, that’s not necessarily true: we need to nest that failure transformation if our new failure type doesn’t match the existing failure type, but if we want to align our existing failure type with a more general new failure type, we can do that at the basic pipeline level:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -493,12 +480,11 @@ ruminations on software development
             <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">.</span><span class="na">errors</span><span class="o">)))</span>
         <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>As it happens, the pink function here is actually doing a transformation - taking the list out of the <code class="highlighter-rouge">FailedValidation</code> - but we could just as easily make it a type coercion:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -514,12 +500,11 @@ ruminations on software development
             <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">mapFailure</span><span class="o">(</span><span class="n">f</span> <span class="o">-&gt;</span> <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">)))</span>
             <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>Well, I say just as easily, but it requires a little bit of behind-the-scenesery:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Types</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">Types</span> <span class="o">{</span>
     <span class="kd">static</span> <span class="o">&lt;</span><span class="n">NF</span><span class="o">&gt;</span> <span class="n">FailureConverter</span><span class="o">&lt;</span><span class="n">NF</span><span class="o">&gt;</span> <span class="nf">forFailures</span><span class="o">()</span> <span class="o">{</span>
         <span class="k">return</span> <span class="k">new</span> <span class="n">FailureConverter</span><span class="o">&lt;</span><span class="n">NF</span><span class="o">&gt;()</span> <span class="o">{</span>
             <span class="nd">@Override</span>
@@ -537,12 +522,11 @@ ruminations on software development
         <span class="k">return</span> <span class="n">fv</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>There are a couple of things that are a touch ugly here. It would be lovely if we could instead phrase our coercion like this:</p>
 
-<div class="language-java highlighter-rouge"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">isThisAnInterview</span><span class="o">(</span><span class="kt">int</span> <span class="n">m</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">Validator</span><span class="o">&lt;</span><span class="n">Integer</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">fizzbuzz</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">compose</span><span class="o">(</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"fizz"</span><span class="o">),</span>
         <span class="n">rejectIf</span><span class="o">(</span><span class="n">n</span> <span class="o">-&gt;</span> <span class="n">n</span> <span class="o">%</span> <span class="mi">5</span> <span class="o">==</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"buzz"</span><span class="o">));</span>
@@ -558,8 +542,7 @@ ruminations on software development
             <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">mapFailure</span><span class="o">(</span><span class="n">f</span> <span class="o">-&gt;</span> <span class="s">"Big fails :( "</span> <span class="o">+</span> <span class="n">String</span><span class="o">.</span><span class="na">join</span><span class="o">(</span><span class="s">", "</span><span class="o">,</span> <span class="n">f</span><span class="o">)))</span>
             <span class="o">.</span><span class="na">andFinally</span><span class="o">(</span><span class="n">collapse</span><span class="o">()));</span>
 <span class="o">}</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>And thus skip the call to <code class="highlighter-rouge">convert()</code>, but I can’t see a way of doing that, because <code class="highlighter-rouge">then()</code> expects an <code class="highlighter-rouge">Attempt</code> which has many types, and we want to only specify the type we care about: the target failure type. Doing our magic in the <code class="highlighter-rouge">convert</code> mechanism allows the other types to be inferred.</p>
 
@@ -602,7 +585,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

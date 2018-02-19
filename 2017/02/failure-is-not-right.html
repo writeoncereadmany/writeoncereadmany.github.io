@@ -57,15 +57,15 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
+        
           <li><a href="/2017/11/carpet-oriented-programming">Carpet-Oriented Programming</a></li>
         
           <li><a href="/2017/11/how-to-fail-in-java">How to Fail in Java</a></li>
         
           <li><a href="/2017/11/most-code-fails-badly">Most Code Fails Badly - The Case for Results</a></li>
-        
-          <li><a href="/2017/10/intermittency-and-interference">Intermittency, Interference and Isolation</a></li>
-        
-          <li><a href="/2017/09/doing-stuff-in-minima">Doing stuff in Minima</a></li>
         
     </ul>
 </div>
@@ -90,9 +90,8 @@ ruminations on software development
             <div class="post-content">
             <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="highlighter-rouge">Either</code> is:</p>
 
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
-</code></pre>
-</div>
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
+</code></pre></div></div>
 
 <p>All this means is an instance of <code class="highlighter-rouge">Either a b</code> is a <code class="highlighter-rouge">Left a</code>, or it’s a <code class="highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
 
@@ -120,12 +119,11 @@ ruminations on software development
 
 <p>Monadic composition is a very clean way of implementing that concept. In Haskell, it would be easy to make <code class="highlighter-rouge">Either</code> a monad if it didn’t already come like that for free. It’s as simple as:</p>
 
-<div class="language-haskell highlighter-rouge"><pre class="highlight"><code><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">instance</span> <span class="kt">Monad</span> <span class="p">(</span><span class="kt">Either</span> <span class="n">a</span><span class="p">)</span> <span class="kr">where</span>
   <span class="n">return</span> <span class="o">=</span> <span class="kt">Right</span>
   <span class="p">(</span><span class="kt">Left</span> <span class="n">x</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">x</span>
   <span class="p">(</span><span class="kt">Right</span> <span class="n">x</span><span class="p">)</span> <span class="o">&gt;&gt;=</span> <span class="n">f</span> <span class="o">=</span> <span class="n">f</span> <span class="n">x</span>
-</code></pre>
-</div>
+</code></pre></div></div>
 
 <p>That’s not a lot of code! In brief, this says we can create a “standard” <code class="highlighter-rouge">Either</code> by using the constructor <code class="highlighter-rouge">Right</code>, and we can apply a function to an <code class="highlighter-rouge">Either</code> using <code class="highlighter-rouge">&gt;&gt;=</code>. When we do, if it’s a <code class="highlighter-rouge">Left</code>, we get the same <code class="highlighter-rouge">Left</code> out, and when it’s a <code class="highlighter-rouge">Right</code>, we get the result of applying that function its value. Furthermore, what we get out is another <code class="highlighter-rouge">Either</code>, so we can apply more functions to it using the same convention, buiding a pipwline of operations. That sounds exactly like the model we want for sequencing operations which might fail.</p>
 
@@ -182,7 +180,7 @@ ruminations on software development
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2017 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>
