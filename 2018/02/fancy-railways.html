@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
+          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
+        
+          <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
+        
+          <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
+        
+          <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2018/02/fancy-railways">Feb 21, 2018 - Fancy Railways</a></h1>
+            
+            <div class="post-content">
+            <p>This is the eighth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. Previous parts:</p>
+<ul>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/d-what-about-the-rest-of-the-world">What about the rest of the world?</a></li>
+</ul>
+
+<p>Let’s recap briefly. We now understand what railway-oriented programming is,
+and we’re comfortable abstracting over the idea of collating failures at different
+points in an execution and handling them separately. We can combine operations
+which always succeed and operations which may fail, we can convert pretty much
+any failure mode into results, and we can resolve back to a regular value.</p>
+
+<p>What else could we ask for? Well, let’s take an example: we’re working at the
+gate of a ride at WonderFunLand. We’ve got a queue of people coming up to ride
+the BoneRattler. Can they ride?</p>
+
+<!--more-->
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">,</span> <span class="n">NoRideReason</span><span class="o">&gt;&gt;</span> <span class="nf">admitToBoneRattler</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">visitors</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">visitors</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">mustBeAtLeastHeight</span><span class="o">(</span><span class="mi">120</span><span class="o">))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBePregnant</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBeBannedForMooningRidePhoto</span><span class="o">()));</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>So far so good. Only now there’s a new requirement: none of these apply if they’re
+the boss’s kids. Yep, even the rules about height and pregnancy - for the sake
+of narrative, we’re submitting to implementing bad requirements.</p>
+
+<h4 id="recovering-from-some-failures">Recovering from (some) failures</h4>
+
+<p>We <em>could</em> modify each condition to have the exception, but that would require
+implementing it in three places. It would be much cleaner if we could just find those
+exceptional cases, and make them successes again:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span><span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="nf">recover</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">F</span><span class="o">,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">result</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
+    <span class="n">succ</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">(</span><span class="n">succ</span><span class="o">),</span> <span class="c1">// if there's a success, pass it through</span>
+    <span class="n">fail</span> <span class="o">-&gt;</span> <span class="n">f</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">fail</span><span class="o">)</span>  <span class="c1">// if it was a failure, apply the function, which may return a success</span>
+  <span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Let’s say <code class="highlighter-rouge">NoRideReason</code> contains a reference to the <code class="highlighter-rouge">Person</code> for detail
+messages, so it’s easy to convert it back if need be:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">,</span> <span class="n">NoRideReason</span><span class="o">&gt;&gt;</span> <span class="nf">admitToBoneRattler</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">visitors</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">visitors</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">mustBeAtLeastHeight</span><span class="o">(</span><span class="mi">120</span><span class="o">))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBePregnant</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBeBannedForMooningRidePhoto</span><span class="o">()))</span>
+      <span class=pink><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">recover</span><span class="o">(</span><span class="n">allowOnIfBossesKid</span><span class="o">()));</span></span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Okay! That’s great! Then a new request comes through: visitors are getting annoyed
+by being turned away at the gate after queueing for an hour, so whenever we turn
+someone away we’re giving them a fast-track ticket to jump the line at
+SplishySplashyCanyon.</p>
+
+<h4 id="applying-a-side-effect-to-one-track-of-the-railway">Applying a side effect to one track of the railway</h4>
+
+<p>This is a mutable update on Person, so we just need to apply a side-effect to the failures:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;&gt;</span> <span class="nf">onFailureDo</span><span class="o">(</span><span class="n">Consumer</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">result</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
+    <span class="n">succ</span> <span class="o">-&gt;</span> <span class="n">success</span><span class="o">(</span><span class="n">succ</span><span class="o">),</span>
+    <span class="n">fail</span> <span class="o">-&gt;</span> <span class="n">failure</span><span class="o">(</span><span class="n">peek</span><span class="o">(</span><span class="n">c</span><span class="o">).</span><span class="na">apply</span><span class="o">(</span><span class="n">fail</span><span class="o">))</span>
+  <span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">T</span><span class="o">&gt;</span> <span class="nf">peek</span><span class="o">(</span><span class="n">Consumer</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">consumer</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">value</span> <span class="o">-&gt;</span> <span class="o">{</span>
+    <span class="n">consumer</span><span class="o">.</span><span class="na">accept</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">value</span><span class="o">;</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>We’re using <code class="highlighter-rouge">peek()</code> here, which turns a <code class="highlighter-rouge">void</code>-returning <code class="highlighter-rouge">Consumer</code> into a
+<code class="highlighter-rouge">Function</code> which applies the consumer, then returns its input value. This is a
+useful little utility function that crops up quite a lot when you want to apply
+side-effects in pipelines. That’s being used to implement <code class="highlighter-rouge">onFailureDo</code>, which
+applies a side-effect to just failures. That lets us do this:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">,</span> <span class="n">NoRideReason</span><span class="o">&gt;&gt;</span> <span class="nf">admitToBoneRattler</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">visitors</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">visitors</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">mustBeAtLeastHeight</span><span class="o">(</span><span class="mi">120</span><span class="o">))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBePregnant</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBeBannedForMooningRidePhoto</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">recover</span><span class="o">(</span><span class="n">allowOnIfBossesKid</span><span class="o">()))</span>
+      <span class=pink><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">onFailureDo</span><span class="o">(</span><span class="n">giveSplishySplashyCanyonGoldenTicket</span><span class="o">()));</span></span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>And then, of course, we only let the people who meet all our criteria onto the
+ride.</p>
+
+<h4 id="discarding-failures">Discarding failures</h4>
+
+<p>One approach could be to filter the stream to just the successes, and then get
+the successes out - but the type system doesn’t know that a filtered <code class="highlighter-rouge">Result</code>
+is a success, so we’d still have to say what to do in the case a failure gets
+through the filter.</p>
+
+<p>There’s a cleaner way, by flatmapping a stream. We can turn each
+<code class="highlighter-rouge">Result&lt;Person, NoRideReason&gt;</code> into a <code class="highlighter-rouge">Stream&lt;Person&gt;</code>, and <code class="highlighter-rouge">Stream.flatMap()</code>
+can concatenate all the streams together. A success contains one successful
+<code class="highlighter-rouge">Person</code>, and a failure contains no successful <code class="highlighter-rouge">Person</code>s:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">Result</span><span class="o">&lt;</span><span class="n">S</span><span class="o">,</span> <span class="n">F</span><span class="o">&gt;,</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;&gt;</span> <span class="nf">successes</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">result</span> <span class="o">-&gt;</span> <span class="n">result</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
+    <span class="n">succ</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">succ</span><span class="o">),</span>
+    <span class="n">fail</span> <span class="o">-&gt;</span> <span class="n">Stream</span><span class="o">.</span><span class="na">empty</span><span class="o">()</span>
+  <span class="o">)</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Which then permits us to add:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="nf">admitToBoneRattler</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">visitors</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">visitors</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">mustBeAtLeastHeight</span><span class="o">(</span><span class="mi">120</span><span class="o">))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBePregnant</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">attempt</span><span class="o">(</span><span class="n">mustNotBeBannedForMooningRidePhoto</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">recover</span><span class="o">(</span><span class="n">allowOnIfBossesKid</span><span class="o">()))</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">onFailureDo</span><span class="o">(</span><span class="n">giveSplishySplashyCanyonGoldenTicket</span><span class="o">()))</span>
+      <span class=pink><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="n">successes</span><span class="o">());</span></span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="this-is-just-the-beginning">This is just the beginning</h4>
+
+<p>These are examples of some of the utility functions available on <code class="highlighter-rouge">Result</code> which
+allow you to build more versatile pipelines. They’re all <a href="https://github.com/unruly/control">in the control library</a>, along with a bunch of other commonly
+used constructs.</p>
+
+<p>The philosophy here isn’t “here’s your set of tools - now go build stuff
+with them”, though. Sometimes, you’ll want to operate on <code class="highlighter-rouge">Result</code>s in a novel
+way. That’s fine! That’s good.</p>
+
+<p>These functions are mostly very short and easy to write. Just write another.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

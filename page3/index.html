@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
           <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
-        
-          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,24 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/11/carpet-oriented-programming">Nov 23, 2017 - Carpet-Oriented Programming</a></h1>
+        
+        <div class="content">
+            <p>This is the third in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>, and
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>.</p>
+
+<p>Before we look at railway-oriented programming with <code class="highlighter-rouge">Result</code>, it’ll help if we
+start with the similar, but simpler case of carpet-oriented programming with
+<code class="highlighter-rouge">Optional</code>. And we’ll illustrate this with the King of Spain’s Beard.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/11/how-to-fail-in-java">Nov 20, 2017 - How to Fail in Java</a></h1>
@@ -125,94 +143,6 @@ as good as possible.</p>
 
 <p>However, most code that fails, fails badly.</p>
 
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/10/intermittency-and-interference">Oct 18, 2017 - Intermittency, Interference and Isolation</a></h1>
-        
-        <div class="content">
-            <blockquote>
-  <p>We disabled the tests because they were intermittent.</p>
-</blockquote>
-
-<p>I was somewhat alarmed to hear this.</p>
-
-<p>To an extent, it was understandable - these particular tests were failing
-really <em>quite a lot</em>, and they were preventing us from deploying some basic
-maintenance updates. Also, they were doing things we hadn’t been doing
-before, so it was possible the approach was flawed - fixing them would require
-some investigation.</p>
-
-<p>But these tests were <em>important</em> - they were a brand new regression test suite,
-a last line of sanity-checks against unexpected changes in our journal formats.
-So putting them back was a high priority.</p>
-
-<!-- more -->
-
-<p>The tests were quite simple: we write journals of various events out, and these
-files are then handed over to a pipeline which processes them for reporting
-purposes. We want to make sure that journal format is consistent, and to be
-aware of exactly what changes we’re making when we’re doing so intentionally.</p>
-
-<p>So, our tests were quite simple. We take a snapshot of the journals, then we
-perform some action, then we look at the journals again, filter anything out
-we’d already seen, and compare what’s left to what we expect to be left.</p>
-
-<p>When they failed, we were seeing nothing in the actual output. It was as if the
-events didn’t happen. We had some theories - were we trying to read from the
-logs before buffers had been flushed? Were we seeing journal rotation happening
-between our action and our read operation? We couldn’t reproduce any of these
-cases.</p>
-
-<p>The key was that these tests were failing <em>a lot</em> in the full build, but it was
-difficult to work out what was going on because they were passing when we
-debugged them. They were also passing when we just ran them in the IDE.</p>
-
-<p>Those are not the characteristics of an intermittent test.</p>
-
-<p>Those are the characteristics of an <em>interferent</em> test.</p>
-
-<p>Our tests each reused basically the exact same input, and then ran different
-assertions on the outcome. Our journals contained timestamps, but only with
-second granularity.</p>
-
-<p>So, when we ran the full suite of tests, we’d run a test, add some lines to the
-journal, sample that journal, run the same scenario again <em>generating the exact
-same output</em>, remove lines which matched what we’d seen before (including what
-had just been generated), and hey, no log lines for this action.</p>
-
-<p>Our tests were interfering with each other.</p>
-
-<p>The solution was quite simple - make sure the tests each generated different
-output. Seed the input with a different characteristic piece of data, and then
-the output from each test case will be distinct and identifiable.</p>
-
-<p>Furthermore, if rather than <em>filtering out</em> lines not associated with an
-individual event, we can <em>select for</em> them - that enables the possibility of
-running such tests in parallel in the future.</p>
-
-<h3 id="in-summation">In summation</h3>
-
-<p>If your tests pass in isolation, but not en masse, they’re interfering with
-each other. Somewhere, you have a shared dependence on mutable state - and
-for end-to-end tests, that could mean files, databases, other services, all the
-sorts of mutable state applications exist to manage.</p>
-
-<p>If your tests are interfering with each other, then you need to find some way
-of isolating them - of ensuring the bits of state that this test case interacts
-with are distinctly separable from all other state.</p>
-
-<p>If your tests aren’t interfering with each other, there’s a good possibility
-they will in the future. Any time you’re generating persistent state in tests,
-work out on what basis you want to isolate one test from another.</p>
-
-<p>Ideally, isolate on something you can randomly generate at runtime, so that when
-people copy-and-paste an existing test to do something new in the future, the
-right sort of isolation just magically happens.</p>
 
         </div>
     </div>

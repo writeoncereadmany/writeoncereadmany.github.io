@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
           <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
-        
-          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,42 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/09/b-overloading-in-minima">Sep 3, 2017 - Syntactic Overloading in Minima</a></h1>
+        
+        <div class="content">
+            <p>This is the second in a series of posts on the <a href="https://github.com/writeoncereadmany/minimalang">Minima language</a>. <a href="https://writeoncereadmany.github.io/2017/09/a-minima">Here’s the first</a>.</p>
+
+<p>There are a few things I’ve made a very conscious decision to try to enforce
+in the design of Minima.</p>
+
+<p>These include, but are not limited to:</p>
+<ul>
+  <li>No nulls/uninitialised state</li>
+  <li>No inheritance</li>
+  <li>No reflection</li>
+  <li>No overloading</li>
+</ul>
+
+<p>The first three are simple: I just don’t introduce those features. There’s no
+way to define a variable without its initial value: the syntax doesn’t support
+it. There’s no concept of classes, let alone subclasses. And there’s no way
+to introspect an object or function.</p>
+
+<p>What happens if you try to access an undefined field of an object, you ask?
+Not null, that’s for damn sure. You get a type error. At runtime, yes. We’ll
+do something better about that later.</p>
+
+<p>Overloading of functions is similarly not supported - any one given name
+resolves to exactly one value - but I didn’t just say no overloading of
+functions. I’m also concerned about overloading of <em>syntax</em>.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/09/a-minima">Sep 3, 2017 - Minima</a></h1>
@@ -125,18 +161,6 @@ interesting question.</p>
 so many solutions are available. And they’re all terrible in different ways.</p>
 
 <p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/03/safety-subtypes-and-inference">Mar 19, 2017 - Safety, subtypes and inference</a></h1>
-        
-        <div class="content">
-            <p>Using <code class="highlighter-rouge">Result</code> to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to <em>allow</em> sensible handling of them.</p>
 
 
         </div>

@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
           <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
-        
-          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,18 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/03/safety-subtypes-and-inference">Mar 19, 2017 - Safety, subtypes and inference</a></h1>
+        
+        <div class="content">
+            <p>Using <code class="highlighter-rouge">Result</code> to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to <em>allow</em> sensible handling of them.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/02/failure-is-not-right">Feb 27, 2017 - Failure is not Right</a></h1>
@@ -160,48 +172,6 @@ ruminations on software development
 </code></pre></div></div>
 
 <p>The problem is there are two String classes here: <code class="highlighter-rouge">java.lang.String</code> (in blue) and our own <code class="highlighter-rouge">String</code> class (in pink). <code class="highlighter-rouge">main()</code> requires a blue <code class="highlighter-rouge">String</code>, but it gets a pink <code class="highlighter-rouge">String</code>, so it’s not a <code class="highlighter-rouge">main()</code> method. But I don’t really care about the puzzler here: I want to talk about the highlighting.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2016/12/optional-get-considered-harmful">Dec 21, 2016 - Optional.get() considered harmful</a></h1>
-        
-        <div class="content">
-            <blockquote>
-  <p>I call it my billion-dollar mistake. It was the invention of the null reference in 1965… <strong>My goal was to ensure that all use of references should be absolutely safe, with checking performed automatically by the compiler</strong>. But I couldn’t resist the temptation to put in a null reference, simply because it was so easy to implement. This has led to innumerable errors, vulnerabilities, and system crashes, which have probably caused a billion dollars of pain and damage in the last forty years.</p>
-</blockquote>
-
-<p><em>– Tony Hoare</em></p>
-
-<p>Nulls are terrible. They’re dangerous and sneaky and they’re <a href="http://io.livecode.ch/learn/namin/unsound">why Java’s type system is unsound</a>. Ideally, we’d never use them, but we can’t do much about twenty years of libraries which might return nulls. At least we can try to stop returning them in our own APIs, because Java 8 gave us <code class="highlighter-rouge">Optional</code>s.</p>
-
-<p>What’s an <code class="highlighter-rouge">Optional</code>? It’s a data type which represents either a value, or… not a value. This allows us to represent the possibility of an absence of the value in the type system. So, instead of code like this:</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Cat</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">meow</span><span class="o">());</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>We can write code like this:</p>
-
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">helloKitty</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">Cat</span><span class="o">&gt;</span> <span class="n">kitty</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">if</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span>
-        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">kitty</span><span class="o">.</span><span class="na">get</span><span class="o">().</span><span class="na">meow</span><span class="o">());</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>The latter code is, to my mind, indisputably better than the former. The possibility of nullity is encoded in the types, and we can’t do anything to the cat without making a conscious decision to remove it from the <code class="highlighter-rouge">Optional</code>.</p>
-
-<p>Intent is clearer. Mistakes are less likely. These are good things.</p>
-
-<p>That said, <strong>don’t write code like this</strong>. Just because it’s better than the null-exposed version doesn’t make it <em>good</em>.</p>
 
 
         </div>

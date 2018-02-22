@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
           <li><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Pipe Dreams, or - The Applicable Pattern</a></li>
-        
-          <li><a href="/2018/02/a-the-difference-between-functions-and-methods">The Difference Between Functions And Methods</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,34 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/c-railway-oriented-programming">Feb 19, 2018 - Railway-Oriented Programming</a></h1>
+        
+        <div class="content">
+            <p>This is the sixth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. Previous parts:</p>
+<ul>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
+</ul>
+
+<p>Before we start, I’d recommend at least reading <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a>.</p>
+
+<p>So. We’ve got this concept of carpet-oriented programming - of building a pipeline
+of operations which could fail, sweeping any failures under the carpet, and only
+thinking about whether it succeeded or not (and what to do about failures) at the end.</p>
+
+<p>One thing this approach lacks is any feedback as to <em>how</em>, or <em>why</em>, it failed.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Feb 19, 2018 - Pipe Dreams, or - The Applicable Pattern</a></h1>
@@ -135,24 +163,6 @@ opportunities for powerful constructs.</p>
 doesn’t have methods it should. This is a near-unavoidable consequence of a
 fundamental design mistake: the API of <code class="highlighter-rouge">Optional</code> is made of methods instead
 of functions.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/11/carpet-oriented-programming">Nov 23, 2017 - Carpet-Oriented Programming</a></h1>
-        
-        <div class="content">
-            <p>This is the third in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>, and
-a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>.</p>
-
-<p>Before we look at railway-oriented programming with <code class="highlighter-rouge">Result</code>, it’ll help if we
-start with the similar, but simpler case of carpet-oriented programming with
-<code class="highlighter-rouge">Optional</code>. And we’ll illustrate this with the King of Spain’s Beard.</p>
 
 
         </div>

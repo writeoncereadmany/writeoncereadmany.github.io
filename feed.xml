@@ -7,6 +7,163 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Fancy Railways</title>
+				<description>&lt;p&gt;This is the eighth in a series of posts introducing &lt;a href=&quot;https://github.com/unruly/control&quot;&gt;co.unruly.control&lt;/a&gt;,
+a functional control library for Java. Previous parts:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/most-code-fails-badly&quot;&gt;Most code fails badly&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java&quot;&gt;How to fail in Java&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming&quot;&gt;Carpet-oriented programming&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods&quot;&gt;The difference between functions and methods&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern&quot;&gt;The Applicable Pattern&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming&quot;&gt;Railway-Oriented Programming&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://writeoncereadmany.github.io/2018/02/d-what-about-the-rest-of-the-world&quot;&gt;What about the rest of the world?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Let’s recap briefly. We now understand what railway-oriented programming is,
+and we’re comfortable abstracting over the idea of collating failures at different
+points in an execution and handling them separately. We can combine operations
+which always succeed and operations which may fail, we can convert pretty much
+any failure mode into results, and we can resolve back to a regular value.&lt;/p&gt;
+
+&lt;p&gt;What else could we ask for? Well, let’s take an example: we’re working at the
+gate of a ride at WonderFunLand. We’ve got a queue of people coming up to ride
+the BoneRattler. Can they ride?&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NoRideReason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;admitToBoneRattler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustBeAtLeastHeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBePregnant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBeBannedForMooningRidePhoto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()));&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;So far so good. Only now there’s a new requirement: none of these apply if they’re
+the boss’s kids. Yep, even the rules about height and pregnancy - for the sake
+of narrative, we’re submitting to implementing bad requirements.&lt;/p&gt;
+
+&lt;h4 id=&quot;recovering-from-some-failures&quot;&gt;Recovering from (some) failures&lt;/h4&gt;
+
+&lt;p&gt;We &lt;em&gt;could&lt;/em&gt; modify each condition to have the exception, but that would require
+implementing it in three places. It would be much cleaner if we could just find those
+exceptional cases, and make them successes again:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;recover&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;either&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// if there's a success, pass it through&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// if it was a failure, apply the function, which may return a success&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let’s say &lt;code class=&quot;highlighter-rouge&quot;&gt;NoRideReason&lt;/code&gt; contains a reference to the &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt; for detail
+messages, so it’s easy to convert it back if need be:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NoRideReason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;admitToBoneRattler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustBeAtLeastHeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBePregnant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBeBannedForMooningRidePhoto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recover&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allowOnIfBossesKid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()));&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Okay! That’s great! Then a new request comes through: visitors are getting annoyed
+by being turned away at the gate after queueing for an hour, so whenever we turn
+someone away we’re giving them a fast-track ticket to jump the line at
+SplishySplashyCanyon.&lt;/p&gt;
+
+&lt;h4 id=&quot;applying-a-side-effect-to-one-track-of-the-railway&quot;&gt;Applying a side effect to one track of the railway&lt;/h4&gt;
+
+&lt;p&gt;This is a mutable update on Person, so we just need to apply a side-effect to the failures:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;onFailureDo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;either&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;failure&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;peek&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;peek&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;consumer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;accept&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;We’re using &lt;code class=&quot;highlighter-rouge&quot;&gt;peek()&lt;/code&gt; here, which turns a &lt;code class=&quot;highlighter-rouge&quot;&gt;void&lt;/code&gt;-returning &lt;code class=&quot;highlighter-rouge&quot;&gt;Consumer&lt;/code&gt; into a
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Function&lt;/code&gt; which applies the consumer, then returns its input value. This is a
+useful little utility function that crops up quite a lot when you want to apply
+side-effects in pipelines. That’s being used to implement &lt;code class=&quot;highlighter-rouge&quot;&gt;onFailureDo&lt;/code&gt;, which
+applies a side-effect to just failures. That lets us do this:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;NoRideReason&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;admitToBoneRattler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustBeAtLeastHeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBePregnant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBeBannedForMooningRidePhoto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recover&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allowOnIfBossesKid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onFailureDo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;giveSplishySplashyCanyonGoldenTicket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()));&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;And then, of course, we only let the people who meet all our criteria onto the
+ride.&lt;/p&gt;
+
+&lt;h4 id=&quot;discarding-failures&quot;&gt;Discarding failures&lt;/h4&gt;
+
+&lt;p&gt;One approach could be to filter the stream to just the successes, and then get
+the successes out - but the type system doesn’t know that a filtered &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt;
+is a success, so we’d still have to say what to do in the case a failure gets
+through the filter.&lt;/p&gt;
+
+&lt;p&gt;There’s a cleaner way, by flatmapping a stream. We can turn each
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Result&amp;lt;Person, NoRideReason&amp;gt;&lt;/code&gt; into a &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream&amp;lt;Person&amp;gt;&lt;/code&gt;, and &lt;code class=&quot;highlighter-rouge&quot;&gt;Stream.flatMap()&lt;/code&gt;
+can concatenate all the streams together. A success contains one successful
+&lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt;, and a failure contains no successful &lt;code class=&quot;highlighter-rouge&quot;&gt;Person&lt;/code&gt;s:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;F&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;S&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;successes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;either&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;of&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;succ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;),&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;fail&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;empty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Which then permits us to add:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;admitToBoneRattler&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Stream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Person&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visitors&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustBeAtLeastHeight&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;120&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBePregnant&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attempt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mustNotBeBannedForMooningRidePhoto&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;recover&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;allowOnIfBossesKid&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;onFailureDo&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;giveSplishySplashyCanyonGoldenTicket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()))&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;&quot;!!pink!!&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;flatMap&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;successes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;!!end!!&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;this-is-just-the-beginning&quot;&gt;This is just the beginning&lt;/h4&gt;
+
+&lt;p&gt;These are examples of some of the utility functions available on &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt; which
+allow you to build more versatile pipelines. They’re all &lt;a href=&quot;https://github.com/unruly/control&quot;&gt;in the control library&lt;/a&gt;, along with a bunch of other commonly
+used constructs.&lt;/p&gt;
+
+&lt;p&gt;The philosophy here isn’t “here’s your set of tools - now go build stuff
+with them”, though. Sometimes, you’ll want to operate on &lt;code class=&quot;highlighter-rouge&quot;&gt;Result&lt;/code&gt;s in a novel
+way. That’s fine! That’s good.&lt;/p&gt;
+
+&lt;p&gt;These functions are mostly very short and easy to write. Just write another.&lt;/p&gt;
+</description>
+				<pubDate>Wed, 21 Feb 2018 00:00:00 +0000</pubDate>
+				<link>/2018/02/fancy-railways</link>
+				<guid isPermaLink="true">/2018/02/fancy-railways</guid>
+			</item>
+		
+			<item>
 				<title>Gold Cards, Production Systems, Temptations and Expectations</title>
 				<description>&lt;p&gt;At Unruly, we devote 20% of our time to personal development, via Gold Cards.
 &lt;a href=&quot;http://benjiweber.co.uk/blog/2018/01/29/gold-cards/&quot;&gt;Benji recently made a good post about what they are and why we do them&lt;/a&gt;. Generally, I spend
@@ -2238,376 +2395,6 @@ right sort of isolation just magically happens.&lt;/p&gt;
 				<pubDate>Wed, 18 Oct 2017 00:00:00 +0100</pubDate>
 				<link>/2017/10/intermittency-and-interference</link>
 				<guid isPermaLink="true">/2017/10/intermittency-and-interference</guid>
-			</item>
-		
-			<item>
-				<title>Doing stuff in Minima</title>
-				<description>&lt;p&gt;This is the fourth in a series of posts on the &lt;a href=&quot;https://github.com/writeoncereadmany/minimalang&quot;&gt;Minima language&lt;/a&gt;. &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/a-minima&quot;&gt;Here’s the first&lt;/a&gt;,
-&lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/b-overloading-in-minima&quot;&gt;here’s the second&lt;/a&gt;, and &lt;a href=&quot;https://writeoncereadmany.github.io/2017/09/c-how-minimal-is-minima&quot;&gt;here’s the third&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;So far I’ve provided little more than explanations of syntax. So, let’s have
-a look at how to approach some actual problems in Minima. When I say actual
-problems, I mean whiteboard screening questions: reversing a list and Fizzbuzz.&lt;/p&gt;
-
-&lt;!--more--&gt;
-
-&lt;h3 id=&quot;reversing-a-list&quot;&gt;Reversing a list&lt;/h3&gt;
-
-&lt;p&gt;Reversing a list isn’t usually a particularly difficult problem, but that’s in
-languages which give you a little more to start with. Before we can reverse a
-list, we first need a list: something Minima doesn’t give us.&lt;/p&gt;
-
-&lt;p&gt;So what’s a list? It’s an ordered collection of elements. If you’ve got access
-to pointers (or your standard library implementers do, which is basically true
-of anything which runs on computers), you may choose to implement a list as an
-array or vector. But we don’t have access to pointers in Minima, and we don’t
-want to introduce new builtins.&lt;/p&gt;
-
-&lt;p&gt;What about a linked list, then? A linked list is nice and simple: it’s either
-a &lt;code class=&quot;highlighter-rouge&quot;&gt;node&lt;/code&gt;, containing an element and a tail (the rest of the linked list), or it’s
-the empty list, &lt;code class=&quot;highlighter-rouge&quot;&gt;nil&lt;/code&gt;. So we could implement it like so:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;node is [head, tail] =&amp;gt; {
-  head: head,
-  tail: tail
-}
-
-nil is {}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And then create a list as follows:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;list is node[1, node[2, node[3, node[4, nil]]]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;We &lt;em&gt;could&lt;/em&gt; do that, but we’re going to hit a problem: when we iterate over this
-list, how do we know when we reach the end? How do we detect we’ve hit &lt;code class=&quot;highlighter-rouge&quot;&gt;nil&lt;/code&gt;?
-We could implement some sort of &lt;code class=&quot;highlighter-rouge&quot;&gt;equals&lt;/code&gt; method, but that requires a bunch of
-other constructs like a boolean type and an if statement and that all sounds
-terribly heavyweight just to reverse a string (although, to be fair, I suspect
-they would be constructs we could easily reuse in other situations).&lt;/p&gt;
-
-&lt;p&gt;But we don’t just have objects at our disposal to represent data: we saw how
-we could represent data as functions in the last post. This approach becomes
-particularly powerful when we want to represent data with multiple shapes, like
-a list. For example:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;node is [head, tail] =&amp;gt; [onItem, onEmpty] =&amp;gt; onItem[head, tail]
-nil is [onItem, onEmpty] =&amp;gt; onEmpty[]
-
-numbers is node[1, node[2, node[3, node[4, nil]]]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Here, a list is a function which takes two functions: the first one is invoked
-if there are any elements, and the second is invoked if it’s empty. So, for
-example, we can implement some very simple functions:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;isEmpty is [list] =&amp;gt; list[
-  [h, t] =&amp;gt; &quot;nonempty&quot;,
-  [] =&amp;gt; &quot;empty&quot;
-]
-
-head is [list, default] =&amp;gt; list[
-  [h, t] =&amp;gt; h,
-  [] =&amp;gt; default
-]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;So far, so good. Before we reverse this list, it would be good to be able to
-see what’s in the list - let’s find a way of printing it. Hmm…&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;showList is [list] =&amp;gt; (
-  contents is list[
-    [h, t] =&amp;gt; h:show[]:concat[???],
-    [] =&amp;gt; &quot;&quot;
-  ],
-  &quot;list[&quot;:concat[contents]:concat[&quot;]&quot;]
-)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;All this skeleton so far is fairly straightforward. We wrap the contents in
-“list[]”, and the contents are empty if the list is empty, and the contents
-start with the head if it’s non-empty. If it’s non-empty, we then want to recurse
-on the tail, so maybe something like:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;showList is [list] =&amp;gt; (
-  content is [l] =&amp;gt; l[
-    [h, t] =&amp;gt; head:show[]:concat[&quot;, &quot;]:concat[content[t]],
-    [] =&amp;gt; &quot;&quot;
-  ],
-  &quot;list[&quot;:concat[content[list]]:concat[&quot;]&quot;]
-)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;And this would work - with a trailing comma, but whatever - if it weren’t for
-one thing. We can’t recurse like this, because &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt; isn’t a named function.
-The function we assign to &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt; only has access to variables which exist at
-the time we define it - but the &lt;em&gt;variable&lt;/em&gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt; doesn’t exist until we
-assign the function to it, which is necessarily after defining it. As &lt;code class=&quot;highlighter-rouge&quot;&gt;content&lt;/code&gt;
-isn’t in scope within its body, we can’t call it.&lt;/p&gt;
-
-&lt;p&gt;Fortunately, we don’t need named functions for recursion: there are constructs
-which do it for us. In this case, we need the y-combinator, which in Minima looks
-a little like this:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;showList is [list] =&amp;gt; (
-  content is [l, cont] =&amp;gt; l[
-    [h, t] =&amp;gt; h:show[]:concat[&quot;, &quot;]:concat[cont[t, cont]],
-    [] =&amp;gt; &quot;&quot;
-  ],
-  &quot;list[&quot;:concat[content[list, content]]:concat[&quot;]&quot;]
-)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Rather than expecting the function to recurse on to be available in the body,
-we pass it in as an argument in addition to the other arguments. Then, when
-you need to recurse, you just call the passed-in argument and keep passing the
-function down for the next invocation.&lt;/p&gt;
-
-&lt;p&gt;Let’s give the whole program a try:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;node is [head, tail] =&amp;gt; [onItem, onEmpty] =&amp;gt; onItem[head, tail]
-nil is [onItem, onEmpty] =&amp;gt; onEmpty[]
-
-numbers is node[1, node[2, node[3, node[4, nil]]]]
-
-showList is [list] =&amp;gt; (
-  content is [l, cont] =&amp;gt; l[
-    [h, t] =&amp;gt; h:show[]:concat[&quot;, &quot;]:concat[cont[t, cont]],
-    [] =&amp;gt; &quot;&quot;
-  ],
-  &quot;list[&quot;:concat[content[list, content]]:concat[&quot;]&quot;]
-)
-
-print[showList[numbers]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;list[1.0, 2.0, 3.0, 4.0, ]
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Okay! We’re making progress! Now, let’s reverse a list. Our approach is simple:
-we start off with an empty list, and as we iterate along the list, we put each
-element on the front of our list, and when we reach the end, we return what
-we’ve built. Seems simple enough:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;reverse is [list] =&amp;gt; (
-  inner is [l, acc, cont] =&amp;gt; l[
-    [h, t] =&amp;gt; cont[t, node[h, acc], cont],
-    [] =&amp;gt; acc
-  ],
-  inner[list, nil, inner]
-)
-
-print[showList[reverse[numbers]]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;list[4.0, 3.0, 2.0, 1.0, ]
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Success! Some observations:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;Interacting with function-data lists feels very similar to pattern matching&lt;/li&gt;
-  &lt;li&gt;Implementing recursion is a pain in the neck&lt;/li&gt;
-  &lt;li&gt;It’s interesting that we don’t &lt;em&gt;need&lt;/em&gt; explicit support for recursion&lt;/li&gt;
-  &lt;li&gt;Lists feel like something we should have better support for&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;One other thing: it could be stated here that when we’re building recursive
-functions like this, we can build them one of two ways:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;obviousReverse is [list] =&amp;gt; (
-  inner is [l, acc, cont] =&amp;gt; l[
-    [h, t] =&amp;gt; cont[t, node[h, acc], cont],
-    [] =&amp;gt; acc
-  ],
-  inner[list, nil, inner]
-)
-
-efficientReverse is (
-  inner is [l, acc, cont] =&amp;gt; l[
-    [h, t] =&amp;gt; cont[t, node[h, acc], cont],
-    [] =&amp;gt; acc
-  ],
-  [list] =&amp;gt; inner[list, nil, inner]
-)
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;The difference here is that &lt;code class=&quot;highlighter-rouge&quot;&gt;efficientReverse&lt;/code&gt; only creates the inner function
-once, whereas &lt;code class=&quot;highlighter-rouge&quot;&gt;obviousReverse&lt;/code&gt; creates it on each invocation. A few quick
-thoughts on performance optimisations like this:&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;do not optimise Minima code for performance&lt;/li&gt;
-  &lt;li&gt;the more efficient version of the code is about as readable as the obvious
-  version, so there’s no real downside to using that if you prefer it&lt;/li&gt;
-  &lt;li&gt;&lt;em&gt;do not optimise Minima code for performance&lt;/em&gt;&lt;/li&gt;
-  &lt;li&gt;If performance is, or might be, an issue: don’t use Minima&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Okay, that’s enough of that. Next up: Fizzbuzz.&lt;/p&gt;
-
-&lt;h3 id=&quot;fizzbuzz&quot;&gt;Fizzbuzz&lt;/h3&gt;
-
-&lt;p&gt;For anyone who isn’t familiar with it, Fizzbuzz is a number game in which you
-count upwards from 1, only if a number is divisible by 3 you replace it with
-“Fizz”, if it’s divisible by 5 you replace it with “Buzz”, and if both, you
-replace it with “FizzBuzz”. So, for example, playing it up to 20 would yield:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1
-2
-Fizz
-4
-Buzz
-Fizz
-7
-8
-Fizz
-Buzz
-11
-Fizz
-13
-14
-FizzBuzz
-16
-17
-Fizz
-19
-Buzz
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Not super interesting, but it’s a good way of testing basic programming ability:
-functions, conditionals, loops and so on.&lt;/p&gt;
-
-&lt;p&gt;Let’s start off simple: just print out the numbers 1 to 20.&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fizzbuzz is (
-  inner is [current, max, cont] =&amp;gt; (
-    print[current]
-    cont[current:plus[1], max, cont]
-  ),
-  [current, max] =&amp;gt; inner[current, max, inner]  
-)
-
-fizzbuzz[1, 20]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Well, obviously, this doesn’t just print the numbers 1 to 20 - it keeps printing
-numbers forever (or until we run out of stack), as we don’t have a condition to
-stop it looping.&lt;/p&gt;
-
-&lt;p&gt;We could be more specific: in Minima, we don’t have conditions. And now we need
-them. We’re going to try to avoid introducing a builtin &lt;code class=&quot;highlighter-rouge&quot;&gt;boolean&lt;/code&gt; type, so let’s
-go back to functions-as-data.&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;true is [ifTrue, ifFalse] =&amp;gt; ifTrue[]
-false is [ifTrue, ifFalse] =&amp;gt; ifFalse[]
-
-print[true[[] =&amp;gt; &quot;yay&quot;, [] =&amp;gt; &quot;nay&quot;]]
-print[false[[] =&amp;gt; &quot;yarp&quot;, [] =&amp;gt; &quot;narp&quot;]]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;yay
-narp
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Depending on what we like syntactically, we could opt do something like this:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;if[cond, actions] =&amp;gt; cond[actions:then[], actions:else[]]
-
-statement is if[true, {
-  then: [] =&amp;gt; &quot;yay&quot;,
-  else: [] =&amp;gt; &quot;nay&quot;
-}]
-
-print[statement]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;There’s a lot we could do. The long and short of this is that we can introduce
-decision-making functions which can sensibly be described as &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt;
-without introducing any new fundamental concepts.&lt;/p&gt;
-
-&lt;p&gt;That doesn’t mean we can implement &lt;code class=&quot;highlighter-rouge&quot;&gt;FizzBuzz&lt;/code&gt; without adding to the built-ins,
-though - although we don’t need to add much. To print the numbers 1-20, we need
-a new method on numbers: &lt;code class=&quot;highlighter-rouge&quot;&gt;lessThan&lt;/code&gt;. That allows us to do this:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fizzbuzz is (
-  inner is [current, max, cont] =&amp;gt; (
-    print[current]
-    current:lessThan[max][
-      [] =&amp;gt; cont[current:plus[1], max, cont],
-      [] =&amp;gt; SUCCESS
-    ]
-  ),
-  [current, max] =&amp;gt; inner[current, max, inner]  
-)
-
-fizzbuzz[1, 20]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Note this doesn’t require we add &lt;code class=&quot;highlighter-rouge&quot;&gt;true&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;false&lt;/code&gt; to the Prelude - we can
-just return anonymous functions from &lt;code class=&quot;highlighter-rouge&quot;&gt;lessThan&lt;/code&gt;. But at that point, not adding
-them to the Prelude just seems churlish.&lt;/p&gt;
-
-&lt;p&gt;And this works:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.0
-2.0
-3.0
-4.0
-..
-20.0
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;We just need one other thing here: to check whether a number is divisible by 3
-or 5. We could implement a &lt;code class=&quot;highlighter-rouge&quot;&gt;modulo&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;%&lt;/code&gt; operator, but then we’d also need
-&lt;code class=&quot;highlighter-rouge&quot;&gt;equals&lt;/code&gt;, so for now, let’s just be incredibly direct and implement a
-&lt;code class=&quot;highlighter-rouge&quot;&gt;dividesBy&lt;/code&gt; method on numbers. That lets us write this:&lt;/p&gt;
-
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fizzbuzz is (
-  inner is [current, max, cont] =&amp;gt; (
-    current:divisibleBy[3][
-      [] =&amp;gt; print[&quot;fizz&quot;],
-      [] =&amp;gt; print[current]
-    ],
-    current:lessThan[max][
-      [] =&amp;gt; cont[current:plus[1], max, cont],
-      [] =&amp;gt; SUCCESS
-    ]
-  ),
-  [current, max] =&amp;gt; inner[current, max, inner]
-)
-
-fizzbuzz[1, 20]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Which yields:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1.0
-2.0
-fizz
-4.0
-5.0
-fizz
-7.0
-..
-20.0
-&amp;gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;And then we can extend it to include buzz as well:&lt;/p&gt;
-&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;fizzbuzz is (
-  inner is [current, max, cont] =&amp;gt; (
-    fizzy is current:divisibleBy[3],
-    buzzy is current:divisibleBy[5],
-    fizzy[
-      [] =&amp;gt; buzzy[
-        [] =&amp;gt; print[&quot;fizzbuzz&quot;],
-        [] =&amp;gt; print[&quot;fizz&quot;]
-      ],
-      [] =&amp;gt; buzzy[
-        [] =&amp;gt; print[&quot;buzz&quot;],
-        [] =&amp;gt; print[current]
-      ]
-    ],
-    current:lessThan[max][
-      [] =&amp;gt; cont[current:plus[1], max, cont],
-      [] =&amp;gt; SUCCESS
-    ]
-  ),
-  [current, max] =&amp;gt; inner[current, max, inner]
-)
-
-fizzbuzz[1, 20]
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;Now, there’s more we could do here. This isn’t a particularly elegant way to
-build a decision tree - but it is &lt;em&gt;a&lt;/em&gt; way to build a decision tree, and we’ve
-avoided having to add too much.&lt;/p&gt;
-
-&lt;p&gt;So: what? I’ve solved two incredibly simple problems in a way which, at first
-glance, seems vastly more complicated than &lt;insert your=&quot;&quot; favourite=&quot;&quot; language=&quot;&quot; here=&quot;&quot;&gt;.
-But the point is that these things are *possible*, with some basic patterns,
-without language features required to do such fundamental things as recursion
-and decision-making.&lt;/insert&gt;&lt;/p&gt;
-
-&lt;p&gt;Clearly Minima isn’t a language we want to use every day to solve these problems.
-But similarly clearly, it’s capable as a foundation.&lt;/p&gt;
-
-&lt;p&gt;And hopefully, this has provided an interesting perspective on what the concepts
-of recursion and decision actually &lt;em&gt;are&lt;/em&gt;.&lt;/p&gt;
-</description>
-				<pubDate>Sat, 09 Sep 2017 00:00:00 +0100</pubDate>
-				<link>/2017/09/doing-stuff-in-minima</link>
-				<guid isPermaLink="true">/2017/09/doing-stuff-in-minima</guid>
 			</item>
 		
 	</channel>
