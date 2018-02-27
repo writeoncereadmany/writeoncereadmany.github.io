@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
+        
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
+          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
+        
+          <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
+        
+          <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2018/02/detecting-when-in-intellij">Feb 27, 2018 - Detecting when you're in IntelliJ</a></h1>
+            
+            <div class="post-content">
+            <p>How do you make your tests aware if you’re running them from your IDE or not?
+That’s what I’ve been wrestling with, and there were some surprising results,
+so I thought it would be worth sharing.</p>
+
+<!--more-->
+
+<p>But first of all, why on earth would you ever care?</p>
+
+<p>When I joined the team at Unruly, we had a suite of acceptance tests for our
+exchange, each of which called <code class="highlighter-rouge">main()</code> at the beginning of the test so we had
+something to test against. That meant we could just invoke the test from within
+IntelliJ, debug the exchange from a test, etc. Everything was nice and convenient.</p>
+
+<p>Some things, however, were too convenient. As we were starting the exchange
+programmatically, we could do things like inject test doubles, replace statics,
+and generally fool around with the guts of the exchange. We weren’t actually just
+invoking <code class="highlighter-rouge">main()</code>, we were constructing a test exchange and starting that.
+This meant that our acceptance tests weren’t really acceptance tests - and that
+isn’t just a semantic argument.</p>
+
+<p>On more than one occasion, we broke application startup. Because our tests didn’t
+actually <em>start</em> the exchange, we only discovered that when a botched deploy left
+us without a service in production.</p>
+
+<h4 id="test-against-what-youre-going-to-deploy">Test Against What You’re Going To Deploy</h4>
+
+<p>So we changed things. We removed the various injections and dependencies, stubbing
+out behaviour at the edges rather than shoving mocks into internals, and got to
+the point where we could run the exchange and its tests in different processes.
+That way, we were actually testing against the exchange we were deploying, instead
+of a jumble of exchange components.</p>
+
+<p>Then we codified that, by removing the ability of tests to start the exchange.
+The only way to run the acceptance tests was to already have an exchange started
+and ready to run against. Doing this with a single instance of the exchange for
+the entire AT run (as opposed to a fresh one for each test class) also forced us
+to clean up some accidental dependencies on initial state.</p>
+
+<p>Not only was this more principled, giving us better, more meaningful coverage,
+it was also faster. The relatively expensive startup was being done once, instead
+of dozens of times (once per acceptance test class). The gain wasn’t quite as
+large as I’d hoped for, but it was noticeable.</p>
+
+<p>Sounds like a pure win, right? Well, except for the experience in the IDE.</p>
+
+<h4 id="frictionless-feedback-is-important">Frictionless Feedback is Important</h4>
+
+<p>In order to run tests in the IDE, you had to remember to start the exchange first.
+If you changed code, you had to remember to restart it. In order to debug, you
+had to juggle in your head which process to restart (the tests? or the exchange?),
+and in order to build and deploy, you also had to remember to stop the exchange.
+Even when you remembered, it was just <em>fiddlier</em>. A few extra clicks, a requirement
+to use the mouse instead of the keyboard.</p>
+
+<h4 id="robust-or-frictionless-why-not-both">Robust or Frictionless? Why not both?</h4>
+
+<p>The fast-feedback loop of everyday development was worse. It was easy to under-estimate
+the impact that had. Also, the additional robustness and performance of the build
+script meant we didn’t necessarily need it in the IDE.</p>
+
+<p>So what if we ran the tests against an exchange in a different process in the
+full deploy script, but when we’re in the IDE we start up the exchange in the
+same process?</p>
+
+<p>That requires two things: making the tests toggle-able as to whether they start
+the exchange or not, and passing the toggle in. Surprisingly, the hard part was
+the latter.</p>
+
+<h4 id="-dstartexchangetrue">-DstartExchange=true</h4>
+
+<p>The first idea was to pass in a system property when running ATs from Maven.
+If the property is set, the tests are being invoked from a Maven build, so don’t
+start the exchange. Otherwise, do.</p>
+
+<p>I was very surprised when that didn’t work: the property was being set even when
+running tests in IntelliJ. It turns out that IntelliJ looks at the Maven config,
+and applies any command-line arguments to test targets when running tests.</p>
+
+<p>Thanks, IntelliJ! That was some help I didn’t need or want.</p>
+
+<p>As a result, I can’t distinguish from where the tests are being run via
+arguments provided in the Maven script.</p>
+
+<h4 id="run-configurations">Run configurations</h4>
+
+<p>The second idea would be to pass in a system property when running the ATs from
+<em>IntelliJ</em>, with custom run configurations. It’s easy to edit configurations to
+pass in an argument, and Maven is unaware of them. It’s also easy to share and
+check them in, so it’s not something you need to think about when setting up a
+dev environment.</p>
+
+<p>Of course, we don’t just use a pre-existing run configuration: sometimes we’ll
+run “all tests”, but then sometimes we’ll run “only this case which just failed”,
+or “only this case I just wrote”. That’s fine - you can edit a default configuration,
+and then any new JUnit configuration will inherit that.</p>
+
+<p><em>But you can’t share and check in a default configuration</em>.</p>
+
+<p>Which means that you have ATs working in the IDE, <em>until they don’t</em>, and it’s
+totally unclear as to what the difference is between this case running by itself
+and as part of a suite.</p>
+
+<h4 id="something-totally-horrible">Something totally horrible</h4>
+
+<p>The third idea was a terrible, horrible, no-good, very bad idea. What if I just
+looked in the system properties to see if, y’know, <em>maybe</em> there’s something there
+that tells me this is being run from IntelliJ?</p>
+
+<p>And there was. The <code class="highlighter-rouge">sun.java.command</code> property is set to
+<code class="highlighter-rouge">com.intellij.rt.execution.junit.JUnitStarter &lt;...various settings...&gt;</code> when run
+from IntelliJ. So that gives me my function:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isRunningInIntelliJ</span><span class="o">()</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">System</span><span class="o">.</span><span class="na">getProperty</span><span class="o">(</span><span class="s">"sun.java.command"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="na">contains</span><span class="o">(</span><span class="s">"intellij"</span><span class="o">);</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Let me repeat: I know this is horrible. It’s fragile - I have no reassurance that
+this will continue to work in future versions of IntelliJ, and I’m certain it
+won’t work from Eclipse.</p>
+
+<p>But sometimes, in the absence of a principled way of solving a problem, all you
+have are hacks. After all: it works, and if the alternative is either a loss of
+robustness or frictionlessness, then you’re better off swallowing your pride and
+embracing the hack.</p>
+
+<p>But if anyone knows a nice, principled way of doing this, please: let me know.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2018/02/fancy-railways" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

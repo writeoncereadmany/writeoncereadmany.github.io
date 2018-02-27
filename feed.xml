@@ -7,6 +7,141 @@
 		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Detecting when you're in IntelliJ</title>
+				<description>&lt;p&gt;How do you make your tests aware if you’re running them from your IDE or not?
+That’s what I’ve been wrestling with, and there were some surprising results,
+so I thought it would be worth sharing.&lt;/p&gt;
+
+&lt;!--more--&gt;
+
+&lt;p&gt;But first of all, why on earth would you ever care?&lt;/p&gt;
+
+&lt;p&gt;When I joined the team at Unruly, we had a suite of acceptance tests for our
+exchange, each of which called &lt;code class=&quot;highlighter-rouge&quot;&gt;main()&lt;/code&gt; at the beginning of the test so we had
+something to test against. That meant we could just invoke the test from within
+IntelliJ, debug the exchange from a test, etc. Everything was nice and convenient.&lt;/p&gt;
+
+&lt;p&gt;Some things, however, were too convenient. As we were starting the exchange
+programmatically, we could do things like inject test doubles, replace statics,
+and generally fool around with the guts of the exchange. We weren’t actually just
+invoking &lt;code class=&quot;highlighter-rouge&quot;&gt;main()&lt;/code&gt;, we were constructing a test exchange and starting that.
+This meant that our acceptance tests weren’t really acceptance tests - and that
+isn’t just a semantic argument.&lt;/p&gt;
+
+&lt;p&gt;On more than one occasion, we broke application startup. Because our tests didn’t
+actually &lt;em&gt;start&lt;/em&gt; the exchange, we only discovered that when a botched deploy left
+us without a service in production.&lt;/p&gt;
+
+&lt;h4 id=&quot;test-against-what-youre-going-to-deploy&quot;&gt;Test Against What You’re Going To Deploy&lt;/h4&gt;
+
+&lt;p&gt;So we changed things. We removed the various injections and dependencies, stubbing
+out behaviour at the edges rather than shoving mocks into internals, and got to
+the point where we could run the exchange and its tests in different processes.
+That way, we were actually testing against the exchange we were deploying, instead
+of a jumble of exchange components.&lt;/p&gt;
+
+&lt;p&gt;Then we codified that, by removing the ability of tests to start the exchange.
+The only way to run the acceptance tests was to already have an exchange started
+and ready to run against. Doing this with a single instance of the exchange for
+the entire AT run (as opposed to a fresh one for each test class) also forced us
+to clean up some accidental dependencies on initial state.&lt;/p&gt;
+
+&lt;p&gt;Not only was this more principled, giving us better, more meaningful coverage,
+it was also faster. The relatively expensive startup was being done once, instead
+of dozens of times (once per acceptance test class). The gain wasn’t quite as
+large as I’d hoped for, but it was noticeable.&lt;/p&gt;
+
+&lt;p&gt;Sounds like a pure win, right? Well, except for the experience in the IDE.&lt;/p&gt;
+
+&lt;h4 id=&quot;frictionless-feedback-is-important&quot;&gt;Frictionless Feedback is Important&lt;/h4&gt;
+
+&lt;p&gt;In order to run tests in the IDE, you had to remember to start the exchange first.
+If you changed code, you had to remember to restart it. In order to debug, you
+had to juggle in your head which process to restart (the tests? or the exchange?),
+and in order to build and deploy, you also had to remember to stop the exchange.
+Even when you remembered, it was just &lt;em&gt;fiddlier&lt;/em&gt;. A few extra clicks, a requirement
+to use the mouse instead of the keyboard.&lt;/p&gt;
+
+&lt;h4 id=&quot;robust-or-frictionless-why-not-both&quot;&gt;Robust or Frictionless? Why not both?&lt;/h4&gt;
+
+&lt;p&gt;The fast-feedback loop of everyday development was worse. It was easy to under-estimate
+the impact that had. Also, the additional robustness and performance of the build
+script meant we didn’t necessarily need it in the IDE.&lt;/p&gt;
+
+&lt;p&gt;So what if we ran the tests against an exchange in a different process in the
+full deploy script, but when we’re in the IDE we start up the exchange in the
+same process?&lt;/p&gt;
+
+&lt;p&gt;That requires two things: making the tests toggle-able as to whether they start
+the exchange or not, and passing the toggle in. Surprisingly, the hard part was
+the latter.&lt;/p&gt;
+
+&lt;h4 id=&quot;-dstartexchangetrue&quot;&gt;-DstartExchange=true&lt;/h4&gt;
+
+&lt;p&gt;The first idea was to pass in a system property when running ATs from Maven.
+If the property is set, the tests are being invoked from a Maven build, so don’t
+start the exchange. Otherwise, do.&lt;/p&gt;
+
+&lt;p&gt;I was very surprised when that didn’t work: the property was being set even when
+running tests in IntelliJ. It turns out that IntelliJ looks at the Maven config,
+and applies any command-line arguments to test targets when running tests.&lt;/p&gt;
+
+&lt;p&gt;Thanks, IntelliJ! That was some help I didn’t need or want.&lt;/p&gt;
+
+&lt;p&gt;As a result, I can’t distinguish from where the tests are being run via
+arguments provided in the Maven script.&lt;/p&gt;
+
+&lt;h4 id=&quot;run-configurations&quot;&gt;Run configurations&lt;/h4&gt;
+
+&lt;p&gt;The second idea would be to pass in a system property when running the ATs from
+&lt;em&gt;IntelliJ&lt;/em&gt;, with custom run configurations. It’s easy to edit configurations to
+pass in an argument, and Maven is unaware of them. It’s also easy to share and
+check them in, so it’s not something you need to think about when setting up a
+dev environment.&lt;/p&gt;
+
+&lt;p&gt;Of course, we don’t just use a pre-existing run configuration: sometimes we’ll
+run “all tests”, but then sometimes we’ll run “only this case which just failed”,
+or “only this case I just wrote”. That’s fine - you can edit a default configuration,
+and then any new JUnit configuration will inherit that.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;But you can’t share and check in a default configuration&lt;/em&gt;.&lt;/p&gt;
+
+&lt;p&gt;Which means that you have ATs working in the IDE, &lt;em&gt;until they don’t&lt;/em&gt;, and it’s
+totally unclear as to what the difference is between this case running by itself
+and as part of a suite.&lt;/p&gt;
+
+&lt;h4 id=&quot;something-totally-horrible&quot;&gt;Something totally horrible&lt;/h4&gt;
+
+&lt;p&gt;The third idea was a terrible, horrible, no-good, very bad idea. What if I just
+looked in the system properties to see if, y’know, &lt;em&gt;maybe&lt;/em&gt; there’s something there
+that tells me this is being run from IntelliJ?&lt;/p&gt;
+
+&lt;p&gt;And there was. The &lt;code class=&quot;highlighter-rouge&quot;&gt;sun.java.command&lt;/code&gt; property is set to
+&lt;code class=&quot;highlighter-rouge&quot;&gt;com.intellij.rt.execution.junit.JUnitStarter &amp;lt;...various settings...&amp;gt;&lt;/code&gt; when run
+from IntelliJ. So that gives me my function:&lt;/p&gt;
+
+&lt;div class=&quot;language-java highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isRunningInIntelliJ&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getProperty&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sun.java.command&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;contains&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;intellij&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Let me repeat: I know this is horrible. It’s fragile - I have no reassurance that
+this will continue to work in future versions of IntelliJ, and I’m certain it
+won’t work from Eclipse.&lt;/p&gt;
+
+&lt;p&gt;But sometimes, in the absence of a principled way of solving a problem, all you
+have are hacks. After all: it works, and if the alternative is either a loss of
+robustness or frictionlessness, then you’re better off swallowing your pride and
+embracing the hack.&lt;/p&gt;
+
+&lt;p&gt;But if anyone knows a nice, principled way of doing this, please: let me know.&lt;/p&gt;
+</description>
+				<pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
+				<link>/2018/02/detecting-when-in-intellij</link>
+				<guid isPermaLink="true">/2018/02/detecting-when-in-intellij</guid>
+			</item>
+		
+			<item>
 				<title>Fancy Railways</title>
 				<description>&lt;p&gt;This is the eighth in a series of posts introducing &lt;a href=&quot;https://github.com/unruly/control&quot;&gt;co.unruly.control&lt;/a&gt;,
 a functional control library for Java. Previous parts:&lt;/p&gt;
@@ -2309,92 +2444,6 @@ the following in upcoming posts:&lt;/p&gt;
 				<pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
 				<link>/2017/11/most-code-fails-badly</link>
 				<guid isPermaLink="true">/2017/11/most-code-fails-badly</guid>
-			</item>
-		
-			<item>
-				<title>Intermittency, Interference and Isolation</title>
-				<description>&lt;blockquote&gt;
-  &lt;p&gt;We disabled the tests because they were intermittent.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;I was somewhat alarmed to hear this.&lt;/p&gt;
-
-&lt;p&gt;To an extent, it was understandable - these particular tests were failing
-really &lt;em&gt;quite a lot&lt;/em&gt;, and they were preventing us from deploying some basic
-maintenance updates. Also, they were doing things we hadn’t been doing
-before, so it was possible the approach was flawed - fixing them would require
-some investigation.&lt;/p&gt;
-
-&lt;p&gt;But these tests were &lt;em&gt;important&lt;/em&gt; - they were a brand new regression test suite,
-a last line of sanity-checks against unexpected changes in our journal formats.
-So putting them back was a high priority.&lt;/p&gt;
-
-&lt;!-- more --&gt;
-
-&lt;p&gt;The tests were quite simple: we write journals of various events out, and these
-files are then handed over to a pipeline which processes them for reporting
-purposes. We want to make sure that journal format is consistent, and to be
-aware of exactly what changes we’re making when we’re doing so intentionally.&lt;/p&gt;
-
-&lt;p&gt;So, our tests were quite simple. We take a snapshot of the journals, then we
-perform some action, then we look at the journals again, filter anything out
-we’d already seen, and compare what’s left to what we expect to be left.&lt;/p&gt;
-
-&lt;p&gt;When they failed, we were seeing nothing in the actual output. It was as if the
-events didn’t happen. We had some theories - were we trying to read from the
-logs before buffers had been flushed? Were we seeing journal rotation happening
-between our action and our read operation? We couldn’t reproduce any of these
-cases.&lt;/p&gt;
-
-&lt;p&gt;The key was that these tests were failing &lt;em&gt;a lot&lt;/em&gt; in the full build, but it was
-difficult to work out what was going on because they were passing when we
-debugged them. They were also passing when we just ran them in the IDE.&lt;/p&gt;
-
-&lt;p&gt;Those are not the characteristics of an intermittent test.&lt;/p&gt;
-
-&lt;p&gt;Those are the characteristics of an &lt;em&gt;interferent&lt;/em&gt; test.&lt;/p&gt;
-
-&lt;p&gt;Our tests each reused basically the exact same input, and then ran different
-assertions on the outcome. Our journals contained timestamps, but only with
-second granularity.&lt;/p&gt;
-
-&lt;p&gt;So, when we ran the full suite of tests, we’d run a test, add some lines to the
-journal, sample that journal, run the same scenario again &lt;em&gt;generating the exact
-same output&lt;/em&gt;, remove lines which matched what we’d seen before (including what
-had just been generated), and hey, no log lines for this action.&lt;/p&gt;
-
-&lt;p&gt;Our tests were interfering with each other.&lt;/p&gt;
-
-&lt;p&gt;The solution was quite simple - make sure the tests each generated different
-output. Seed the input with a different characteristic piece of data, and then
-the output from each test case will be distinct and identifiable.&lt;/p&gt;
-
-&lt;p&gt;Furthermore, if rather than &lt;em&gt;filtering out&lt;/em&gt; lines not associated with an
-individual event, we can &lt;em&gt;select for&lt;/em&gt; them - that enables the possibility of
-running such tests in parallel in the future.&lt;/p&gt;
-
-&lt;h3 id=&quot;in-summation&quot;&gt;In summation&lt;/h3&gt;
-
-&lt;p&gt;If your tests pass in isolation, but not en masse, they’re interfering with
-each other. Somewhere, you have a shared dependence on mutable state - and
-for end-to-end tests, that could mean files, databases, other services, all the
-sorts of mutable state applications exist to manage.&lt;/p&gt;
-
-&lt;p&gt;If your tests are interfering with each other, then you need to find some way
-of isolating them - of ensuring the bits of state that this test case interacts
-with are distinctly separable from all other state.&lt;/p&gt;
-
-&lt;p&gt;If your tests aren’t interfering with each other, there’s a good possibility
-they will in the future. Any time you’re generating persistent state in tests,
-work out on what basis you want to isolate one test from another.&lt;/p&gt;
-
-&lt;p&gt;Ideally, isolate on something you can randomly generate at runtime, so that when
-people copy-and-paste an existing test to do something new in the future, the
-right sort of isolation just magically happens.&lt;/p&gt;
-</description>
-				<pubDate>Wed, 18 Oct 2017 00:00:00 +0100</pubDate>
-				<link>/2017/10/intermittency-and-interference</link>
-				<guid isPermaLink="true">/2017/10/intermittency-and-interference</guid>
 			</item>
 		
 	</channel>
