@@ -83,12 +83,11 @@ ruminations on software development
 
         </div>
         <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2023/02/initial-commit">Feb 22, 2023 - Pandamonium: Initial Commit</a></h1>
             
-<div class="article">
-    <div class="well">
-        <h1><a href="/2023/02/initial-commit">Feb 22, 2023 - Pandamonium: Initial Commit</a></h1>
-        
-        <div class="content">
+            <div class="post-content">
             <p>The phrase “Initial commit” covers a real multitude of sins. It’s shorthand for “I’ve done too much stuff
 already to describe it meaningfully, so… here’s all of what I’ve done so far”. It’s an admission that
 an important step has been left too late.</p>
@@ -104,69 +103,76 @@ backfill the more interesting choices made so far.</p>
 
 <p><img src="/assets/pandamonium_screenshot.png" alt="image tooltip here" width="500" class="centered" /></p>
 
+<!--more-->
+<h3 id="what-is-pandamonium">What is Pandamonium?</h3>
+<p>At work, I do more-or-less constant remote pair programming. One of the important habits of pair
+programming is managing pace: taking small, regular breaks. At one point, I was doing a MarioKart cup
+in those breaks, to help distract me and reset my thought process.</p>
 
+<p>The end goal of this is to be my new pomodoro break game, played in bursts of no more than 5 minutes. You’re
+a panda, frantically chasing a high score.</p>
+
+<p>On each screen, you get 10 seconds to get to the flag, picking up as many coins as possible on the way.
+Miss the flag, and it’s game over. Theintention is to have those screens procedurally generated - so it’s 
+not just dexterity, it’s also assessing the situation and planning a route on the fly.</p>
+
+<p>Once it’s built I’ll put it in an arcade cabinet in my home office (also to be built), running on a Raspberry Pi.</p>
+
+<h3 id="constraints-goals-and-opportunities">Constraints, Goals, and Opportunities</h3>
+<p>My constraints are simple: graphically, it’s not exactly advanced, but I’m harkening back to a chunky
+pixel-style of the NES era. I do, however, want it to run at a consistent 60fps: this game is extremely
+fast and precise. That should not be difficult on the technology I’m using.</p>
+
+<p>I also want to control this with a proper joystick: the proper tactile sensation is very much part of the experience.</p>
+
+<p>I’m <em>not</em> particularly interested in solving this the simplest possible way, as will become obvious quite
+shortly. The simplest possible way would be to use something like Unity. Sometimes, when it’s not part
+of the day job, reinventing wheels is fun.</p>
+
+<p>And of course: it’s an opportunity to learn new things and stretch myself. Maybe a language I’m not familiar with?</p>
+
+<h3 id="rust">Rust</h3>
+<p>I’ve made some small steps towards building little games before in Haskell and Python. Early experiments showed
+me that I couldn’t reliably get 60fps in Pygame, even when not really doing anything, and in Haskell I couldn’t
+find any support for joystick bindings.</p>
+
+<p>So I was quite pleased when a little dabbling showed I could easily satisfy both of those criteria in Rust using
+sdl2 bindings. sdl2 is perfect for my needs: all the basic game functionality you need for a throwback 2D game in 
+a very simple API, providing very little game engine functionality.</p>
+
+<p>My experience with Rust was really shallow, but it’s a language I always wanted to learn more about, and games - 
+which largely boil down to a bunch of manipulation of mutable state - would be an excellent way to make me engage
+with Rust’s type system: borrow checker, mutability types and all.</p>
+
+<p>I do love grappling with a good type system.</p>
+
+<h3 id="state-of-play">State of Play</h3>
+<p>The game’s very much in the feeling-out stage at the moment. I’m pretty comfortable with the controls, and
+I’ve got a basic loop through a small number of stages. I’m getting to the point where most of the foundations
+are present, albeit with some cleanup required.</p>
+
+<p>Currently, I’m working on music: I’ve got multi-channel tunes working, but without an ergonomic way of writing 
+anything of any length: that’ll be my next post, most likely.</p>
+
+<p><a href="https://github.com/writeoncereadmany/rust-game">If you want to check it out, it’s hosted on my Github</a>. I’ve
+only tested it on the Raspberry Pi and my Macbook, but it should work on anything with SDL2 installed and with
+a Rust toolchain.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2018/02/detecting-when-in-intellij" class="previous">Older Post</a>
+              
+          </div>
         </div>
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2018/02/detecting-when-in-intellij">Feb 27, 2018 - Detecting when you're in IntelliJ</a></h1>
-        
-        <div class="content">
-            <p>How do you make your tests aware if you’re running them from your IDE or not?
-That’s what I’ve been wrestling with, and there were some surprising results,
-so I thought it would be worth sharing.</p>
 
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2018/02/fancy-railways">Feb 21, 2018 - Fancy Railways</a></h1>
-        
-        <div class="content">
-            <p>This is the eighth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. Previous parts:</p>
-<ul>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/d-what-about-the-rest-of-the-world">What about the rest of the world?</a></li>
-</ul>
-
-<p>Let’s recap briefly. We now understand what railway-oriented programming is,
-and we’re comfortable abstracting over the idea of collating failures at different
-points in an execution and handling them separately. We can combine operations
-which always succeed and operations which may fail, we can convert pretty much
-any failure mode into results, and we can resolve back to a regular value.</p>
-
-<p>What else could we ask for? Well, let’s take an example: we’re working at the
-gate of a ride at WonderFunLand. We’ve got a queue of people coming up to ride
-the BoneRattler. Can they ride?</p>
-
-
-        </div>
-    </div>
-</div>
-
-
-<div class="pagination">
-  
-  <span class="page_number ">Page: 1 of 8</span>
-  
-    <a class="btn btn-default" href="/page2" class="next">Older</a>
-  
-</div>
-
-        </div>
-    </div>
-</div>
 
 <div class="container-fluid">
     <div class="row-fluid">

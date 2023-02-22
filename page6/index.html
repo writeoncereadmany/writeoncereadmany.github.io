@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
+        
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
         
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
-        
-          <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,28 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/09/a-minima">Sep 3, 2017 - Minima</a></h1>
+        
+        <div class="content">
+            <p>Minima is a programming language. There are two things that it’s important
+to know about Minima.</p>
+<ul>
+  <li>It’s a very small language</li>
+  <li>It’s not a very good language</li>
+</ul>
+
+<p><a href="https://github.com/writeoncereadmany/minimalang">You can find a Java implementation of it here</a>.</p>
+
+<p>It’s called Minima because it’s small. It’s not as small as it <em>could</em> be - it’s
+not <em>technically</em> minimal. But it’s pretty small.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/08/reflections-on-equality">Aug 12, 2017 - Reflections on Equality</a></h1>
@@ -121,25 +143,6 @@ so many solutions are available. And they’re all terrible in different ways.</
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/02/failure-is-not-right">Feb 27, 2017 - Failure is not Right</a></h1>
-        
-        <div class="content">
-            <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="language-plaintext highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="language-plaintext highlighter-rouge">Either</code> is:</p>
-
-<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
-</code></pre></div></div>
-
-<p>All this means is an instance of <code class="language-plaintext highlighter-rouge">Either a b</code> is a <code class="language-plaintext highlighter-rouge">Left a</code>, or it’s a <code class="language-plaintext highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
-
-<p>What that means is: for an <code class="language-plaintext highlighter-rouge">Either a b</code>, the success type is <code class="language-plaintext highlighter-rouge">b</code> and the failure type is <code class="language-plaintext highlighter-rouge">a</code>. This is true for two reasons.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -147,7 +150,7 @@ so many solutions are available. And they’re all terrible in different ways.</
         <a class="btn btn-default" href="/page5" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 6 of 7</span>
+  <span class="page_number ">Page: 6 of 8</span>
   
     <a class="btn btn-default" href="/page7" class="next">Older</a>
   

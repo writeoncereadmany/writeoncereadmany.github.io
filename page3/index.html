@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
+        
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
         
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
           <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
-        
-          <li><a href="/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,35 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/b-pipe-dreams-or-the-applicable-pattern">Feb 19, 2018 - Pipe Dreams, or - The Applicable Pattern</a></h1>
+        
+        <div class="content">
+            <p>This is the fifth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>,
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
+an <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>,
+and <a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">an argument for implementing rich behaviour on datatypes using standalone
+functions instead of methods here</a>.</p>
+
+<p>So. You’re on board with using functions instead of methods, and you start applying
+that approach. Most likely, you’ll find that your code is bitty and clunky - it
+just doesn’t flow like it did when you were happily chaining methods.</p>
+
+<p>Let’s explore that.</p>
+
+<h3 id="functions-more-like-clunk-tions">Functions? More like clunk-tions!</h3>
+
+<p>Using functions instead of methods looks fine in isolation, but the moment
+you want to do something more complex - like building a carpet-oriented programming
+pipe - the functional approach starts to get much harder to read.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2018/02/a-the-difference-between-functions-and-methods">Feb 19, 2018 - The Difference Between Functions And Methods</a></h1>
@@ -130,32 +159,6 @@ start with the similar, but simpler case of carpet-oriented programming with
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/11/how-to-fail-in-java">Nov 20, 2017 - How to Fail in Java</a></h1>
-        
-        <div class="content">
-            <p>This is the second in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>.</p>
-
-<p>The library all revolves around a single central concept: the <code class="language-plaintext highlighter-rouge">Result</code> class.
-A large part of the reason to use <code class="language-plaintext highlighter-rouge">Result</code> is how it can be manipulated,
-allowing error-handling to be separated from core logic. But before we get to
-that, there’s another important reason to use <code class="language-plaintext highlighter-rouge">Result</code>: it fills an important
-gap in Java’s API.</p>
-
-<p>Namely, to represent the outcome of an operation which may fail.</p>
-
-<p>This may seem like kind of a huge oversight, seeing as many operations can
-potentially fail - there’s definitely a <em>need</em> for a tool for that job. That’s
-not to say Java doesn’t have ways of handling potential failure - it does, just
-that they’re all bad.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -163,7 +166,7 @@ that they’re all bad.</p>
         <a class="btn btn-default" href="/page2" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 3 of 7</span>
+  <span class="page_number ">Page: 3 of 8</span>
   
     <a class="btn btn-default" href="/page4" class="next">Older</a>
   

@@ -49,3 +49,9 @@ body {
 .author a {
     color: #ee4444;
 }
+
+img.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
