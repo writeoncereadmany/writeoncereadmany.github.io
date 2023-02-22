@@ -91,17 +91,17 @@ ruminations on software development
             <p>As always, it started with a bug. We’d been extending the capabilities
 of one of our services, to allow filtering deals on a new concept. While
 introducing that new concept, some classes had new fields added. One of those
-classes implemented <code class="highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
+classes implemented <code class="language-plaintext highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
 the new field.</p>
 
-<p>The first-order fix was easy: just re-generate the <code class="highlighter-rouge">equals()</code> method. Trying to
+<p>The first-order fix was easy: just re-generate the <code class="language-plaintext highlighter-rouge">equals()</code> method. Trying to
 protect against this class of problem reoccurring, though, is a really
 interesting question.</p>
 
 <p>Not because it’s difficult to come up with a broader solution, but because
 so many solutions are available. And they’re all terrible in different ways.</p>
 
-<p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
+<p>But first, let’s talk about <code class="language-plaintext highlighter-rouge">equals()</code>, and understand our problem.</p>
 
 <!--more-->
 
@@ -110,39 +110,39 @@ so many solutions are available. And they’re all terrible in different ways.</
 <p>Java isn’t unique in having a really, really bad approach to equality, but
 I don’t think I can imagine a way to approach equality that’s as thorny as Java’s.</p>
 
-<p>Firstly, <code class="highlighter-rouge">Object</code> implements <code class="highlighter-rouge">equals()</code>. That means <em>everything</em> implements
-<code class="highlighter-rouge">equals()</code>: even things like <code class="highlighter-rouge">Function</code> which have no possible sensible approach.</p>
+<p>Firstly, <code class="language-plaintext highlighter-rouge">Object</code> implements <code class="language-plaintext highlighter-rouge">equals()</code>. That means <em>everything</em> implements
+<code class="language-plaintext highlighter-rouge">equals()</code>: even things like <code class="language-plaintext highlighter-rouge">Function</code> which have no possible sensible approach.</p>
 
-<p>Secondly, <code class="highlighter-rouge">equals()</code> <em>takes</em> an <code class="highlighter-rouge">Object</code>, which means everything can be compared
+<p>Secondly, <code class="language-plaintext highlighter-rouge">equals()</code> <em>takes</em> an <code class="language-plaintext highlighter-rouge">Object</code>, which means everything can be compared
 to everything else, even when it doesn’t make sense to do so. That means a
-well-behaved implementation of <code class="highlighter-rouge">equals</code> needs to do runtime type-checks and casts.</p>
+well-behaved implementation of <code class="language-plaintext highlighter-rouge">equals</code> needs to do runtime type-checks and casts.</p>
 
 <p>Thirdly, Java has subtyping, which means you need to consider not only how
-<code class="highlighter-rouge">equals()</code> works for your class but <em>also for any extenders of your class</em>, and
+<code class="language-plaintext highlighter-rouge">equals()</code> works for your class but <em>also for any extenders of your class</em>, and
 anyone extending the class needs to be aware of what you’ve done.</p>
 
 <p>Altogether, this means that there are a number of best practices when
-implementing <code class="highlighter-rouge">equals()</code> that need to be taken into consideration.
+implementing <code class="language-plaintext highlighter-rouge">equals()</code> that need to be taken into consideration.
 <em>Effective Java</em> has eight pages on how to do this properly, and a further
-six on also implementing <code class="highlighter-rouge">hashCode()</code>.</p>
+six on also implementing <code class="language-plaintext highlighter-rouge">hashCode()</code>.</p>
 
 <p>What this boils down to is: the vast majority of the time, Java developers
-<em>don’t write <code class="highlighter-rouge">equals()</code> methods</em>. They use standardised templates to do so,
+<em>don’t write <code class="language-plaintext highlighter-rouge">equals()</code> methods</em>. They use standardised templates to do so,
 except in the few custom cases where custom logic is required
-(for example, implementing <code class="highlighter-rouge">equals()</code> on a <code class="highlighter-rouge">List</code> requires that other
-implementations of <code class="highlighter-rouge">List</code> with the same contents are considered equal).</p>
+(for example, implementing <code class="language-plaintext highlighter-rouge">equals()</code> on a <code class="language-plaintext highlighter-rouge">List</code> requires that other
+implementations of <code class="language-plaintext highlighter-rouge">List</code> with the same contents are considered equal).</p>
 
 <p>Compare that to, for example, Kotlin, which has a concept of data classes which
-implement <code class="highlighter-rouge">equals()</code> implicitly. Or Scala, which has case classes which
-implement <code class="highlighter-rouge">equals()</code> implicitly. Or Haskell, where you can use <code class="highlighter-rouge">deriving Eq</code> to,
-well, derive an implementation of <code class="highlighter-rouge">==</code>, Haskell’s equivalent.</p>
+implement <code class="language-plaintext highlighter-rouge">equals()</code> implicitly. Or Scala, which has case classes which
+implement <code class="language-plaintext highlighter-rouge">equals()</code> implicitly. Or Haskell, where you can use <code class="language-plaintext highlighter-rouge">deriving Eq</code> to,
+well, derive an implementation of <code class="language-plaintext highlighter-rouge">==</code>, Haskell’s equivalent.</p>
 
 <p>Because that behaviour’s built into the language, any time you change type
-definitions in Kotlin, Scala, or Haskell, the implementation of <code class="highlighter-rouge">equals()</code>
+definitions in Kotlin, Scala, or Haskell, the implementation of <code class="language-plaintext highlighter-rouge">equals()</code>
 changes alongside.</p>
 
 <p>But in Java, that doesn’t happen. If you add a field to a class and don’t change
-its <code class="highlighter-rouge">equals()</code> method, you have an incorrect <code class="highlighter-rouge">equals()</code> method, and the standard
+its <code class="language-plaintext highlighter-rouge">equals()</code> method, you have an incorrect <code class="language-plaintext highlighter-rouge">equals()</code> method, and the standard
 language and tooling do nothing to help you.</p>
 
 <h3 id="on-being-a-responsible-programmer">On being a responsible programmer</h3>
@@ -181,16 +181,16 @@ a brief overview of what it is and how it could be used to solve this problem.</
 <p>Static analysis involves the use of tooling to analyse code without actually
 running it. In the Java world, this includes tools like Checkstyle, PMD,
 Error-Prone, the Checker Framework and more. Many tools in this category are
-referred to as <em>linters</em>, after <code class="highlighter-rouge">lint</code>, an early static analysis tool for C.</p>
+referred to as <em>linters</em>, after <code class="language-plaintext highlighter-rouge">lint</code>, an early static analysis tool for C.</p>
 
 <p>Most of these tools have an API that allows you to define your own rules. So we
-could build a plugin which looks at classes which implements <code class="highlighter-rouge">equals()</code>, and
+could build a plugin which looks at classes which implements <code class="language-plaintext highlighter-rouge">equals()</code>, and
 performs various checks on that implementation. For example, in order to protect
 against the bug we encountered, we could check that every field declared is
-referenced in the <code class="highlighter-rouge">equals()</code> method.</p>
+referenced in the <code class="language-plaintext highlighter-rouge">equals()</code> method.</p>
 
 <p>Then, as long as the static analysis tool is part of our build process, we’ll
-find that if we forget to update <code class="highlighter-rouge">equals()</code>, our build will fail at the static
+find that if we forget to update <code class="language-plaintext highlighter-rouge">equals()</code>, our build will fail at the static
 analysis step.</p>
 
 <h3 id="dynamic-analysis">Dynamic analysis</h3>
@@ -207,7 +207,7 @@ some important aspects of static analysis.</p>
 <p>One thing that’s nice about static analysis is we implement our check and it’s
 applied generally, to the whole codebase. We can do that at runtime too.</p>
 
-<p>First we could use reflection to find everything which implements <code class="highlighter-rouge">equals()</code>.
+<p>First we could use reflection to find everything which implements <code class="language-plaintext highlighter-rouge">equals()</code>.
 For each type we found, instantiate it twice with the same parameters: these
 should be equal. Then for each parameter, instantiate it twice with that
 parameter unequal but each other parameter equal, and these objects should not be
@@ -224,17 +224,17 @@ assertions about behaviour than we could with static analysis.</p>
 
 <p>It’s entirely possible to write a test like that. Making it scalable and robust
 is an exercise left to the reader. But we don’t need to go all the way: let’s
-say we just want to ensure <code class="highlighter-rouge">equals()</code> is updated when the fields are updated.</p>
+say we just want to ensure <code class="language-plaintext highlighter-rouge">equals()</code> is updated when the fields are updated.</p>
 
-<p>We could use reflection to find everything which implements <code class="highlighter-rouge">equals()</code>. For
+<p>We could use reflection to find everything which implements <code class="language-plaintext highlighter-rouge">equals()</code>. For
 each implementation, ensure it’s annotated with a new annotation which includes
-the <code class="highlighter-rouge">serialVersionUID</code> of the type when it was generated, and then check that
-matches the current <code class="highlighter-rouge">serialVersionUID</code>. Whenever the fields change, so does
-the <code class="highlighter-rouge">serialVersionUID</code> and the test requires the method be re-generated.</p>
+the <code class="language-plaintext highlighter-rouge">serialVersionUID</code> of the type when it was generated, and then check that
+matches the current <code class="language-plaintext highlighter-rouge">serialVersionUID</code>. Whenever the fields change, so does
+the <code class="language-plaintext highlighter-rouge">serialVersionUID</code> and the test requires the method be re-generated.</p>
 
-<p>This wouldn’t test that the <code class="highlighter-rouge">equals()</code> method is <em>correct</em>, just that it’s based
+<p>This wouldn’t test that the <code class="language-plaintext highlighter-rouge">equals()</code> method is <em>correct</em>, just that it’s based
 on the current fields of the class. But it’s easy to build, and it solves our
-actual problem: how to keep the <code class="highlighter-rouge">equals()</code> method correct when changing fields.</p>
+actual problem: how to keep the <code class="language-plaintext highlighter-rouge">equals()</code> method correct when changing fields.</p>
 
 <h3 id="static-generation">Static generation</h3>
 
@@ -247,11 +247,11 @@ the documented types.</p>
 language, such as Kotlin, Scala, or Haskell (using Frege). After all, that’s
 just treating building the other language in the pipeline as a generator of JVM
 bytecode, and we’ve already referenced how those languages give us a sensible
-implementation of <code class="highlighter-rouge">equals()</code> for free.</p>
+implementation of <code class="language-plaintext highlighter-rouge">equals()</code> for free.</p>
 
 <p>Taking such an approach would mean that any data types generated through
-such steps would always have an up-to-date <code class="highlighter-rouge">equals()</code> method: any changes to the
-data type would automatically be applied to the <code class="highlighter-rouge">equals()</code> implementation.</p>
+such steps would always have an up-to-date <code class="language-plaintext highlighter-rouge">equals()</code> method: any changes to the
+data type would automatically be applied to the <code class="language-plaintext highlighter-rouge">equals()</code> implementation.</p>
 
 <p>One thing worth noting is that these approaches do their generation as a
 separate process to the Java compilation, and therefore have to occur before
@@ -259,19 +259,19 @@ compilation, in order to be referenced by the code. That means they can’t refe
 to our main codebase.</p>
 
 <p>There are also tools like Lombok which allow us to include data types in our
-main Java codebase without implementing <code class="highlighter-rouge">equals()</code>, and allowing the compiler
+main Java codebase without implementing <code class="language-plaintext highlighter-rouge">equals()</code>, and allowing the compiler
 plugin to derive the implementation for us.</p>
 
 <h3 id="dynamic-generation">Dynamic generation</h3>
 
 <p>Maybe we’re just taking the wrong approach here. Instead of relying on our
-implementation of <code class="highlighter-rouge">equals()</code> being correct at build time, we should find a way
+implementation of <code class="language-plaintext highlighter-rouge">equals()</code> being correct at build time, we should find a way
 of doing it correctly at runtime. Maybe we’re better off reflecting over the
 fields of the class and checking them for equality rather than relying on
 anything as prescriptive as <em>code</em>.</p>
 
-<p>Tools exist for this: for example, Apache’s <code class="highlighter-rouge">EqualsBuilder</code> has a
-<code class="highlighter-rouge">reflectiveEquals()</code> method, which looks at whatever the class looks like
+<p>Tools exist for this: for example, Apache’s <code class="language-plaintext highlighter-rouge">EqualsBuilder</code> has a
+<code class="language-plaintext highlighter-rouge">reflectiveEquals()</code> method, which looks at whatever the class looks like
 at the time it’s invoked. Not only is this guaranteed to take into account
 the structure of the data class you’re actually running, it’s also concise,
 reducing the amount of code the maintainer needs to consider.</p>
@@ -293,7 +293,7 @@ consistent, simpler, and therefore easier to maintain.</p>
 <p>There’s a fundamental difference here between the two overarching categories of
 analysis (be it static or dynamic) and generation (be it static, dynamic, or
 transglottal): <em>generation requires awareness</em>. You can build your data types
-using Lombok, or with <code class="highlighter-rouge">reflectiveEquals()</code>, or in a separate library, and then
+using Lombok, or with <code class="language-plaintext highlighter-rouge">reflectiveEquals()</code>, or in a separate library, and then
 one day a new developer on the team builds a simple data type and either isn’t
 aware of the agreed approach or just overlooks it.</p>
 
@@ -335,7 +335,7 @@ situation. There are approaches to ensuring that’s not a blocker, but they
 have consequences - for example, you can exempt given types from a given check,
 but then you have no protection in the case of future maintenance of that type.</p>
 
-<p>For something as general as validating <code class="highlighter-rouge">equals()</code>, even if it’s expensive to
+<p>For something as general as validating <code class="language-plaintext highlighter-rouge">equals()</code>, even if it’s expensive to
 develop, <em>this only ever has to be developed once, and not necessarily by us</em>.
 Often, a pre-existing plugin exists somewhere, and if not, then if we develop it,
 others can benefit in turn from our labours. This helps mitigate the first point.</p>
@@ -372,7 +372,7 @@ or ability to hire.</p>
 <p>A perfect solution doesn’t exist. Each category has its own characteristic
 issues, and each solution within that category adds more. It’s worth asking
 whether the benefits of any of these solutions outweigh their costs - whether
-just reminding the team to be mindful of updating <code class="highlighter-rouge">equals()</code> is, actually, the
+just reminding the team to be mindful of updating <code class="language-plaintext highlighter-rouge">equals()</code> is, actually, the
 best solution.</p>
 
 <p>I would however argue that analytic approaches are woefully underused in
@@ -403,7 +403,7 @@ something everyone could benefit from being better at.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

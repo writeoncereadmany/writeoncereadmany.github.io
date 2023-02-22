@@ -116,17 +116,17 @@ functions. I’m also concerned about overloading of <em>syntax</em>.</p>
 
 <!--more-->
 
-<p>For example, in Java, parens <code class="highlighter-rouge">()</code> are used in two contexts: method invocation and
-precedence of (eg arithmetic) sub-expressions. The period <code class="highlighter-rouge">.</code> is used in two
+<p>For example, in Java, parens <code class="language-plaintext highlighter-rouge">()</code> are used in two contexts: method invocation and
+precedence of (eg arithmetic) sub-expressions. The period <code class="language-plaintext highlighter-rouge">.</code> is used in two
 contexts: a separator for floating-point numerals, and field/method access on
-objects. Angle brackets <code class="highlighter-rouge">&lt;&gt;</code> are used individually to delimit type arguments,
+objects. Angle brackets <code class="language-plaintext highlighter-rouge">&lt;&gt;</code> are used individually to delimit type arguments,
 and also as the less-than and greater-than mathematical operators.</p>
 
 <p>I don’t want to do that. It makes code much simpler and clearer when a given
 symbol can only mean one thing. There are four sorts of grouping: arguments,
 groups, objects, and precedence - and a standard ASCII keyboard
-has three sets of brackets: <code class="highlighter-rouge">{}</code>, <code class="highlighter-rouge">[]</code> and <code class="highlighter-rouge">()</code> (excluding <code class="highlighter-rouge">&lt;&gt;</code>, on the basis
-we value <code class="highlighter-rouge">&lt;</code> and <code class="highlighter-rouge">&gt;</code> higher as mathematical operators).</p>
+has three sets of brackets: <code class="language-plaintext highlighter-rouge">{}</code>, <code class="language-plaintext highlighter-rouge">[]</code> and <code class="language-plaintext highlighter-rouge">()</code> (excluding <code class="language-plaintext highlighter-rouge">&lt;&gt;</code>, on the basis
+we value <code class="language-plaintext highlighter-rouge">&lt;</code> and <code class="language-plaintext highlighter-rouge">&gt;</code> higher as mathematical operators).</p>
 
 <p>This gives us two dilemmas. The first is what to use where; the second is we
 have more use-cases than tools available.</p>
@@ -134,45 +134,45 @@ have more use-cases than tools available.</p>
 <p>In terms of what gets first pick of the cherry, there’s a symbology which has
 priority over any programming conventions - and that’s maths. Regardless of in what
 context we’ll be using whatever language Minima develops into, we’ll need to
-support basic arithmetic. That means the basic set of operators: <code class="highlighter-rouge">+</code>, <code class="highlighter-rouge">-</code>, <code class="highlighter-rouge">*</code>,
-<code class="highlighter-rouge">/</code>, <code class="highlighter-rouge">=</code>, <code class="highlighter-rouge">&lt;</code>, <code class="highlighter-rouge">&gt;</code>, and <code class="highlighter-rouge">()</code> for precedence. That’s also how parentheses are
+support basic arithmetic. That means the basic set of operators: <code class="language-plaintext highlighter-rouge">+</code>, <code class="language-plaintext highlighter-rouge">-</code>, <code class="language-plaintext highlighter-rouge">*</code>,
+<code class="language-plaintext highlighter-rouge">/</code>, <code class="language-plaintext highlighter-rouge">=</code>, <code class="language-plaintext highlighter-rouge">&lt;</code>, <code class="language-plaintext highlighter-rouge">&gt;</code>, and <code class="language-plaintext highlighter-rouge">()</code> for precedence. That’s also how parentheses are
 used generally (in English): to define subclauses, evaluated in their own right
 and then incorporated into the larger context.</p>
 
 <p>More than anything, that’s what readers are used to believing parentheses are <em>for</em>.</p>
 
 <p>That leaves arguments, groups and objects. Groups, or blocks, generally use
-one of two syntaxes: <code class="highlighter-rouge">{}</code> in curly-brace languages, and significant whitespace
+one of two syntaxes: <code class="language-plaintext highlighter-rouge">{}</code> in curly-brace languages, and significant whitespace
 in languages like Python and Haskell. Objects and classes generally use one of
-two syntaxes: <code class="highlighter-rouge">{}</code> in curly-brace languages, and significant whitespace in others.</p>
+two syntaxes: <code class="language-plaintext highlighter-rouge">{}</code> in curly-brace languages, and significant whitespace in others.</p>
 
 <p>This makes one decision easy: what to use for arguments. We don’t have anything
-competing for <code class="highlighter-rouge">[]</code>, so we can use that there. Generally, languages use <code class="highlighter-rouge">[]</code> for
+competing for <code class="language-plaintext highlighter-rouge">[]</code>, so we can use that there. Generally, languages use <code class="language-plaintext highlighter-rouge">[]</code> for
 indexing into arrays, but we don’t have arrays or lists as a language-level
 concept.</p>
 
-<p>So let’s get back to <code class="highlighter-rouge">{}</code> - who gets that, groups or objects? Fortunately, there’s
+<p>So let’s get back to <code class="language-plaintext highlighter-rouge">{}</code> - who gets that, groups or objects? Fortunately, there’s
 a cool trick here that makes our problem go away. If we define a group as being
 a sequence of expressions which are all evaluated, returning the value of the
 last expression (which we did), then <em>a group of one expression is equivalent
 to a parenthesised expression</em>.</p>
 
-<p>That leaves <code class="highlighter-rouge">{}</code> free for objects.</p>
+<p>That leaves <code class="language-plaintext highlighter-rouge">{}</code> free for objects.</p>
 
-<p>We don’t want to overload <code class="highlighter-rouge">.</code>, and there isn’t really a sensible alternative for
-numeric literals, so it’s out for object field access. So we use <code class="highlighter-rouge">:</code> instead.</p>
+<p>We don’t want to overload <code class="language-plaintext highlighter-rouge">.</code>, and there isn’t really a sensible alternative for
+numeric literals, so it’s out for object field access. So we use <code class="language-plaintext highlighter-rouge">:</code> instead.</p>
 
 <h3 id="syntactic-symmetry">Syntactic symmetry</h3>
 
 <p>Now, that means that technically speaking, we have two overloaded sets of symbols.
-The <code class="highlighter-rouge">[]</code> square brackets can mean something is an <em>argument</em> list or a <em>parameter</em>
-list, and the <code class="highlighter-rouge">:</code> operator can be used both to <em>define</em> a key-value pair in an
+The <code class="language-plaintext highlighter-rouge">[]</code> square brackets can mean something is an <em>argument</em> list or a <em>parameter</em>
+list, and the <code class="language-plaintext highlighter-rouge">:</code> operator can be used both to <em>define</em> a key-value pair in an
 object and to <em>access</em> an object’s field via the key.</p>
 
 <p>In each of these cases, though, whilst they’re distinct syntactic constructs,
-they’re symmetrical views on the same concept. Square brackets <code class="highlighter-rouge">[]</code> can be used to
+they’re symmetrical views on the same concept. Square brackets <code class="language-plaintext highlighter-rouge">[]</code> can be used to
 define or invoke a function, but they always refer to the input to a function.
-The colon <code class="highlighter-rouge">:</code> can be used to define or access a field, but it’s always defining
+The colon <code class="language-plaintext highlighter-rouge">:</code> can be used to define or access a field, but it’s always defining
 how a given value relates to an object.</p>
 
 <p>That’s not an ambiguity. Quite the opposite: it reinforces the syntax.</p>
@@ -185,21 +185,21 @@ them, so why should we?</p>
 
 <p>Well, let’s take this function as an example:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [] =&gt; println["Hello, World!"]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [] =&gt; println["Hello, World!"]
 </code></pre></div></div>
 
 <p>In the point-free style, how would you invoke such a function? It’d just be</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet
 </code></pre></div></div>
 
 <p>And how would you reference such a function to, for example, pass it into
 another function as a callback? It’d just be:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maybeDoSomething[greet]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>maybeDoSomething[greet]
 </code></pre></div></div>
 
-<p>But when we evaluate <code class="highlighter-rouge">greet</code> to pass it into <code class="highlighter-rouge">maybeDoSomething</code>, that’s an
+<p>But when we evaluate <code class="language-plaintext highlighter-rouge">greet</code> to pass it into <code class="language-plaintext highlighter-rouge">maybeDoSomething</code>, that’s an
 invocation, right? Or is it? <em>How should the language know?</em></p>
 
 <p>Herein lies the problem. The point free style is fine when there’s no difference
@@ -214,8 +214,8 @@ result after invoking. Minima is, quite deliberately, not pure.</p>
 to deal with it, which will come up as we build atop Minima.</p>
 
 <p>In a language which is not point-free, it’s easy to differentiate between
-an invocation of a zero-arg method, and an uninvoked zero-arg method: <code class="highlighter-rouge">greet[]</code>
-is an invocation, and <code class="highlighter-rouge">greet</code> is a function.</p>
+an invocation of a zero-arg method, and an uninvoked zero-arg method: <code class="language-plaintext highlighter-rouge">greet[]</code>
+is an invocation, and <code class="language-plaintext highlighter-rouge">greet</code> is a function.</p>
 
 <p>Plus, the shortage of brackets isn’t really a problem, not since we understood
 how parenthesisation can be viewed as a special case of grouping.</p>
@@ -224,7 +224,7 @@ how parenthesisation can be viewed as a special case of grouping.</p>
 
 <p>One thing you can’t do in Minima is this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print[2 + 5]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print[2 + 5]
 </code></pre></div></div>
 
 <p>That’s because there’s no syntactic support for mathematical operators. It’s
@@ -232,12 +232,12 @@ not super complicated to add that - and indeed, that’ll be one of the features
 we add to Minima in the future. Never fear, though, because we can still do
 maths. It’s just not quite as readable:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print[2:plus[5]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print[2:plus[5]]
 </code></pre></div></div>
 
 <p>Numbers are objects, which means they can have fields - and fields can be
-methods. Numbers support the following methods: <code class="highlighter-rouge">plus</code>, <code class="highlighter-rouge">minus</code>, <code class="highlighter-rouge">multiplyBy</code>,
-<code class="highlighter-rouge">divideBy</code>, and <code class="highlighter-rouge">show</code> - which returns a String representation of the number.</p>
+methods. Numbers support the following methods: <code class="language-plaintext highlighter-rouge">plus</code>, <code class="language-plaintext highlighter-rouge">minus</code>, <code class="language-plaintext highlighter-rouge">multiplyBy</code>,
+<code class="language-plaintext highlighter-rouge">divideBy</code>, and <code class="language-plaintext highlighter-rouge">show</code> - which returns a String representation of the number.</p>
 
 <p>They don’t support any comparison operators right at the moment. We’re probably
 going to need those, but they open up some interesting questions for another
@@ -248,20 +248,20 @@ day.</p>
 <p>It’s important not just to avoid overloading syntax, but also to avoid
 overloading <em>expectations</em> on syntax.</p>
 
-<p>I get particularly annoyed with the approach taken to the use of <code class="highlighter-rouge">=</code>. Many
-languages use <code class="highlighter-rouge">=</code> for assignment, which means they end up using <code class="highlighter-rouge">==</code> (and
-sometimes even <code class="highlighter-rouge">===</code> too!) for testing for equality.</p>
+<p>I get particularly annoyed with the approach taken to the use of <code class="language-plaintext highlighter-rouge">=</code>. Many
+languages use <code class="language-plaintext highlighter-rouge">=</code> for assignment, which means they end up using <code class="language-plaintext highlighter-rouge">==</code> (and
+sometimes even <code class="language-plaintext highlighter-rouge">===</code> too!) for testing for equality.</p>
 
 <p>One language which gets this right is Prolog, where testing for equality and
 assignment are just different views on the same operation: unification. It’s
 reasonable to use one symbol for one concept! And that’s what lies closest
-to the meaning of the <code class="highlighter-rouge">=</code> symbol as used in mathematics: these two things are
+to the meaning of the <code class="language-plaintext highlighter-rouge">=</code> symbol as used in mathematics: these two things are
 conceptually equivalent.</p>
 
-<p>My approach is to use <code class="highlighter-rouge">=</code> for testing for equality (although that’s not
-syntactically supported yet, it will be). For assignment, instead, I use <code class="highlighter-rouge">is</code>.
-This is, like much of Minima, forward-looking: assignment uses <code class="highlighter-rouge">is</code>, so
-<em>re</em>-assignment (not currently supported) can use <code class="highlighter-rouge">becomes</code>, because updating
+<p>My approach is to use <code class="language-plaintext highlighter-rouge">=</code> for testing for equality (although that’s not
+syntactically supported yet, it will be). For assignment, instead, I use <code class="language-plaintext highlighter-rouge">is</code>.
+This is, like much of Minima, forward-looking: assignment uses <code class="language-plaintext highlighter-rouge">is</code>, so
+<em>re</em>-assignment (not currently supported) can use <code class="language-plaintext highlighter-rouge">becomes</code>, because updating
 a variable in-place is fundamentally different to creating a new variable and
 deserves distinct syntax.</p>
 
@@ -289,7 +289,7 @@ opportunity to <em>really think about what they’re doing</em> when they use it
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

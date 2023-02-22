@@ -92,17 +92,17 @@ ruminations on software development
             <p>As always, it started with a bug. We’d been extending the capabilities
 of one of our services, to allow filtering deals on a new concept. While
 introducing that new concept, some classes had new fields added. One of those
-classes implemented <code class="highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
+classes implemented <code class="language-plaintext highlighter-rouge">equals()</code>, but the method wasn’t updated to account for
 the new field.</p>
 
-<p>The first-order fix was easy: just re-generate the <code class="highlighter-rouge">equals()</code> method. Trying to
+<p>The first-order fix was easy: just re-generate the <code class="language-plaintext highlighter-rouge">equals()</code> method. Trying to
 protect against this class of problem reoccurring, though, is a really
 interesting question.</p>
 
 <p>Not because it’s difficult to come up with a broader solution, but because
 so many solutions are available. And they’re all terrible in different ways.</p>
 
-<p>But first, let’s talk about <code class="highlighter-rouge">equals()</code>, and understand our problem.</p>
+<p>But first, let’s talk about <code class="language-plaintext highlighter-rouge">equals()</code>, and understand our problem.</p>
 
 
         </div>
@@ -114,7 +114,7 @@ so many solutions are available. And they’re all terrible in different ways.</
         <h1><a href="/2017/03/safety-subtypes-and-inference">Mar 19, 2017 - Safety, subtypes and inference</a></h1>
         
         <div class="content">
-            <p>Using <code class="highlighter-rouge">Result</code> to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to <em>allow</em> sensible handling of them.</p>
+            <p>Using <code class="language-plaintext highlighter-rouge">Result</code> to model potentially-failing-operations is safe in two ways. Firstly, it requires you to be explicit about how you’re handling failure cases. Secondly, it requires you to maintain a consistent model of what those successes and failures are, in order to <em>allow</em> sensible handling of them.</p>
 
 
         </div>
@@ -126,14 +126,14 @@ so many solutions are available. And they’re all terrible in different ways.</
         <h1><a href="/2017/02/failure-is-not-right">Feb 27, 2017 - Failure is not Right</a></h1>
         
         <div class="content">
-            <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="highlighter-rouge">Either</code> is:</p>
+            <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="language-plaintext highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="language-plaintext highlighter-rouge">Either</code> is:</p>
 
 <div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
 </code></pre></div></div>
 
-<p>All this means is an instance of <code class="highlighter-rouge">Either a b</code> is a <code class="highlighter-rouge">Left a</code>, or it’s a <code class="highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
+<p>All this means is an instance of <code class="language-plaintext highlighter-rouge">Either a b</code> is a <code class="language-plaintext highlighter-rouge">Left a</code>, or it’s a <code class="language-plaintext highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
 
-<p>What that means is: for an <code class="highlighter-rouge">Either a b</code>, the success type is <code class="highlighter-rouge">b</code> and the failure type is <code class="highlighter-rouge">a</code>. This is true for two reasons.</p>
+<p>What that means is: for an <code class="language-plaintext highlighter-rouge">Either a b</code>, the success type is <code class="language-plaintext highlighter-rouge">b</code> and the failure type is <code class="language-plaintext highlighter-rouge">a</code>. This is true for two reasons.</p>
 
 
         </div>
@@ -160,7 +160,7 @@ so many solutions are available. And they’re all terrible in different ways.</
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

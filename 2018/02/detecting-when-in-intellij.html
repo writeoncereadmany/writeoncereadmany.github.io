@@ -97,14 +97,14 @@ so I thought it would be worth sharing.</p>
 <p>But first of all, why on earth would you ever care?</p>
 
 <p>When I joined the team at Unruly, we had a suite of acceptance tests for our
-exchange, each of which called <code class="highlighter-rouge">main()</code> at the beginning of the test so we had
+exchange, each of which called <code class="language-plaintext highlighter-rouge">main()</code> at the beginning of the test so we had
 something to test against. That meant we could just invoke the test from within
 IntelliJ, debug the exchange from a test, etc. Everything was nice and convenient.</p>
 
 <p>Some things, however, were too convenient. As we were starting the exchange
 programmatically, we could do things like inject test doubles, replace statics,
 and generally fool around with the guts of the exchange. We weren’t actually just
-invoking <code class="highlighter-rouge">main()</code>, we were constructing a test exchange and starting that.
+invoking <code class="language-plaintext highlighter-rouge">main()</code>, we were constructing a test exchange and starting that.
 This meant that our acceptance tests weren’t really acceptance tests - and that
 isn’t just a semantic argument.</p>
 
@@ -196,12 +196,12 @@ and as part of a suite.</p>
 looked in the system properties to see if, y’know, <em>maybe</em> there’s something there
 that tells me this is being run from IntelliJ?</p>
 
-<p>And there was. The <code class="highlighter-rouge">sun.java.command</code> property is set to
-<code class="highlighter-rouge">com.intellij.rt.execution.junit.JUnitStarter &lt;...various settings...&gt;</code> when run
+<p>And there was. The <code class="language-plaintext highlighter-rouge">sun.java.command</code> property is set to
+<code class="language-plaintext highlighter-rouge">com.intellij.rt.execution.junit.JUnitStarter &lt;...various settings...&gt;</code> when run
 from IntelliJ. So that gives me my function:</p>
 
 <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">isRunningInIntelliJ</span><span class="o">()</span> <span class="o">{</span>
-  <span class="k">return</span> <span class="n">System</span><span class="o">.</span><span class="na">getProperty</span><span class="o">(</span><span class="s">"sun.java.command"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="na">contains</span><span class="o">(</span><span class="s">"intellij"</span><span class="o">);</span>
+  <span class="k">return</span> <span class="nc">System</span><span class="o">.</span><span class="na">getProperty</span><span class="o">(</span><span class="s">"sun.java.command"</span><span class="o">,</span> <span class="s">""</span><span class="o">).</span><span class="na">contains</span><span class="o">(</span><span class="s">"intellij"</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
@@ -235,7 +235,7 @@ embracing the hack.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

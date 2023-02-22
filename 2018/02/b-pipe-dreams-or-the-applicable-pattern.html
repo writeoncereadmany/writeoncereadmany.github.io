@@ -111,24 +111,24 @@ pipe - the functional approach starts to get much harder to read.</p>
 
 <p>Let’s take the example of the King of Spain’s Beard from the previous article:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
-  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
-  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
-  <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">beardColour</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span>
-    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+  <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
+  <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">beardColour</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span>
+    <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()));</span>
   <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>We can rewrite that using <code class="highlighter-rouge">MyOptional</code> and functions instead of methods:</p>
+<p>We can rewrite that using <code class="language-plaintext highlighter-rouge">MyOptional</code> and functions instead of methods:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">flatMap</span><span class="o">(</span><span class="n">king</span><span class="o">,</span> <span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">map</span><span class="o">(</span><span class="n">beard</span><span class="o">,</span> <span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">map</span><span class="o">(</span><span class="n">beardColour</span><span class="o">,</span> <span class="n">colour</span> <span class="o">-&gt;</span>
-    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">flatMap</span><span class="o">(</span><span class="n">king</span><span class="o">,</span> <span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">);</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">map</span><span class="o">(</span><span class="n">beard</span><span class="o">,</span> <span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">);</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">map</span><span class="o">(</span><span class="n">beardColour</span><span class="o">,</span> <span class="n">colour</span> <span class="o">-&gt;</span>
+    <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()));</span>
   <span class="k">return</span> <span class="nf">orElse</span><span class="o">(</span><span class="n">message</span><span class="o">,</span> <span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -139,11 +139,11 @@ readability and conciseness.</p>
 <p>However! We don’t leave code like this! We can clean up the code by inlining
 all these interstitial variables:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
       <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
                                    <span class="n">country</span><span class="o">,</span>
                                    <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
       <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
@@ -152,7 +152,7 @@ all these interstitial variables:</p>
 
 <p>But when we try to do that to our functional approach:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="nf">orElse</span><span class="o">(</span>
            <span class="n">map</span><span class="o">(</span>
              <span class="n">map</span><span class="o">(</span>
@@ -160,7 +160,7 @@ all these interstitial variables:</p>
                  <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">(),</span>
                  <span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">),</span>
                <span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">),</span>
-             <span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+             <span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
                                      <span class="n">country</span><span class="o">,</span>
                                      <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())),</span>
            <span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
@@ -172,34 +172,34 @@ all these interstitial variables:</p>
 <p>The problem here is that every time we inline, instead of building a sequence
 of operations, we’re nesting our calls. More clearly - this code:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">D</span> <span class="nf">getD</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">B</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="na">b</span><span class="o">();</span>
-  <span class="n">C</span> <span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="na">c</span><span class="o">();</span>
-  <span class="n">D</span> <span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">d</span><span class="o">();</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="no">D</span> <span class="nf">getD</span><span class="o">(</span><span class="no">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+  <span class="no">B</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="na">b</span><span class="o">();</span>
+  <span class="no">C</span> <span class="n">c</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="na">c</span><span class="o">();</span>
+  <span class="no">D</span> <span class="n">d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="na">d</span><span class="o">();</span>
   <span class="k">return</span> <span class="n">d</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>inlines to:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">D</span> <span class="nf">getD</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="no">D</span> <span class="nf">getD</span><span class="o">(</span><span class="no">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="na">b</span><span class="o">().</span><span class="na">c</span><span class="o">().</span><span class="na">d</span><span class="o">();</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>Whereas this:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">D</span> <span class="nf">getD</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">B</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
-  <span class="n">C</span> <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
-  <span class="n">D</span> <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="no">D</span> <span class="nf">getD</span><span class="o">(</span><span class="no">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+  <span class="no">B</span> <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">(</span><span class="n">a</span><span class="o">);</span>
+  <span class="no">C</span> <span class="n">c</span> <span class="o">=</span> <span class="n">c</span><span class="o">(</span><span class="n">b</span><span class="o">);</span>
+  <span class="no">D</span> <span class="n">d</span> <span class="o">=</span> <span class="n">d</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
   <span class="k">return</span> <span class="n">d</span><span class="o">;</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>inlines to:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">D</span> <span class="nf">getD</span><span class="o">(</span><span class="n">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="no">D</span> <span class="nf">getD</span><span class="o">(</span><span class="no">A</span> <span class="n">a</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="nf">d</span><span class="o">(</span><span class="n">c</span><span class="o">(</span><span class="n">b</span><span class="o">(</span><span class="n">a</span><span class="o">)));</span>
 <span class="o">}</span>
 </code></pre></div></div>
@@ -210,24 +210,24 @@ We can fix that, by introducing a function-infixing operation.</p>
 <p>Now, we’re working in Java here, so our tools are limited: that’s fine, we can
 do this with methods.</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="nf">MyOptional</span><span class="o">()</span> <span class="o">{}</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="n">E</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Present</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">empty</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Absent</span><span class="o">();</span> <span class="o">}</span>
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">);</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="no">E</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="nc">Present</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nf">empty</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="nc">Absent</span><span class="o">();</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">);</span>
 
-  <span class=blue><span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">R</span> <span class="nf">then</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">function</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">function</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="o">}</span></span>
+  <span class=blue><span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="no">R</span> <span class="nf">then</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">function</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="n">function</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="k">this</span><span class="o">);</span> <span class="o">}</span></span>
 
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Present</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">T</span> <span class="n">value</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="nf">Present</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Present</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="no">T</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Present</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
       <span class="k">return</span> <span class="n">whenPresent</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
     <span class="o">}</span>
   <span class="o">}</span>
 
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Absent</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Absent</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
       <span class="k">return</span> <span class="n">whenAbsent</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
     <span class="o">}</span>
   <span class="o">}</span>
@@ -240,39 +240,39 @@ we can pass the function into the object. As it happens, this is done in a
 chainable way.</p>
 
 <p>This does mean we need to rewrite our methods as higher-order functions: for
-example, <code class="highlighter-rouge">map()</code> goes from this:</p>
+example, <code class="language-plaintext highlighter-rouge">map()</code> goes from this:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>to this:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;,</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
-  <span class="k">return</span> <span class="n">maybe</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;,</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;&gt;</span> <span class="nf">map</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">return</span> <span class="n">maybe</span> <span class="o">-&gt;</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>But then it allows us to rewrite our code as follows:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">));</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">));</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">beardColour</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span>
-    <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">&gt;</span> <span class="n">king</span> <span class="o">=</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">();</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Beard</span><span class="o">&gt;</span> <span class="n">beard</span> <span class="o">=</span> <span class="n">king</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">));</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Color</span><span class="o">&gt;</span> <span class="n">beardColour</span> <span class="o">=</span> <span class="n">beard</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">));</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">message</span> <span class="o">=</span> <span class="n">beardColour</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span>
+    <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span> <span class="n">country</span><span class="o">,</span> <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())));</span>
   <span class="k">return</span> <span class="n">message</span><span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>Which then inlines to this:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
                                         <span class="n">country</span><span class="o">,</span>
                                         <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">));</span>
@@ -282,11 +282,11 @@ example, <code class="highlighter-rouge">map()</code> goes from this:</p>
 <p>Which is a <em>little</em> more verbose than the traditional method-chaining approach,
 but not that makes a big difference:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
       <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>
-      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
                                    <span class="n">country</span><span class="o">,</span>
                                    <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
       <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">);</span>
@@ -294,7 +294,7 @@ but not that makes a big difference:</p>
 </code></pre></div></div>
 
 <p>It’s certainly a darn sight better than trying to use functions <em>without</em> the
-<code class="highlighter-rouge">then()</code> method.</p>
+<code class="language-plaintext highlighter-rouge">then()</code> method.</p>
 
 <h3 id="functions-are-everywhere">Functions are everywhere!</h3>
 
@@ -302,36 +302,36 @@ but not that makes a big difference:</p>
 as there are a bunch of other places in modern Java where you’d want to use them.
 For example: streams. If we stop binding over the country in the example above:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
                                         <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">orElse</span><span class="o">(</span><span class="s">"Found a country which does not have a bearded monarch"</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>Then it’s easy to modify the method to take a <code class="highlighter-rouge">Stream&lt;Country&gt;</code>:</p>
+<p>Then it’s easy to modify the method to take a <code class="language-plaintext highlighter-rouge">Stream&lt;Country&gt;</code>:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">countries</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Country:</span><span class="o">:</span><span class="n">getMonarch</span><span class="o">)</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
                                         <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())))</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">orElse</span><span class="o">(</span><span class="s">"Found a country without a bearded monarch"</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>We just replace <code class="highlighter-rouge">then()</code> with <code class="highlighter-rouge">map()</code>, and it works in-place. We can’t do that so
+<p>We just replace <code class="language-plaintext highlighter-rouge">then()</code> with <code class="language-plaintext highlighter-rouge">map()</code>, and it works in-place. We can’t do that so
 easily with our method-chained example - we can turn our calls into lambdas:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">countries</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Country:</span><span class="o">:</span><span class="n">getMonarch</span><span class="o">)</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">monarch</span> <span class="o">-&gt;</span> <span class="n">monarch</span><span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">beard</span> <span class="o">-&gt;</span> <span class="n">beard</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">bc</span> <span class="o">-&gt;</span> <span class="n">bc</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">bc</span> <span class="o">-&gt;</span> <span class="n">bc</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
                                                 <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())))</span>
       <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">message</span> <span class="o">-&gt;</span> <span class="n">message</span><span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="s">"Found a country without a bearded monarch"</span><span class="o">));</span>
 <span class="o">}</span>
@@ -339,11 +339,11 @@ easily with our method-chained example - we can turn our calls into lambdas:</p>
 
 <p>Or we can nest the whole chain approach:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">countries</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">country</span> <span class="o">-&gt;</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
         <span class="o">.</span><span class="na">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">)</span>
         <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">)</span>
-        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
+        <span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"The king of %s has a %s beard"</span><span class="o">,</span>
                                      <span class="n">country</span><span class="o">,</span>
                                      <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">()))</span>
         <span class="o">.</span><span class="na">orElse</span><span class="o">(</span><span class="n">country</span> <span class="o">+</span> <span class="s">" does not have a bearded monarch"</span><span class="o">)</span>
@@ -353,40 +353,40 @@ easily with our method-chained example - we can turn our calls into lambdas:</p>
 
 <p>Or we could extract it and deal with it separately:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="n">Stream</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Stream</span><span class="o">&lt;</span><span class="n">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Country</span><span class="o">&gt;</span> <span class="n">countries</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">countries</span><span class="o">.</span><span class="na">map</span><span class="o">(</span><span class="k">this</span><span class="o">::</span><span class="n">describeKingsBeard</span><span class="o">);</span>
 <span class="o">}</span>
 
-<span class="kd">public</span> <span class="n">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="n">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="nc">String</span> <span class="nf">describeKingsBeard</span><span class="o">(</span><span class="nc">Country</span> <span class="n">country</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">country</span><span class="o">.</span><span class="na">getMonarch</span><span class="o">()</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">flatMap</span><span class="o">(</span><span class="nl">Person:</span><span class="o">:</span><span class="n">getBeard</span><span class="o">))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="nl">Beard:</span><span class="o">:</span><span class="n">getColour</span><span class="o">))</span>
-      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
+      <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">map</span><span class="o">(</span><span class="n">colour</span> <span class="o">-&gt;</span> <span class="nc">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"Found a king with a %s beard"</span><span class="o">,</span>
                                         <span class="n">colour</span><span class="o">.</span><span class="na">describe</span><span class="o">())))</span>
       <span class="o">.</span><span class="na">then</span><span class="o">(</span><span class="n">orElse</span><span class="o">(</span><span class="s">"Found a country which does not have a bearded monarch"</span><span class="o">));</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>Now, you may argue that none of these are that bad. The point is: you have to
-stop and think about how to make this work in the context of a <code class="highlighter-rouge">Stream</code>, whereas
+stop and think about how to make this work in the context of a <code class="language-plaintext highlighter-rouge">Stream</code>, whereas
 with the functional approach you’re already thinking in terms of the higher-order
-functions that a <code class="highlighter-rouge">Stream</code> needs.</p>
+functions that a <code class="language-plaintext highlighter-rouge">Stream</code> needs.</p>
 
 <h3 id="universal-piping">Universal Piping</h3>
 
-<p>There’s another approach that could be taken here: instead of putting a <code class="highlighter-rouge">then()</code>
-method on classes, we could just create a wrapper with a <code class="highlighter-rouge">then()</code> method:</p>
+<p>There’s another approach that could be taken here: instead of putting a <code class="language-plaintext highlighter-rouge">then()</code>
+method on classes, we could just create a wrapper with a <code class="language-plaintext highlighter-rouge">then()</code> method:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Piper</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-  <span class="kd">private</span> <span class="kd">final</span> <span class="n">T</span> <span class="n">element</span><span class="o">;</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Piper</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">final</span> <span class="no">T</span> <span class="n">element</span><span class="o">;</span>
 
-  <span class="kd">public</span> <span class="n">Piper</span><span class="o">&lt;&gt;(</span><span class="n">T</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">element</span> <span class="o">=</span> <span class="n">element</span><span class="o">;</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="nc">Piper</span><span class="o">&lt;&gt;(</span><span class="no">T</span> <span class="n">element</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">element</span> <span class="o">=</span> <span class="n">element</span><span class="o">;</span> <span class="o">}</span>
 
-  <span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">Piper</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">then</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="n">Piper</span><span class="o">&lt;&gt;(</span><span class="n">f</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
+  <span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nc">Piper</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">then</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">f</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nc">Piper</span><span class="o">&lt;&gt;(</span><span class="n">f</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
   <span class="o">}</span>
 
-  <span class="kd">public</span> <span class="n">T</span> <span class="nf">resolve</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">element</span><span class="o">;</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="no">T</span> <span class="nf">resolve</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="n">element</span><span class="o">;</span> <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
@@ -394,7 +394,7 @@ method on classes, we could just create a wrapper with a <code class="highlighte
 But this provides a very important function: it allows us to chain custom operations
 on arbitrary objects. That’s useful when wanting to chain on types you don’t control,
 but it turns out to be pretty much essential for generic programming: this will
-become apparent once we get into railway-oriented programming with <code class="highlighter-rouge">Result</code>.</p>
+become apparent once we get into railway-oriented programming with <code class="language-plaintext highlighter-rouge">Result</code>.</p>
 
 <p>Speaking of which: maybe it’s time to move on from carpet-oriented programming to
 the good stuff.</p>
@@ -420,7 +420,7 @@ the good stuff.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

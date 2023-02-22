@@ -110,9 +110,9 @@ array or vector. But we don’t have access to pointers in Minima, and we don’
 want to introduce new builtins.</p>
 
 <p>What about a linked list, then? A linked list is nice and simple: it’s either
-a <code class="highlighter-rouge">node</code>, containing an element and a tail (the rest of the linked list), or it’s
-the empty list, <code class="highlighter-rouge">nil</code>. So we could implement it like so:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; {
+a <code class="language-plaintext highlighter-rouge">node</code>, containing an element and a tail (the rest of the linked list), or it’s
+the empty list, <code class="language-plaintext highlighter-rouge">nil</code>. So we could implement it like so:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; {
   head: head,
   tail: tail
 }
@@ -120,11 +120,11 @@ the empty list, <code class="highlighter-rouge">nil</code>. So we could implemen
 nil is {}
 </code></pre></div></div>
 <p>And then create a list as follows:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list is node[1, node[2, node[3, node[4, nil]]]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list is node[1, node[2, node[3, node[4, nil]]]]
 </code></pre></div></div>
 <p>We <em>could</em> do that, but we’re going to hit a problem: when we iterate over this
-list, how do we know when we reach the end? How do we detect we’ve hit <code class="highlighter-rouge">nil</code>?
-We could implement some sort of <code class="highlighter-rouge">equals</code> method, but that requires a bunch of
+list, how do we know when we reach the end? How do we detect we’ve hit <code class="language-plaintext highlighter-rouge">nil</code>?
+We could implement some sort of <code class="language-plaintext highlighter-rouge">equals</code> method, but that requires a bunch of
 other constructs like a boolean type and an if statement and that all sounds
 terribly heavyweight just to reverse a string (although, to be fair, I suspect
 they would be constructs we could easily reuse in other situations).</p>
@@ -133,7 +133,7 @@ they would be constructs we could easily reuse in other situations).</p>
 we could represent data as functions in the last post. This approach becomes
 particularly powerful when we want to represent data with multiple shapes, like
 a list. For example:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; [onItem, onEmpty] =&gt; onItem[head, tail]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; [onItem, onEmpty] =&gt; onItem[head, tail]
 nil is [onItem, onEmpty] =&gt; onEmpty[]
 
 numbers is node[1, node[2, node[3, node[4, nil]]]]
@@ -141,7 +141,7 @@ numbers is node[1, node[2, node[3, node[4, nil]]]]
 <p>Here, a list is a function which takes two functions: the first one is invoked
 if there are any elements, and the second is invoked if it’s empty. So, for
 example, we can implement some very simple functions:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>isEmpty is [list] =&gt; list[
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>isEmpty is [list] =&gt; list[
   [h, t] =&gt; "nonempty",
   [] =&gt; "empty"
 ]
@@ -153,7 +153,7 @@ head is [list, default] =&gt; list[
 </code></pre></div></div>
 <p>So far, so good. Before we reverse this list, it would be good to be able to
 see what’s in the list - let’s find a way of printing it. Hmm…</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
   contents is list[
     [h, t] =&gt; h:show[]:concat[???],
     [] =&gt; ""
@@ -165,7 +165,7 @@ see what’s in the list - let’s find a way of printing it. Hmm…</p>
 “list[]”, and the contents are empty if the list is empty, and the contents
 start with the head if it’s non-empty. If it’s non-empty, we then want to recurse
 on the tail, so maybe something like:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
   content is [l] =&gt; l[
     [h, t] =&gt; head:show[]:concat[", "]:concat[content[t]],
     [] =&gt; ""
@@ -174,16 +174,16 @@ on the tail, so maybe something like:</p>
 )
 </code></pre></div></div>
 <p>And this would work - with a trailing comma, but whatever - if it weren’t for
-one thing. We can’t recurse like this, because <code class="highlighter-rouge">content</code> isn’t a named function.
-The function we assign to <code class="highlighter-rouge">content</code> only has access to variables which exist at
-the time we define it - but the <em>variable</em> <code class="highlighter-rouge">content</code> doesn’t exist until we
-assign the function to it, which is necessarily after defining it. As <code class="highlighter-rouge">content</code>
+one thing. We can’t recurse like this, because <code class="language-plaintext highlighter-rouge">content</code> isn’t a named function.
+The function we assign to <code class="language-plaintext highlighter-rouge">content</code> only has access to variables which exist at
+the time we define it - but the <em>variable</em> <code class="language-plaintext highlighter-rouge">content</code> doesn’t exist until we
+assign the function to it, which is necessarily after defining it. As <code class="language-plaintext highlighter-rouge">content</code>
 isn’t in scope within its body, we can’t call it.</p>
 
 <p>Fortunately, we don’t need named functions for recursion: there are constructs
 which do it for us. In this case, we need the y-combinator, which in Minima looks
 a little like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>showList is [list] =&gt; (
   content is [l, cont] =&gt; l[
     [h, t] =&gt; h:show[]:concat[", "]:concat[cont[t, cont]],
     [] =&gt; ""
@@ -198,7 +198,7 @@ function down for the next invocation.</p>
 
 <p>Let’s give the whole program a try:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; [onItem, onEmpty] =&gt; onItem[head, tail]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>node is [head, tail] =&gt; [onItem, onEmpty] =&gt; onItem[head, tail]
 nil is [onItem, onEmpty] =&gt; onEmpty[]
 
 numbers is node[1, node[2, node[3, node[4, nil]]]]
@@ -213,7 +213,7 @@ showList is [list] =&gt; (
 
 print[showList[numbers]]
 </code></pre></div></div>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list[1.0, 2.0, 3.0, 4.0, ]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list[1.0, 2.0, 3.0, 4.0, ]
 &gt;
 </code></pre></div></div>
 
@@ -221,7 +221,7 @@ print[showList[numbers]]
 we start off with an empty list, and as we iterate along the list, we put each
 element on the front of our list, and when we reach the end, we return what
 we’ve built. Seems simple enough:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reverse is [list] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reverse is [list] =&gt; (
   inner is [l, acc, cont] =&gt; l[
     [h, t] =&gt; cont[t, node[h, acc], cont],
     [] =&gt; acc
@@ -231,7 +231,7 @@ we’ve built. Seems simple enough:</p>
 
 print[showList[reverse[numbers]]]
 </code></pre></div></div>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list[4.0, 3.0, 2.0, 1.0, ]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>list[4.0, 3.0, 2.0, 1.0, ]
 &gt;
 </code></pre></div></div>
 
@@ -245,7 +245,7 @@ print[showList[reverse[numbers]]]
 
 <p>One other thing: it could be stated here that when we’re building recursive
 functions like this, we can build them one of two ways:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>obviousReverse is [list] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>obviousReverse is [list] =&gt; (
   inner is [l, acc, cont] =&gt; l[
     [h, t] =&gt; cont[t, node[h, acc], cont],
     [] =&gt; acc
@@ -261,8 +261,8 @@ efficientReverse is (
   [list] =&gt; inner[list, nil, inner]
 )
 </code></pre></div></div>
-<p>The difference here is that <code class="highlighter-rouge">efficientReverse</code> only creates the inner function
-once, whereas <code class="highlighter-rouge">obviousReverse</code> creates it on each invocation. A few quick
+<p>The difference here is that <code class="language-plaintext highlighter-rouge">efficientReverse</code> only creates the inner function
+once, whereas <code class="language-plaintext highlighter-rouge">obviousReverse</code> creates it on each invocation. A few quick
 thoughts on performance optimisations like this:</p>
 <ul>
   <li>do not optimise Minima code for performance</li>
@@ -280,7 +280,7 @@ thoughts on performance optimisations like this:</p>
 count upwards from 1, only if a number is divisible by 3 you replace it with
 “Fizz”, if it’s divisible by 5 you replace it with “Buzz”, and if both, you
 replace it with “FizzBuzz”. So, for example, playing it up to 20 would yield:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1
 2
 Fizz
 4
@@ -305,7 +305,7 @@ Buzz
 functions, conditionals, loops and so on.</p>
 
 <p>Let’s start off simple: just print out the numbers 1 to 20.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
   inner is [current, max, cont] =&gt; (
     print[current]
     cont[current:plus[1], max, cont]
@@ -320,20 +320,20 @@ numbers forever (or until we run out of stack), as we don’t have a condition t
 stop it looping.</p>
 
 <p>We could be more specific: in Minima, we don’t have conditions. And now we need
-them. We’re going to try to avoid introducing a builtin <code class="highlighter-rouge">boolean</code> type, so let’s
+them. We’re going to try to avoid introducing a builtin <code class="language-plaintext highlighter-rouge">boolean</code> type, so let’s
 go back to functions-as-data.</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>true is [ifTrue, ifFalse] =&gt; ifTrue[]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>true is [ifTrue, ifFalse] =&gt; ifTrue[]
 false is [ifTrue, ifFalse] =&gt; ifFalse[]
 
 print[true[[] =&gt; "yay", [] =&gt; "nay"]]
 print[false[[] =&gt; "yarp", [] =&gt; "narp"]]
 </code></pre></div></div>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yay
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>yay
 narp
 &gt;
 </code></pre></div></div>
 <p>Depending on what we like syntactically, we could opt do something like this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if[cond, actions] =&gt; cond[actions:then[], actions:else[]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if[cond, actions] =&gt; cond[actions:then[], actions:else[]]
 
 statement is if[true, {
   then: [] =&gt; "yay",
@@ -343,13 +343,13 @@ statement is if[true, {
 print[statement]
 </code></pre></div></div>
 <p>There’s a lot we could do. The long and short of this is that we can introduce
-decision-making functions which can sensibly be described as <code class="highlighter-rouge">true</code> or <code class="highlighter-rouge">false</code>
+decision-making functions which can sensibly be described as <code class="language-plaintext highlighter-rouge">true</code> or <code class="language-plaintext highlighter-rouge">false</code>
 without introducing any new fundamental concepts.</p>
 
-<p>That doesn’t mean we can implement <code class="highlighter-rouge">FizzBuzz</code> without adding to the built-ins,
+<p>That doesn’t mean we can implement <code class="language-plaintext highlighter-rouge">FizzBuzz</code> without adding to the built-ins,
 though - although we don’t need to add much. To print the numbers 1-20, we need
-a new method on numbers: <code class="highlighter-rouge">lessThan</code>. That allows us to do this:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
+a new method on numbers: <code class="language-plaintext highlighter-rouge">lessThan</code>. That allows us to do this:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
   inner is [current, max, cont] =&gt; (
     print[current]
     current:lessThan[max][
@@ -362,12 +362,12 @@ a new method on numbers: <code class="highlighter-rouge">lessThan</code>. That a
 
 fizzbuzz[1, 20]
 </code></pre></div></div>
-<p>Note this doesn’t require we add <code class="highlighter-rouge">true</code> and <code class="highlighter-rouge">false</code> to the Prelude - we can
-just return anonymous functions from <code class="highlighter-rouge">lessThan</code>. But at that point, not adding
+<p>Note this doesn’t require we add <code class="language-plaintext highlighter-rouge">true</code> and <code class="language-plaintext highlighter-rouge">false</code> to the Prelude - we can
+just return anonymous functions from <code class="language-plaintext highlighter-rouge">lessThan</code>. But at that point, not adding
 them to the Prelude just seems churlish.</p>
 
 <p>And this works:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.0
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.0
 2.0
 3.0
 4.0
@@ -377,11 +377,11 @@ them to the Prelude just seems churlish.</p>
 </code></pre></div></div>
 
 <p>We just need one other thing here: to check whether a number is divisible by 3
-or 5. We could implement a <code class="highlighter-rouge">modulo</code> or <code class="highlighter-rouge">%</code> operator, but then we’d also need
-<code class="highlighter-rouge">equals</code>, so for now, let’s just be incredibly direct and implement a
-<code class="highlighter-rouge">dividesBy</code> method on numbers. That lets us write this:</p>
+or 5. We could implement a <code class="language-plaintext highlighter-rouge">modulo</code> or <code class="language-plaintext highlighter-rouge">%</code> operator, but then we’d also need
+<code class="language-plaintext highlighter-rouge">equals</code>, so for now, let’s just be incredibly direct and implement a
+<code class="language-plaintext highlighter-rouge">dividesBy</code> method on numbers. That lets us write this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
   inner is [current, max, cont] =&gt; (
     current:divisibleBy[3][
       [] =&gt; print["fizz"],
@@ -398,7 +398,7 @@ or 5. We could implement a <code class="highlighter-rouge">modulo</code> or <cod
 fizzbuzz[1, 20]
 </code></pre></div></div>
 <p>Which yields:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.0
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1.0
 2.0
 fizz
 4.0
@@ -411,7 +411,7 @@ fizz
 </code></pre></div></div>
 
 <p>And then we can extend it to include buzz as well:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>fizzbuzz is (
   inner is [current, max, cont] =&gt; (
     fizzy is current:divisibleBy[3],
     buzzy is current:divisibleBy[5],
@@ -472,7 +472,7 @@ of recursion and decision actually <em>are</em>.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

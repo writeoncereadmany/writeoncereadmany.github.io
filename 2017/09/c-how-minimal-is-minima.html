@@ -100,18 +100,18 @@ features are implementable in terms of other features.</p>
 <h3 id="variables">Variables</h3>
 
 <p>Let’s start with variables. We need to be able to access variables, but we have
-two ways of defining them: with <code class="highlighter-rouge">is</code> declarations, and as function parameters.</p>
+two ways of defining them: with <code class="language-plaintext highlighter-rouge">is</code> declarations, and as function parameters.</p>
 
 <p>We can’t really get rid of function parameters, but we can rewrite any code
-which uses <code class="highlighter-rouge">is</code> to use function parameters instead. For example:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
+which uses <code class="language-plaintext highlighter-rouge">is</code> to use function parameters instead. For example:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
   start is "Hello, ",
   print[start:concat[name]]  
 )
 </code></pre></div></div>
-<p>We could eliminate the variable <code class="highlighter-rouge">start</code> by inlining it, but for demonstrative
+<p>We could eliminate the variable <code class="language-plaintext highlighter-rouge">start</code> by inlining it, but for demonstrative
 purposes, we want to give it a name. So instead we can do:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>greet is [name] =&gt; (
   ([start] =&gt; print[start:concat[name]])["Hello, "]
 )
 </code></pre></div></div>
@@ -119,7 +119,7 @@ purposes, we want to give it a name. So instead we can do:</p>
 <h3 id="grouping">Grouping</h3>
 
 <p>Let’s say we want to write a function which prints three things:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
   print["Hello, ":concat[name]]
   print[name:concat[", may I take your coat?"]
   print["Goodbye, ":concat[name]]  
@@ -129,7 +129,7 @@ purposes, we want to give it a name. So instead we can do:</p>
 <p>We can do that without grouping, by creating a function which takes and ignores
 three parameters, and immediately invoking it with our three side-effecting
 expressions:</p>
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>visit is [name] =&gt; (
   ([ignore1, ignore2, ignore3] =&gt; SUCCESS)[
     print["Hello, ":concat[name]],
     print[name:concat[", may I take your coat?"]],
@@ -143,10 +143,10 @@ variables bound to locally evaluated values.</p>
 
 <p>It’s worth noting that whilst this obviates the need for sequencing expressions
 in a group, we still do need parentheses for precedence - otherwise, we’d be
-trying to invoke <code class="highlighter-rouge">SUCCESS</code> instead of our locally declared function.</p>
+trying to invoke <code class="language-plaintext highlighter-rouge">SUCCESS</code> instead of our locally declared function.</p>
 
-<p>An expression like: <code class="highlighter-rouge">apply is [a, b] =&gt; a[b]</code> can be interpreted in two ways:
-either as <code class="highlighter-rouge">(apply is [a, b] =&gt; a)[b]</code>, or as <code class="highlighter-rouge">apply is ([a, b] =&gt; a[b])</code>. Here,
+<p>An expression like: <code class="language-plaintext highlighter-rouge">apply is [a, b] =&gt; a[b]</code> can be interpreted in two ways:
+either as <code class="language-plaintext highlighter-rouge">(apply is [a, b] =&gt; a)[b]</code>, or as <code class="language-plaintext highlighter-rouge">apply is ([a, b] =&gt; a[b])</code>. Here,
 we clearly mean the former, but that’s only obvious as a reader from context.</p>
 
 <p>We can apply various precedence rules: access binds the most tightly, then
@@ -161,10 +161,10 @@ regular parenthesisation.</p>
 <h3 id="objects">Objects</h3>
 
 <p>Objects are how we build larger data structures out of smaller ones. For example,
-if we want to represent a 2D vector, and we had access to both a <code class="highlighter-rouge">square</code> and
-a <code class="highlighter-rouge">sqrt</code> function:</p>
+if we want to represent a 2D vector, and we had access to both a <code class="language-plaintext highlighter-rouge">square</code> and
+a <code class="language-plaintext highlighter-rouge">sqrt</code> function:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is { x : 2, y : 5 }
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is { x : 2, y : 5 }
 
 length is [vector] =&gt; (
   x is vector:x,
@@ -177,7 +177,7 @@ print[length[vector]]
 
 <p>But we can also represent that with a function:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 
 length is [vector] =&gt; (
   calc is [x, y] =&gt; sqrt[square[x]:plus[square[y]]],
@@ -190,7 +190,7 @@ print[length[vector]]
 <p>That’s just one way of interacting with a function datatype. We may
 prefer to do this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 getX is [x, y] =&gt; x
 getY is [x, y] =&gt; y
 
@@ -207,14 +207,14 @@ print[length[vector]]
 note how instead of performing operations <em>on</em> the vector, we give
 operations <em>to</em> the vector - which is a bit counterintuitive with how we usually
 use functions, but is surprisingly analagous to the field access. Just compare
-<code class="highlighter-rouge">vector:x</code> to <code class="highlighter-rouge">vector[getX]</code> - it’s basically the same semantics.</p>
+<code class="language-plaintext highlighter-rouge">vector:x</code> to <code class="language-plaintext highlighter-rouge">vector[getX]</code> - it’s basically the same semantics.</p>
 
 <p>This approach has its problems, though.</p>
 
 <p>Particularly, there’s no association of name to position - we could easily
 confuse ourselves if we were to do something like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is [f] =&gt; f[2, 5]
 
 height is vector[[h, w] =&gt; h]
 </code></pre></div></div>
@@ -235,7 +235,7 @@ with many methods.</p>
 
 <p>There’s a bigger problem, too: we don’t just want to represent objects as a
 fixed set of fields/methods. We want to enable polymorphism - for example,
-<code class="highlighter-rouge">print</code> is a function which should be able to render anything with a <code class="highlighter-rouge">show</code>
+<code class="language-plaintext highlighter-rouge">print</code> is a function which should be able to render anything with a <code class="language-plaintext highlighter-rouge">show</code>
 method. Function datatypes don’t provide an obvious approach to this.</p>
 
 <p>What we could do, instead, is build a datatype that is just a mapping from
@@ -246,7 +246,7 @@ Like, well, a map.</p>
 something we can do, and secondly, it ends up being a lot more verbose. The best
 case scenario is something like this:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is mapOf["x", 2, mapOf["y", 5, empty]]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vector is mapOf["x", 2, mapOf["y", 5, empty]]
 
 length is [vector] =&gt; (
   x is get[vector, "x"],
@@ -269,7 +269,7 @@ with zero and going up by one.</p>
 number. Let’s define a number which represents how many times an operation will
 be repeated:</p>
 
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zero is [s, z, acc] =&gt; z[acc]
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zero is [s, z, acc] =&gt; z[acc]
 succ is [pred] =&gt; [s, z, acc] =&gt; pred[s, z, s[acc]]
 
 three is succ[succ[succ[zero]]]
@@ -353,7 +353,7 @@ do with this language.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>

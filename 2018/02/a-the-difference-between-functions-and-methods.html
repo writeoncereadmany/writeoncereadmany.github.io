@@ -93,17 +93,17 @@ a functional control library for Java. You can find <a href="https://writeoncere
 a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
 and <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>.</p>
 
-<p>Java 8 introduced <code class="highlighter-rouge">Optional</code>, along with lambdas and method references. There
+<p>Java 8 introduced <code class="language-plaintext highlighter-rouge">Optional</code>, along with lambdas and method references. There
 was quite a lot of debate on its API - some wanted it to be just a null-safe
-container, whereas others lobbied for methods like <code class="highlighter-rouge">map()</code> and <code class="highlighter-rouge">flatMap()</code>.</p>
+container, whereas others lobbied for methods like <code class="language-plaintext highlighter-rouge">map()</code> and <code class="language-plaintext highlighter-rouge">flatMap()</code>.</p>
 
-<p>Getting the API right for foundational types like <code class="highlighter-rouge">Optional</code> is really hard. Too
+<p>Getting the API right for foundational types like <code class="language-plaintext highlighter-rouge">Optional</code> is really hard. Too
 many capabilities and the clarity of purpose is obscured; too few and you miss
 opportunities for powerful constructs.</p>
 
-<p><code class="highlighter-rouge">Optional</code> got it wrong in both directions: it has methods it shouldn’t, and it
+<p><code class="language-plaintext highlighter-rouge">Optional</code> got it wrong in both directions: it has methods it shouldn’t, and it
 doesn’t have methods it should. This is a near-unavoidable consequence of a
-fundamental design mistake: the API of <code class="highlighter-rouge">Optional</code> is made of methods instead
+fundamental design mistake: the API of <code class="language-plaintext highlighter-rouge">Optional</code> is made of methods instead
 of functions.</p>
 
 <!--more-->
@@ -115,50 +115,50 @@ have but doesn’t:</p>
   <li>Optional.get()</li>
 </ol>
 
-<p>The <em>point</em> of <code class="highlighter-rouge">Optional</code> is that it may be empty, and it forces you to instruct
+<p>The <em>point</em> of <code class="language-plaintext highlighter-rouge">Optional</code> is that it may be empty, and it forces you to instruct
 it on what to do instead when there’s nothing there. If you want to fail, there’s
-the much clearer <code class="highlighter-rouge">Optional.orElseThrow()</code>.</p>
+the much clearer <code class="language-plaintext highlighter-rouge">Optional.orElseThrow()</code>.</p>
 
-<p>The main reasons I see people using <code class="highlighter-rouge">Optional.get()</code> boil down to either not understanding
+<p>The main reasons I see people using <code class="language-plaintext highlighter-rouge">Optional.get()</code> boil down to either not understanding
 <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">how to effectively compose operations on Optional directly</a>
-or not respecting the possibility of an <code class="highlighter-rouge">Optional</code> being empty - ie, working
+or not respecting the possibility of an <code class="language-plaintext highlighter-rouge">Optional</code> being empty - ie, working
 around safety.</p>
 
-<p>This is a method which shouldn’t be on <code class="highlighter-rouge">Optional</code>.</p>
+<p>This is a method which shouldn’t be on <code class="language-plaintext highlighter-rouge">Optional</code>.</p>
 
 <ol>
   <li>Optional.ifAbsent()</li>
 </ol>
 
 <p>Sometimes, you want to perform a side-effecty action if there’s something in an
-<code class="highlighter-rouge">Optional</code>. For cases like that, there’s <code class="highlighter-rouge">ifPresent()</code>:</p>
+<code class="language-plaintext highlighter-rouge">Optional</code>. For cases like that, there’s <code class="language-plaintext highlighter-rouge">ifPresent()</code>:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Pietr"</span><span class="o">);</span>
-<span class="n">maybeName</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"Pietr"</span><span class="o">);</span>
+<span class="n">maybeName</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
 </code></pre></div></div>
 
 <p>Sometimes, you want to perform a side-effecty action if there’s nothing in an
-<code class="highlighter-rouge">Optional</code>. For example:</p>
+<code class="language-plaintext highlighter-rouge">Optional</code>. For example:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
-<span class="n">maybeName</span><span class="o">.</span><span class="na">ifAbsent</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+<span class="n">maybeName</span><span class="o">.</span><span class="na">ifAbsent</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="no">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
 </code></pre></div></div>
 
-<p>The difference is: <code class="highlighter-rouge">ifPresent()</code> exists on the API, and <code class="highlighter-rouge">ifAbsent()</code> doesn’t.
+<p>The difference is: <code class="language-plaintext highlighter-rouge">ifPresent()</code> exists on the API, and <code class="language-plaintext highlighter-rouge">ifAbsent()</code> doesn’t.
 It’s easy enough to provide our own:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
-<span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+<span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="no">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
 
-<span class="kd">public</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">ifAbsent</span><span class="o">(</span><span class="n">Optional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Runnable</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
+<span class="kd">public</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">ifAbsent</span><span class="o">(</span><span class="nc">Optional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="nc">Runnable</span> <span class="n">task</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">if</span><span class="o">(!</span><span class="n">maybe</span><span class="o">.</span><span class="na">isPresent</span><span class="o">())</span> <span class="o">{</span> <span class="n">task</span><span class="o">.</span><span class="na">run</span><span class="o">();</span> <span class="o">};</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>But maybe we want both side-effects:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="n">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
-<span class="n">maybeName</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
-<span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">maybeName</span> <span class="o">=</span> <span class="nc">Optional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+<span class="n">maybeName</span><span class="o">.</span><span class="na">ifPresent</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">::</span><span class="n">println</span><span class="o">);</span>
+<span class="n">ifAbsent</span><span class="o">(</span><span class="n">maybeName</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="no">LOGGER</span><span class="o">.</span><span class="na">warn</span><span class="o">(</span><span class="s">"No name provided"</span><span class="o">));</span>
 </code></pre></div></div>
 
 <p>The calling conventions for provided API methods and our own custom interactions
@@ -176,92 +176,92 @@ the provided API, and so on.</p>
 anticipate every possible requirement, and provide a method for each. Even if we
 could, it wouldn’t be desirable: there would be a big cost to learning how to
 use such classes. That’s true. However, it’s possible to satisfy every possible
-requirement on an <code class="highlighter-rouge">Optional</code> with just a single method - <code class="highlighter-rouge">either</code>:</p>
+requirement on an <code class="language-plaintext highlighter-rouge">Optional</code> with just a single method - <code class="language-plaintext highlighter-rouge">either</code>:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
   <span class="kd">private</span> <span class="nf">MyOptional</span><span class="o">()</span> <span class="o">{}</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="n">E</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Present</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
-  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">E</span><span class="o">&gt;</span> <span class="nf">empty</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="n">Absent</span><span class="o">();</span> <span class="o">}</span>
-  <span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">);</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nf">of</span><span class="o">(</span><span class="no">E</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="nc">Present</span><span class="o">(</span><span class="n">value</span><span class="o">);</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">E</span><span class="o">&gt;</span> <span class="nf">empty</span><span class="o">()</span> <span class="o">{</span> <span class="k">return</span> <span class="k">new</span> <span class="nc">Absent</span><span class="o">();</span> <span class="o">}</span>
+  <span class="kd">public</span> <span class="kd">abstract</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">);</span>
 
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Present</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">T</span> <span class="n">value</span><span class="o">;</span>
-    <span class="kd">public</span> <span class="nf">Present</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Present</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="no">T</span> <span class="n">value</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="nf">Present</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">)</span> <span class="o">{</span> <span class="k">this</span><span class="o">.</span><span class="na">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">;</span> <span class="o">}</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
       <span class="k">return</span> <span class="n">whenPresent</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">value</span><span class="o">);</span>
     <span class="o">}</span>
   <span class="o">}</span>
 
-  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Absent</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">{</span>
-    <span class="kd">public</span> <span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="n">Supplier</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
+  <span class="kd">private</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">Absent</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">either</span><span class="o">(</span><span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">whenPresent</span><span class="o">,</span> <span class="nc">Supplier</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
       <span class="k">return</span> <span class="n">whenAbsent</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
     <span class="o">}</span>
   <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
-<p>Literally everything we could ever want to do with an <code class="highlighter-rouge">Optional</code>, we can do
-with this. <code class="highlighter-rouge">map()</code> is a one-liner:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">map</span><span class="o">(</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span>
+<p>Literally everything we could ever want to do with an <code class="language-plaintext highlighter-rouge">Optional</code>, we can do
+with this. <code class="language-plaintext highlighter-rouge">map()</code> is a one-liner:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">map</span><span class="o">(</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="n">mapper</span><span class="o">)</span>
 <span class="o">{</span>
-  <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
+  <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">mapper</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">v</span><span class="o">)),</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>As is <code class="highlighter-rouge">flatMap()</code>:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">R</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;</span> <span class="nf">flatMap</span><span class="o">(</span>
-  <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">R</span><span class="o">&gt;&gt;</span> <span class="n">mapper</span><span class="o">)</span>
+<p>As is <code class="language-plaintext highlighter-rouge">flatMap()</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">R</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;</span> <span class="nf">flatMap</span><span class="o">(</span>
+  <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="nc">Function</span><span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="no">R</span><span class="o">&gt;&gt;</span> <span class="n">mapper</span><span class="o">)</span>
 <span class="o">{</span>
   <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">mapper</span><span class="o">,</span> <span class="nl">MyOptional:</span><span class="o">:</span><span class="n">empty</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>As is <code class="highlighter-rouge">orElse()</code>:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">T</span> <span class="nf">orElse</span><span class="o">(</span><span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">T</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
+<p>As is <code class="language-plaintext highlighter-rouge">orElse()</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="no">T</span> <span class="nf">orElse</span><span class="o">(</span><span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="no">T</span> <span class="n">defaultValue</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="n">v</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="n">defaultValue</span><span class="o">);</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>As is our desired <code class="highlighter-rouge">ifAbsent()</code>:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">Void</span> <span class="nf">ifAbsent</span><span class="o">(</span><span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="n">Runnable</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
+<p>As is our desired <code class="language-plaintext highlighter-rouge">ifAbsent()</code>:</p>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="nc">Void</span> <span class="nf">ifAbsent</span><span class="o">(</span><span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">T</span><span class="o">&gt;</span> <span class="n">maybe</span><span class="o">,</span> <span class="nc">Runnable</span> <span class="n">whenAbsent</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">return</span> <span class="n">maybe</span><span class="o">.</span><span class="na">either</span><span class="o">(</span><span class="n">v</span> <span class="o">-&gt;</span> <span class="kc">null</span><span class="o">,</span> <span class="o">()</span> <span class="o">-&gt;</span> <span class="o">{</span> <span class="n">whenAbsent</span><span class="o">.</span><span class="na">run</span><span class="o">();</span> <span class="k">return</span> <span class="kc">null</span><span class="o">;</span> <span class="o">});</span>
 <span class="o">}</span>
 </code></pre></div></div>
-<p>And so on. By restricting ourselves to primitive operations like <code class="highlighter-rouge">either</code>, and
+<p>And so on. By restricting ourselves to primitive operations like <code class="language-plaintext highlighter-rouge">either</code>, and
 then implementing functions using it, we have an extensible approach which allows
 end-users to add new functionality <em>with the same calling convention as the
 shipped API</em>.</p>
 
 <p>This isn’t just a case of insurance against oversight in the initial API design:
 it fundamentally supports a type of abstraction an API made of methods doesn’t.
-<code class="highlighter-rouge">ifAbsent()</code> is the sort of thing you can argue ought to be a method on <code class="highlighter-rouge">Optional</code>,
+<code class="language-plaintext highlighter-rouge">ifAbsent()</code> is the sort of thing you can argue ought to be a method on <code class="language-plaintext highlighter-rouge">Optional</code>,
 but over time you’ll find yourself wanting all sorts of different operations at
 different levels of abstraction.</p>
 
 <p>From the relatively generic and widespread - like safely casting to a subtype:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="n">T</span><span class="o">,</span> <span class="n">S</span> <span class="kd">extends</span> <span class="n">T</span><span class="o">&gt;</span> <span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="nf">castTo</span><span class="o">(</span><span class="n">T</span> <span class="n">value</span><span class="o">,</span> <span class="n">Class</span><span class="o">&lt;</span><span class="n">S</span><span class="o">&gt;</span> <span class="n">subclass</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="o">&lt;</span><span class="no">T</span><span class="o">,</span> <span class="no">S</span> <span class="kd">extends</span> <span class="no">T</span><span class="o">&gt;</span> <span class="nc">MyOptional</span><span class="o">&lt;</span><span class="no">S</span><span class="o">&gt;</span> <span class="nf">castTo</span><span class="o">(</span><span class="no">T</span> <span class="n">value</span><span class="o">,</span> <span class="nc">Class</span><span class="o">&lt;</span><span class="no">S</span><span class="o">&gt;</span> <span class="n">subclass</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">if</span><span class="o">(</span><span class="n">subclass</span><span class="o">.</span><span class="na">isAssignableFrom</span><span class="o">(</span><span class="n">value</span><span class="o">.</span><span class="na">getClass</span><span class="o">()))</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">((</span><span class="n">S</span><span class="o">)</span> <span class="n">value</span><span class="o">);</span>
+    <span class="k">return</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">((</span><span class="no">S</span><span class="o">)</span> <span class="n">value</span><span class="o">);</span>
   <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+    <span class="k">return</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
   <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <p>To the highly domain-specific:</p>
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Hat</span><span class="o">&gt;</span> <span class="nf">getHat</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="nc">Optional</span><span class="o">&lt;</span><span class="nc">Hat</span><span class="o">&gt;</span> <span class="nf">getHat</span><span class="o">(</span><span class="nc">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
   <span class="k">if</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">hasHat</span><span class="o">())</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getHat</span><span class="o">());</span>
+    <span class="k">return</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">person</span><span class="o">.</span><span class="na">getHat</span><span class="o">());</span>
   <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="n">MyOptional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
+    <span class="k">return</span> <span class="nc">MyOptional</span><span class="o">.</span><span class="na">empty</span><span class="o">();</span>
   <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div></div>
 
 <h3 id="functions-for-everybody">Functions for everybody?</h3>
 
-<p>Now, this isn’t desirable for <em>every</em> class. But for sum types like <code class="highlighter-rouge">Optional</code>,
+<p>Now, this isn’t desirable for <em>every</em> class. But for sum types like <code class="language-plaintext highlighter-rouge">Optional</code>,
 it’s effectively presenting a pattern match - this code in Java:</p>
 
-<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">(</span><span class="n">MyOptional</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">maybePerson</span><span class="o">)</span> <span class="o">{</span>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">static</span> <span class="nc">String</span> <span class="nf">getName</span><span class="o">(</span><span class="nc">MyOptional</span><span class="o">&lt;</span><span class="nc">Person</span><span class="o">&gt;</span> <span class="n">maybePerson</span><span class="o">)</span> <span class="o">{</span>
     <span class="k">return</span> <span class="n">maybePerson</span><span class="o">.</span><span class="na">either</span><span class="o">(</span>
         <span class="n">person</span> <span class="o">-&gt;</span> <span class="n">person</span><span class="o">.</span><span class="na">getName</span><span class="o">(),</span>
         <span class="o">()</span>     <span class="o">-&gt;</span> <span class="s">"Unknown"</span><span class="o">);</span>
@@ -278,15 +278,15 @@ it’s effectively presenting a pattern match - this code in Java:</p>
 <p>This is exposing the internals of the class: the opposite of encapsulation.
 That’s not what we were taught about how to do OO well!</p>
 
-<p>Well, the thing is, <code class="highlighter-rouge">MyOptional</code> <em>isn’t really an object</em>. It’s data. We don’t
+<p>Well, the thing is, <code class="language-plaintext highlighter-rouge">MyOptional</code> <em>isn’t really an object</em>. It’s data. We don’t
 want to <em>limit</em> how people interact with it - we just want to make sure that
 all the cases are covered, and addresses with code which handles that case.</p>
 
-<p>All the methods - <code class="highlighter-rouge">map()</code>, <code class="highlighter-rouge">flatMap()</code> and so on - are there as abstractions for
+<p>All the methods - <code class="language-plaintext highlighter-rouge">map()</code>, <code class="language-plaintext highlighter-rouge">flatMap()</code> and so on - are there as abstractions for
 <em>convenience</em>, not necessity. They’re common operations, as opposed to fundamental
 primitives of interacting with the type.</p>
 
-<p>This is in contrast to, say, a <code class="highlighter-rouge">BankAccount</code> class, where we definitely <em>do</em> want to
+<p>This is in contrast to, say, a <code class="language-plaintext highlighter-rouge">BankAccount</code> class, where we definitely <em>do</em> want to
 limit how the user interacts with the internal state of the object. We can limit
 access with functions, of course, but the desire for extensibility isn’t the same.</p>
 
@@ -322,7 +322,7 @@ Applicable Pattern, which I’ll discuss in the next post.</p>
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span12 footer navbar-inverse navbar-fixed-bottom">
-            <p class="copyright">&copy;2018 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
             under
             <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
         </div>
