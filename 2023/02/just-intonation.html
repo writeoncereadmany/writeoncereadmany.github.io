@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
+        
+          <li><a href="/2023/02/composing-musical">Composing Music</a></li>
+        
+          <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
+        
+          <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
+        
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2023/02/just-intonation">Feb 24, 2023 - It's Just Intonation</a></h1>
+            
+            <div class="post-content">
+            <p>Following on from my last post, I was starting to get annoyed by the way I’d chosen to represent note frequencies. For example:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BELL</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.build</span><span class="p">()</span>
+</code></pre></div></div>
+<p>I’d been represeting B4 as two separate values: a frequency and an octave. That permitted me to just define each 
+letter-note once, and rely on math rather than specification to make everything work. However, when I start to get to
+solutions like this:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// r is root, r_o root octave, a is the first walk-up note, b is the second</span>
+<span class="k">fn</span> <span class="nf">bass_bar</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">))</span> 
+        <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nd">vec!</span><span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">)]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Tempo::new(4, 120).using(&amp;BASS, 0)
+    .bar(1).phrase(bass_bar((A, 1), (E, 0), (Gs, 0)))
+    .bar(2).phrase(bass_bar((A, 1), (A, 1), (Gs, 0)))
+    .build();
+</code></pre></div></div>
+<p>Having to provide tuples and destruct them to get their constituent parts… I’m now thinking I want to change my approach.
+I don’t particularly mind having 88 constants - maybe even upwards of that! - if they’re simply defined and simple to use:
+the relative importance of the use-cases vs the declaration-site has changed.
+<!--more--></p>
+
+<h3 id="scaling-musical-scales">Scaling Musical Scales</h3>
+<p>So, before I start changing all my notes from ignoring the octave to including it in the name, using 
+<a href="https://en.wikipedia.org/wiki/Scientific_pitch_notation">scientific pitch notation</a> (which it turns out I’d gotten wrong 
+first time round: each octave starts at C, not A)… how do my notes look at the moment?</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="n">A</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">220.0</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">As</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">233.082</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">Bb</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="n">As</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">B</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">246.942</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">C</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">261.626</span><span class="p">;</span>
+<span class="o">...</span>
+</code></pre></div></div>
+<p>Okay, so I’m defining a bunch of specific, hard-coded values. That’s… fine, I guess? But I’d rather show my working.
+A# is 2^(1/12) of the frequency of A, so why don’t I just say that explicitly?</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="n">As</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="mf">2.0_f32</span><span class="nf">.powf</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">12.0</span><span class="p">);</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>error[E0015]: cannot call non-const fn `std::f32::&lt;impl f32&gt;::powf` in constants
+ --&gt; src/audio/notes.rs:4:33
+  |
+4 | pub const As: f32 = A * 2.0_f32.powf(1.0/12.0);
+  |                                 ^^^^^^^^^^^^^^
+  |
+  = note: calls in constants are limited to constant functions, tuple structs and tuple variants
+</code></pre></div></div>
+<p>Oh. I probably tried last time and got the same error. It’s slightly annoying that <code class="language-plaintext highlighter-rouge">powf</code> <em>isn’t</em> a constant function,
+it feels like it <em>should</em> be? But I’m not about to go implementing my own version of <code class="language-plaintext highlighter-rouge">powf</code> just to clean up my list of
+notes.</p>
+
+<p>So, I guess I could calculate each of the note offsets, or look them up, and use that in how I define notes going forward.
+I mean, I could use these values I’ve already calculated, but I’d ideally like to switch from this approach to something more
+like:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// reference tone</span>
+<span class="k">const</span> <span class="n">Octave4</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">440.0</span>
+
+<span class="k">pub</span> <span class="k">const</span> <span class="n">A</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">As</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">2.0_f32</span><span class="nf">.powf</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">12.0</span><span class="p">);</span> <span class="c1">// yes I know I can't but that's what I'd ideally intend</span>
+<span class="o">...</span>
+
+<span class="k">pub</span> <span class="k">const</span> <span class="n">A4</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="n">Octave4</span> <span class="o">*</span> <span class="n">A</span><span class="p">;</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">As4</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="n">Octave4</span> <span class="o">*</span> <span class="n">As</span><span class="p">;</span>
+<span class="o">...</span>
+</code></pre></div></div>
+<p>i.e., have standard offsets for each letter-note and apply those to the octave for each absolute note. So: pre-calculate
+(or look up) and bake in?</p>
+
+<p>Well, now I’m thinking about it, maybe that’s <em>not</em> what I want.</p>
+
+<h3 id="im-not-sure-i-have-the-right-temperament-for-this">I’m Not Sure I Have The Right Temperament For This</h3>
+
+<p>All that 2^(1/12) stuff is how musical notes’ frequencies relate to each other… in 12-tone equal temperament, 12TET for short. There’s actually more than one way to tune a cat, and over time musicians have generally converged on 12TET as a versatile 
+compromise (largely due to the influence of the piano), which is always <em>slightly</em> out of tune but not enough to really 
+notice, as opposed to other systems of intonation which can be <em>perfectly</em> in tune for most intervals but badly <em>out</em> of 
+tune for others.</p>
+
+<p>If this sounds interesting, I recommend <a href="https://www.amazon.co.uk/Equal-Temperament-Ruined-Harmony-Should/dp/0393334201">How Equal Temperament Ruined Harmony (And Why You Should Care)</a> - it’s a fascinating read, especially if you like both music and math.</p>
+
+<p><img src="/assets/equal-temperament.jpg" alt="image tooltip here" width="300" class="centered" /></p>
+
+<p>It would probably be a good idea to use 12TET if I wanted a general music system, allowing me to write arbitrary music in an
+arbitrary key. But I’m not <em>intending</em> to write arbitrary music in an arbitrary key, I’m going to write a very small number of
+pieces and know what key they’ll be in, in advance. So… I could instead use <a href="https://en.wikipedia.org/wiki/Just_intonation">just intonation</a>, and the intervals will be that bit purer, sound that bit better… and also, the maths will be easier.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="n">C</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="c1">// under 12TET: messy, difficult to understand, doesn't even compile!</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">G_12TET</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">2.0_f32</span><span class="nf">.powf</span><span class="p">(</span><span class="mf">7.0</span><span class="o">/</span><span class="mf">12.0</span><span class="p">);</span>
+<span class="c1">// under just intonation: a perfect pythagorean ratio!</span>
+<span class="k">pub</span> <span class="k">const</span> <span class="n">G_JUST</span><span class="p">:</span> <span class="nb">f32</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>I’m not trying to justify changing the way music works just to make the maths easier and work around a compiler limitation.</p>
+
+<p>But if I hadn’t been thinking about how to make the maths easier and work around a compiler limitation, this wouldn’t have
+occurred to me, which <em>at the very least</em> will be an interesting musical experiment.</p>
+
+<p>Ok, time for some dinner, then I’ll flesh out 88 constants…</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2023/02/composing-musical" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

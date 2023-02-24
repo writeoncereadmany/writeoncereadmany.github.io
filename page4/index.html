@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
+        
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
         
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
         
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
-        
-          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,34 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/a-the-difference-between-functions-and-methods">Feb 19, 2018 - The Difference Between Functions And Methods</a></h1>
+        
+        <div class="content">
+            <p>This is the fourth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>,
+a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
+and <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>.</p>
+
+<p>Java 8 introduced <code class="language-plaintext highlighter-rouge">Optional</code>, along with lambdas and method references. There
+was quite a lot of debate on its API - some wanted it to be just a null-safe
+container, whereas others lobbied for methods like <code class="language-plaintext highlighter-rouge">map()</code> and <code class="language-plaintext highlighter-rouge">flatMap()</code>.</p>
+
+<p>Getting the API right for foundational types like <code class="language-plaintext highlighter-rouge">Optional</code> is really hard. Too
+many capabilities and the clarity of purpose is obscured; too few and you miss
+opportunities for powerful constructs.</p>
+
+<p><code class="language-plaintext highlighter-rouge">Optional</code> got it wrong in both directions: it has methods it shouldn’t, and it
+doesn’t have methods it should. This is a near-unavoidable consequence of a
+fundamental design mistake: the API of <code class="language-plaintext highlighter-rouge">Optional</code> is made of methods instead
+of functions.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/11/carpet-oriented-programming">Nov 23, 2017 - Carpet-Oriented Programming</a></h1>
@@ -122,26 +150,6 @@ gap in Java’s API.</p>
 potentially fail - there’s definitely a <em>need</em> for a tool for that job. That’s
 not to say Java doesn’t have ways of handling potential failure - it does, just
 that they’re all bad.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/11/most-code-fails-badly">Nov 17, 2017 - Most Code Fails Badly - The Case for Results</a></h1>
-        
-        <div class="content">
-            <p>In the real world, most code fails. That’s not a bad thing per se:
-the real world is hairy and complex, and occasionally things will
-happen that aren’t as expected.</p>
-
-<p>Failures happen. There’s not much we can do about that. What we
-can do, though, is try and ensure our handling of failures is
-as good as possible.</p>
-
-<p>However, most code that fails, fails badly.</p>
 
 
         </div>

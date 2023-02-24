@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
+        
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
         
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
         
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
-        
-          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,29 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/d-what-about-the-rest-of-the-world">Feb 19, 2018 - What About The Rest Of The World?</a></h1>
+        
+        <div class="content">
+            <p>This is the seventh in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. Previous parts:</p>
+<ul>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
+</ul>
+
+<p>I should apologise. In the last post, I cheated slightly.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2018/02/c-railway-oriented-programming">Feb 19, 2018 - Railway-Oriented Programming</a></h1>
@@ -135,34 +158,6 @@ just doesn’t flow like it did when you were happily chaining methods.</p>
 <p>Using functions instead of methods looks fine in isolation, but the moment
 you want to do something more complex - like building a carpet-oriented programming
 pipe - the functional approach starts to get much harder to read.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2018/02/a-the-difference-between-functions-and-methods">Feb 19, 2018 - The Difference Between Functions And Methods</a></h1>
-        
-        <div class="content">
-            <p>This is the fourth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>,
-a <a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">critique of different ways to represent failure here</a>,
-and <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">an overview of carpet-oriented programming - abstracting control flow with Optionals - here</a>.</p>
-
-<p>Java 8 introduced <code class="language-plaintext highlighter-rouge">Optional</code>, along with lambdas and method references. There
-was quite a lot of debate on its API - some wanted it to be just a null-safe
-container, whereas others lobbied for methods like <code class="language-plaintext highlighter-rouge">map()</code> and <code class="language-plaintext highlighter-rouge">flatMap()</code>.</p>
-
-<p>Getting the API right for foundational types like <code class="language-plaintext highlighter-rouge">Optional</code> is really hard. Too
-many capabilities and the clarity of purpose is obscured; too few and you miss
-opportunities for powerful constructs.</p>
-
-<p><code class="language-plaintext highlighter-rouge">Optional</code> got it wrong in both directions: it has methods it shouldn’t, and it
-doesn’t have methods it should. This is a near-unavoidable consequence of a
-fundamental design mistake: the API of <code class="language-plaintext highlighter-rouge">Optional</code> is made of methods instead
-of functions.</p>
 
 
         </div>

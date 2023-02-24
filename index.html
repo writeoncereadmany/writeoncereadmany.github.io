@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
+        
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
         
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
         
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
-        
-          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,38 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2023/02/just-intonation">Feb 24, 2023 - It's Just Intonation</a></h1>
+        
+        <div class="content">
+            <p>Following on from my last post, I was starting to get annoyed by the way I’d chosen to represent note frequencies. For example:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BELL</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.build</span><span class="p">()</span>
+</code></pre></div></div>
+<p>I’d been represeting B4 as two separate values: a frequency and an octave. That permitted me to just define each 
+letter-note once, and rely on math rather than specification to make everything work. However, when I start to get to
+solutions like this:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// r is root, r_o root octave, a is the first walk-up note, b is the second</span>
+<span class="k">fn</span> <span class="nf">bass_bar</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">))</span> 
+        <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nd">vec!</span><span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">)]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Tempo::new(4, 120).using(&amp;BASS, 0)
+    .bar(1).phrase(bass_bar((A, 1), (E, 0), (Gs, 0)))
+    .bar(2).phrase(bass_bar((A, 1), (A, 1), (Gs, 0)))
+    .build();
+</code></pre></div></div>
+<p>Having to provide tuples and destruct them to get their constituent parts… I’m now thinking I want to change my approach.
+I don’t particularly mind having 88 constants - maybe even upwards of that! - if they’re simply defined and simple to use:
+the relative importance of the use-cases vs the declaration-site has changed.</p>
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2023/02/composing-musical">Feb 24, 2023 - Composing Music</a></h1>
@@ -120,20 +152,6 @@ backfill the more interesting choices made so far.</p>
 <p>Here’s what I’ve got so far:</p>
 
 <p><img src="/assets/pandamonium_screenshot.png" alt="image tooltip here" width="500" class="centered" /></p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2018/02/detecting-when-in-intellij">Feb 27, 2018 - Detecting when you're in IntelliJ</a></h1>
-        
-        <div class="content">
-            <p>How do you make your tests aware if you’re running them from your IDE or not?
-That’s what I’ve been wrestling with, and there were some surprising results,
-so I thought it would be worth sharing.</p>
 
 
         </div>
