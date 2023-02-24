@@ -3,8 +3,8 @@
 	<channel>
 		<title>write once, read many</title>
 		<description>ruminations on software development</description>
-		<link>http://localhost:4000</link>
-		<atom:link href="http://localhost:4000/feed.xml" rel="self" type="application/rss+xml" />
+		<link></link>
+		<atom:link href="/feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
 				<title>Composing Music</title>
@@ -154,8 +154,8 @@ but also makes &lt;em&gt;intent&lt;/em&gt; a bunch clearer too.&lt;/p&gt;
 &lt;p&gt;I think I may be happy with my music hard-coded into the game with this approach. Let’s see where it takes me.&lt;/p&gt;
 </description>
 				<pubDate>Fri, 24 Feb 2023 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2023/02/musical-scaling</link>
-				<guid isPermaLink="true">http://localhost:4000/2023/02/musical-scaling</guid>
+				<link>/2023/02/composing-musical</link>
+				<guid isPermaLink="true">/2023/02/composing-musical</guid>
 			</item>
 		
 			<item>
@@ -231,8 +231,8 @@ only tested it on the Raspberry Pi and my Macbook, but it should work on anythin
 a Rust toolchain.&lt;/p&gt;
 </description>
 				<pubDate>Wed, 22 Feb 2023 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2023/02/initial-commit</link>
-				<guid isPermaLink="true">http://localhost:4000/2023/02/initial-commit</guid>
+				<link>/2023/02/initial-commit</link>
+				<guid isPermaLink="true">/2023/02/initial-commit</guid>
 			</item>
 		
 			<item>
@@ -366,8 +366,8 @@ embracing the hack.&lt;/p&gt;
 &lt;p&gt;But if anyone knows a nice, principled way of doing this, please: let me know.&lt;/p&gt;
 </description>
 				<pubDate>Tue, 27 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/detecting-when-in-intellij</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/detecting-when-in-intellij</guid>
+				<link>/2018/02/detecting-when-in-intellij</link>
+				<guid isPermaLink="true">/2018/02/detecting-when-in-intellij</guid>
 			</item>
 		
 			<item>
@@ -523,8 +523,8 @@ way. That’s fine! That’s good.&lt;/p&gt;
 &lt;p&gt;These functions are mostly very short and easy to write. Just write another.&lt;/p&gt;
 </description>
 				<pubDate>Wed, 21 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/fancy-railways</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/fancy-railways</guid>
+				<link>/2018/02/fancy-railways</link>
+				<guid isPermaLink="true">/2018/02/fancy-railways</guid>
 			</item>
 		
 			<item>
@@ -720,8 +720,8 @@ doing as a spike.&lt;/p&gt;
 &lt;p&gt;After all, spiking’s all I &lt;em&gt;can&lt;/em&gt; do by myself.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/e-gold-cards-producion-systems-temptations-and-expectations</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/e-gold-cards-producion-systems-temptations-and-expectations</guid>
+				<link>/2018/02/e-gold-cards-producion-systems-temptations-and-expectations</link>
+				<guid isPermaLink="true">/2018/02/e-gold-cards-producion-systems-temptations-and-expectations</guid>
 			</item>
 		
 			<item>
@@ -954,8 +954,8 @@ failure mode circumstances require.&lt;/p&gt;
 &lt;p&gt;So that’s one less excuse!&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/d-what-about-the-rest-of-the-world</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/d-what-about-the-rest-of-the-world</guid>
+				<link>/2018/02/d-what-about-the-rest-of-the-world</link>
+				<guid isPermaLink="true">/2018/02/d-what-about-the-rest-of-the-world</guid>
 			</item>
 		
 			<item>
@@ -1192,8 +1192,8 @@ And these three primary functions are all you need to know.&lt;/p&gt;
 interesting and powerful stuff…&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/c-railway-oriented-programming</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/c-railway-oriented-programming</guid>
+				<link>/2018/02/c-railway-oriented-programming</link>
+				<guid isPermaLink="true">/2018/02/c-railway-oriented-programming</guid>
 			</item>
 		
 			<item>
@@ -1510,8 +1510,8 @@ become apparent once we get into railway-oriented programming with &lt;code clas
 the good stuff.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/b-pipe-dreams-or-the-applicable-pattern</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/b-pipe-dreams-or-the-applicable-pattern</guid>
+				<link>/2018/02/b-pipe-dreams-or-the-applicable-pattern</link>
+				<guid isPermaLink="true">/2018/02/b-pipe-dreams-or-the-applicable-pattern</guid>
 			</item>
 		
 			<item>
@@ -1730,8 +1730,8 @@ There’s a second part to implementing this well (in Java, anyway): the
 Applicable Pattern, which I’ll discuss in the next post.&lt;/p&gt;
 </description>
 				<pubDate>Mon, 19 Feb 2018 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2018/02/a-the-difference-between-functions-and-methods</link>
-				<guid isPermaLink="true">http://localhost:4000/2018/02/a-the-difference-between-functions-and-methods</guid>
+				<link>/2018/02/a-the-difference-between-functions-and-methods</link>
+				<guid isPermaLink="true">/2018/02/a-the-difference-between-functions-and-methods</guid>
 			</item>
 		
 			<item>
@@ -1968,8 +1968,8 @@ details, and move from carpet-oriented to railway-oriented programming.&lt;/p&gt
 between methods and functions.&lt;/p&gt;
 </description>
 				<pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
-				<link>http://localhost:4000/2017/11/carpet-oriented-programming</link>
-				<guid isPermaLink="true">http://localhost:4000/2017/11/carpet-oriented-programming</guid>
+				<link>/2017/11/carpet-oriented-programming</link>
+				<guid isPermaLink="true">/2017/11/carpet-oriented-programming</guid>
 			</item>
 		
 	</channel>
