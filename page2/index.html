@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/02/musical-scaling">Composing Music</a></li>
+        
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
         
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
         
           <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
-        
-          <li><a href="/2018/02/d-what-about-the-rest-of-the-world">What About The Rest Of The World?</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,38 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2018/02/fancy-railways">Feb 21, 2018 - Fancy Railways</a></h1>
+        
+        <div class="content">
+            <p>This is the eighth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. Previous parts:</p>
+<ul>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/c-railway-oriented-programming">Railway-Oriented Programming</a></li>
+  <li><a href="https://writeoncereadmany.github.io/2018/02/d-what-about-the-rest-of-the-world">What about the rest of the world?</a></li>
+</ul>
+
+<p>Let’s recap briefly. We now understand what railway-oriented programming is,
+and we’re comfortable abstracting over the idea of collating failures at different
+points in an execution and handling them separately. We can combine operations
+which always succeed and operations which may fail, we can convert pretty much
+any failure mode into results, and we can resolve back to a regular value.</p>
+
+<p>What else could we ask for? Well, let’s take an example: we’re working at the
+gate of a ride at WonderFunLand. We’ve got a queue of people coming up to ride
+the BoneRattler. Can they ride?</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Feb 19, 2018 - Gold Cards, Production Systems, Temptations and Expectations</a></h1>
@@ -122,34 +154,6 @@ a functional control library for Java. Previous parts:</p>
 </ul>
 
 <p>I should apologise. In the last post, I cheated slightly.</p>
-
-
-        </div>
-    </div>
-</div>
-
-<div class="article">
-    <div class="well">
-        <h1><a href="/2018/02/c-railway-oriented-programming">Feb 19, 2018 - Railway-Oriented Programming</a></h1>
-        
-        <div class="content">
-            <p>This is the sixth in a series of posts introducing <a href="https://github.com/unruly/control">co.unruly.control</a>,
-a functional control library for Java. Previous parts:</p>
-<ul>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">Most code fails badly</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/how-to-fail-in-java">How to fail in Java</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/a-the-difference-between-functions-and-methods">The difference between functions and methods</a></li>
-  <li><a href="https://writeoncereadmany.github.io/2018/02/b-pipe-dreams-or-the-applicable-pattern">The Applicable Pattern</a></li>
-</ul>
-
-<p>Before we start, I’d recommend at least reading <a href="https://writeoncereadmany.github.io/2017/11/carpet-oriented-programming">Carpet-oriented programming</a>.</p>
-
-<p>So. We’ve got this concept of carpet-oriented programming - of building a pipeline
-of operations which could fail, sweeping any failures under the carpet, and only
-thinking about whether it succeeded or not (and what to do about failures) at the end.</p>
-
-<p>One thing this approach lacks is any feedback as to <em>how</em>, or <em>why</em>, it failed.</p>
 
 
         </div>

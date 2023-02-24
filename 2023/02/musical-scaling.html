@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2023/02/musical-scaling">Composing Music</a></li>
+        
+          <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
+        
+          <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
+        
+          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
+        
+          <li><a href="/2018/02/e-gold-cards-producion-systems-temptations-and-expectations">Gold Cards, Production Systems, Temptations and Expectations</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2023/02/musical-scaling">Feb 24, 2023 - Composing Music</a></h1>
+            
+            <div class="post-content">
+            <p>Currently, I’m trying to implement music for the game.</p>
+
+<p>Well, I already <em>have</em> music: I’ve implemented a simple 4-channel audio device, capable of playing sine, 
+triangle, pulse, and noise waves, and I’ve got a variety of tunes already built into the game. This is 
+one of the best ones:</p>
+
+<p><img src="/assets/mario-coin-score.jpg" alt="image tooltip here" width="500" class="centered" />
+<!--more--></p>
+
+<p>That’s a short high B, followed by a sustained higher E. It’s a classic ditty, instantly recognisable as
+the sound made when you collect a coin in a Mario game. Most sound effects in the NES days were actually
+simple tunes, and what I’ve implemented so far works just fine for that:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">250</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BELL</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.25</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="nf">.build</span><span class="p">()</span>
+</code></pre></div></div>
+<p>(for reference: that’s using a tempo of 250bpm with 2 beats in the bar, played using the bell “instrument”
+on channel 3, playing semiquaver B in the 4th octave on the first beat of the bar, then a crotchet E in the
+4th octave a quarter-beat later)</p>
+
+<p>Which is fine, for when my tunes are two notes. I’m comfortable hard-coding that sort of thing. 
+But I don’t just want music as sound-effects, I want music as <em>music</em>, glorious polyphonic (where poly=3), 
+frantic, fast-paced music, providing both a sense of urgency and also acting as a countdown so players 
+are aware of how much of their ten precious seconds per screen remains.</p>
+
+<p>But even something slow and simple, like, say, the bassline to Stand By Me, looks like this:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.build</span><span class="p">();</span>
+</code></pre></div></div>
+<p>That’s a whole lot of code, not easily readable or modifiable - and I intend to write much busier
+music than this!</p>
+
+<p>I need to find a way to scale my ability to make music.</p>
+
+<h3 id="data">Data?</h3>
+
+<p>The obvious concern here is: music isn’t logic, it’s data, so I shouldn’t be defining it directly
+in code. If instead I define some sort of data format for it, I can author it in that and just load
+it into the game in the same way I load other assets like sprites and level layouts.</p>
+
+<p>This would then allow me to either come up with a concise, effective format I can write directly, or
+build a separate tool which allows me to write music via something more intuitive, like a musical staff
+or a tracker, independent of the game code: play pieces independently, from whatever start point I wanted,
+with immediate feedback on the effect. With a separate authoring tool, the file format doesn’t need to be
+human-readable or human-modifiable - I could use something like <code class="language-plaintext highlighter-rouge">serde</code> to delegate serialisation responsibility.</p>
+
+<p>Or, I could leverage existing tools or data formats, and not have to build my own solution. I could import
+music as a WAV or MP3, and play it as a single, long sound.</p>
+
+<p>These are the sorts of solutions I’d pursue if I was on a team of more than me, if delivery was my goal, and if
+the problem I was trying to solve was “having music”. But none of those are actually true. This isn’t my day job.</p>
+
+<p>I specifically want to use this janky, lo-fi “sound chip” simulacrum, so WAV / MP3 is out. I could potentially
+interface with something like MIDI, but that’s a much richer model than I have so I’d have to grapple with
+domain mismatch impedance. And I want to take a small step from where I am: a diversion into building a whole
+music editor is a bit much. The only small step from where I am is serialising to/from something I can edit by
+hand.</p>
+
+<p>That’s the only small step in the direction of data, at least.</p>
+
+<h3 id="not-data">…Not data?</h3>
+
+<p>It’s worth reflecting on what problem I’m trying to solve here. I don’t want a way to author music, in general.
+I’m not going to be using it to serialise Beethoven sonatas: I’m not making Jet Set Willy here. I want to capture
+a very specific vibe of 8-bit game music, with short, repetitive loops of music, with a lot of self-similarity.</p>
+
+<p>Maybe my approach shouldn’t to be to move it out of code, but to make it easier to do big things in code, by
+building it out of smaller parts.</p>
+
+<p>Maybe the solution to my music problem is: composition. Y’know, like functions.</p>
+
+<p>Let’s take another look at Stand By Me:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class=pink><span class="nf">.bar</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class=pink><span class="nf">.bar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=pink><span class="nf">.bar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class="nf">.build</span><span class="p">();</span>
+</code></pre></div></div>
+<p>The pink bars are identical.</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class=blue><span class="nf">.bar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></span>
+    <span class="nf">.build</span><span class="p">();</span>
+</code></pre></div></div>
+<p>The blue bars are all the same <em>shape</em>, and we can make <em>all</em> the bars the same shape without really changing the feel:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">Tempo</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span><span class="nf">.using</span><span class="p">(</span><span class="o">&amp;</span><span class="n">BASS</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Fs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.bar</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">E</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="nf">.play</span><span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">Gs</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="nf">.build</span><span class="p">();</span>
+</code></pre></div></div>
+<p>So we could, in principle, extract an idea of a parameterised phrase:</p>
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// r is root, r_o root octave, a is the first walk-up note, b is the second</span>
+<span class="k">fn</span> <span class="nf">bass_bar</span><span class="p">((</span><span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">),</span> <span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">):</span> <span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">))</span> 
+        <span class="k">-&gt;</span> <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">f32</span><span class="p">,</span> <span class="nb">i32</span><span class="p">)</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="nd">vec!</span><span class="p">[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">r_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a_o</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b_o</span><span class="p">)]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>and then use that:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Tempo::new(4, 120).using(&amp;BASS, 0)
+    .bar(1).phrase(bass_bar((A, 1), (E, 0), (Gs, 0)))
+    .bar(2).phrase(bass_bar((A, 1), (A, 1), (Gs, 0)))
+    .bar(3).phrase(bass_bar((Fs, 0), (E, 0), (E, 0)))
+    .bar(4).phrase(bass_bar((Fs, 0), (Fs, 0), (E, 0)))
+    .bar(5).phrase(bass_bar((D, 0), (D, 0), (Fs, 0)))
+    .bar(6).phrase(bass_bar((E, 0), (E, 0), (Gs, 0)))
+    .bar(7).phrase(bass_bar((A, 1), (E, 0), (Gs, 0)))
+    .bar(8).phrase(bass_bar((A, 1), (E, 0), (Gs, 0)))
+    .build();
+</code></pre></div></div>
+<p>That lets me build bigger tunes out of smaller phrases, but more importantly: to think of music as a sequence
+of variants of structured sub-parts. I’m not going to argue that’s what music <em>is</em>, but it’s a large part of
+how I <em>think</em> about music, particularly the style of music I want to angle for here.</p>
+
+<p>Turning a four-note phrase into a function makes this a little more concise and clearer, but say I wanted instead
+to do Street Spirit (Fade Out) by Radiohead - that has a repeating pattern of 16 semiquavers played throughout,
+arpeggiating one of 3 chords: the <em>information</em> there is much, much less dense than the <em>notes</em> are. Being able to
+reduce that pattern to a single invokable thing not only makes it much easier to scale across an entire piece,
+but also makes <em>intent</em> a bunch clearer too.</p>
+
+<p>I think I may be happy with my music hard-coded into the game with this approach. Let’s see where it takes me.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2023/02/initial-commit" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+
