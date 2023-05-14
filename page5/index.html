@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/05/entity-controller-system-as-a-programming-model">Entity Component System as a programming model</a></li>
+        
           <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
         
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
         
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
-        
-          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,32 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/11/how-to-fail-in-java">Nov 20, 2017 - How to Fail in Java</a></h1>
+        
+        <div class="content">
+            <p>This is the second in a series of posts about <a href="https://github.com/unruly/control">co.unruly.control</a>,
+a functional control library for Java. You can find <a href="https://writeoncereadmany.github.io/2017/11/most-code-fails-badly">the introductory post here</a>.</p>
+
+<p>The library all revolves around a single central concept: the <code class="language-plaintext highlighter-rouge">Result</code> class.
+A large part of the reason to use <code class="language-plaintext highlighter-rouge">Result</code> is how it can be manipulated,
+allowing error-handling to be separated from core logic. But before we get to
+that, there’s another important reason to use <code class="language-plaintext highlighter-rouge">Result</code>: it fills an important
+gap in Java’s API.</p>
+
+<p>Namely, to represent the outcome of an operation which may fail.</p>
+
+<p>This may seem like kind of a huge oversight, seeing as many operations can
+potentially fail - there’s definitely a <em>need</em> for a tool for that job. That’s
+not to say Java doesn’t have ways of handling potential failure - it does, just
+that they’re all bad.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2017/11/most-code-fails-badly">Nov 17, 2017 - Most Code Fails Badly - The Case for Results</a></h1>
@@ -192,23 +218,6 @@ right sort of isolation just magically happens.</p>
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2017/09/doing-stuff-in-minima">Sep 9, 2017 - Doing stuff in Minima</a></h1>
-        
-        <div class="content">
-            <p>This is the fourth in a series of posts on the <a href="https://github.com/writeoncereadmany/minimalang">Minima language</a>. <a href="https://writeoncereadmany.github.io/2017/09/a-minima">Here’s the first</a>,
-<a href="https://writeoncereadmany.github.io/2017/09/b-overloading-in-minima">here’s the second</a>, and <a href="https://writeoncereadmany.github.io/2017/09/c-how-minimal-is-minima">here’s the third</a>.</p>
-
-<p>So far I’ve provided little more than explanations of syntax. So, let’s have
-a look at how to approach some actual problems in Minima. When I say actual
-problems, I mean whiteboard screening questions: reversing a list and Fizzbuzz.</p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -216,7 +225,7 @@ problems, I mean whiteboard screening questions: reversing a list and Fizzbuzz.<
         <a class="btn btn-default" href="/page4" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 5 of 8</span>
+  <span class="page_number ">Page: 5 of 9</span>
   
     <a class="btn btn-default" href="/page6" class="next">Older</a>
   

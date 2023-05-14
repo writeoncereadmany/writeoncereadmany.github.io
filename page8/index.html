@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/05/entity-controller-system-as-a-programming-model">Entity Component System as a programming model</a></li>
+        
           <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
         
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
         
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
-        
-          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,25 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2017/02/failure-is-not-right">Feb 27, 2017 - Failure is not Right</a></h1>
+        
+        <div class="content">
+            <p>When talking about implementing a result type in functional programming languages, many people remark that this can be implemented using an <code class="language-plaintext highlighter-rouge">Either</code> datatype. For example, in Haskell, the definition of <code class="language-plaintext highlighter-rouge">Either</code> is:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">Either</span> <span class="n">a</span> <span class="n">b</span> <span class="o">=</span> <span class="kt">Left</span> <span class="n">a</span> <span class="o">|</span> <span class="kt">Right</span> <span class="n">b</span>
+</code></pre></div></div>
+
+<p>All this means is an instance of <code class="language-plaintext highlighter-rouge">Either a b</code> is a <code class="language-plaintext highlighter-rouge">Left a</code>, or it’s a <code class="language-plaintext highlighter-rouge">Right b</code>. This datastructure is applicable to many use cases: one of them is representing the union of success and failure. For the case where it represents success or failure, a handy mantra is “Failure isn’t right”.</p>
+
+<p>What that means is: for an <code class="language-plaintext highlighter-rouge">Either a b</code>, the success type is <code class="language-plaintext highlighter-rouge">b</code> and the failure type is <code class="language-plaintext highlighter-rouge">a</code>. This is true for two reasons.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2016/12/smell-o-vision">Dec 29, 2016 - Smell-O-Vision</a></h1>
@@ -187,23 +206,6 @@ ruminations on software development
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2016/11/refactoring-to-functionality">Nov 11, 2016 - Refactoring towards a Functional Style</a></h1>
-        
-        <div class="content">
-            <p>Yesterday, I refactored a method.</p>
-
-<p>Nothing unusual about that - we refactor code constantly. Code is, after all, better described as something grown than something built, and a large part of gardening is keeping the weeds in check. Normally, I wouldn’t have given it a second thought.</p>
-
-<p>What was unusual, though, was this was my first time pairing with Sarah, who’s relatively new to Java 8 constructs like Optionals. Pairing with someone new often leads to more discussion of what’s being done and why, which can provoke some interesting reflections.</p>
-
-<p>As we stepped through the refactorings, I noticed a few simple pressures were guiding us towards a functional approach. Each one only made a small, incremental improvement. Together, they had a huge effect on the code.</p>
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
@@ -211,7 +213,9 @@ ruminations on software development
         <a class="btn btn-default" href="/page7" class="previous">Newer</a>
       
   
-  <span class="page_number ">Page: 8 of 8</span>
+  <span class="page_number ">Page: 8 of 9</span>
+  
+    <a class="btn btn-default" href="/page9" class="next">Older</a>
   
 </div>
 

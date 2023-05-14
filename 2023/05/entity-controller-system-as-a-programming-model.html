@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>write once, read many</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/css/theme.css" rel="stylesheet" type="text/css">
+    <link href="/css/syntax.css" rel="stylesheet" type="text/css">
+    <link href="/css/highlight.css" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                  <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">write once, read many</a>
+              </div>
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/">Home</a></li>
+                    <li class="active visible-xs-block"><a href="/links.html">Links</a></li>
+                    <li class="active"><a href="/archive.html">Archive</a></li>
+                    <li class="active"><a href="/about.html">About</a></li>
+                    <li class="active"><a href="/feed.xml">RSS</a></li>
+                    
+                      <li class="active"><a href="https://github.com/writeoncereadmany">Github</a></li>
+                    
+                </ul>
+              </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container container-left">
+    <div class="row">
+        <div class="col-md-3 hidden-xs">
+            <div class="sidebar well">
+ruminations on software development
+</div>
+
+<div class="sidebar well">
+    <h1>Recent Posts</h1>
+    <ul>
+        
+          <li><a href="/2023/05/entity-controller-system-as-a-programming-model">Entity Component System as a programming model</a></li>
+        
+          <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
+        
+          <li><a href="/2023/02/composing-musical">Composing Music</a></li>
+        
+          <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
+        
+          <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
+        
+    </ul>
+</div>
+
+<!--<div class="sidebar well">
+<h1>Links</h1>
+<ul>
+  <li><a href="#">One</a></li>
+  <li><a href="#">Two</a></li>
+  <li><a href="#">Three</a></li>
+  <li><a href="#">Four</a></li>
+</ul>
+
+</div>-->
+
+        </div>
+        <div class="col-md-9">
+          <div class="article">
+            <div class="well">
+                <h1><a href="/2023/05/entity-controller-system-as-a-programming-model">May 13, 2023 - Entity Component System as a programming model</a></h1>
+            
+            <div class="post-content">
+            <p>Pandamonium is, perhaps unnecessarily, implemented using an Entity Component System architecture.</p>
+
+<p>(Caveat: I have only read very surface-level things about Entity Component Systems, my approach has diverged over time, and I suspect it is abnormal and deficient in a bunch of ways. For now, I suspect those ways are ways I don’t care about)</p>
+
+<p>What does that mean, and why? Well, the best way to illustrate that is by example. Much of my game logic is implemented using functions like this:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">translate</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Duration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">entities</span><span class="nf">.apply</span><span class="p">(|(</span><span class="nf">Velocity</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">),</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))|</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">()),</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">())));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>What’s going on here? Very simply: we’re applying a function to our entities, that takes a velocity and a position, and returns a new position.</p>
+
+<!--more-->
+
+<p>OK, so, presumably, this moves all entities according to their current velocity and position?</p>
+
+<p>Not exactly. See, not all entities <em>have</em> a velocity and position. Many don’t have a velocity, and some have neither. So what that does is: <em>for each entity which has a velocity and position</em>, update the position using the supplied function.</p>
+
+<p>OK, so… what is an entity?</p>
+
+<h3 id="entities-and-components">Entities and Components</h3>
+
+<p>An entity is (conceptually at least) a collection of components. A component is a piece of data. For example - position and velocity are both components:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Clone,</span> <span class="nd">Variable)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="nf">Position</span><span class="p">(</span><span class="k">pub</span> <span class="nb">f64</span><span class="p">,</span> <span class="k">pub</span> <span class="nb">f64</span><span class="p">);</span>
+
+<span class="nd">#[derive(Clone,</span> <span class="nd">Variable)]</span>
+<span class="k">pub</span> <span class="k">struct</span> <span class="nf">Velocity</span><span class="p">(</span><span class="k">pub</span> <span class="nb">f64</span><span class="p">,</span> <span class="k">pub</span> <span class="nb">f64</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Note: components are typically pure, dumb, transparent data: no behaviour, just state. Any logic about how these components interact exists outside them, implemented independently.</p>
+
+<p>Note also these components have identical implementations, and are distinguished purely by their type.</p>
+
+<p>An entity may have any number of components, but only one of any given type. An entity can have a position, or not have a position, but it can’t have <em>two</em> positions. Here’s how we define a spring, for example:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[derive(Clone,</span> <span class="nd">Constant)]</span>
+<span class="k">struct</span> <span class="n">Spring</span><span class="p">;</span>
+
+<span class="k">pub</span> <span class="k">fn</span> <span class="nf">spawn_spring</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">entities</span><span class="nf">.spawn</span><span class="p">(</span><span class="nf">entity</span><span class="p">()</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="n">Spring</span><span class="p">)</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nn">Interacts</span><span class="p">::</span><span class="n">Spring</span><span class="p">)</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nf">Mesh</span><span class="p">(</span><span class="nn">ConvexMesh</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="nd">vec!</span><span class="p">[(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)],</span> <span class="nd">vec!</span><span class="p">[])</span><span class="nf">.translate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)))</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nn">Sprite</span><span class="p">::</span><span class="nf">new</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">))</span>
+    <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>A spring has a position, a collision mesh, a sprite, some rules about interaction, and a marker type that basically exists just to say it’s a spring. The <code class="language-plaintext highlighter-rouge">with()</code> method we use to add properties to an entity only cares that they’re components, and components can be declared anywhere: the entity framework code doesn’t know anything about <code class="language-plaintext highlighter-rouge">Spring</code>.</p>
+
+<p>So: that’s an example of something which doesn’t move, which wouldn’t be affected by our <code class="language-plaintext highlighter-rouge">translate</code> method, because it doesn’t have a velocity - in contrast to something like, say, the floating text element.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">fn</span> <span class="nf">spawn_text</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">f64</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="o">&amp;</span><span class="nb">str</span><span class="p">,</span> <span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Events</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="n">text_id</span> <span class="o">=</span> <span class="n">entities</span><span class="nf">.spawn</span><span class="p">(</span><span class="nf">entity</span><span class="p">()</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="n">Text</span> <span class="p">{</span> <span class="n">text</span><span class="p">:</span> <span class="n">text</span><span class="nf">.to_string</span><span class="p">(),</span> <span class="n">justification</span><span class="p">:</span> <span class="nn">align</span><span class="p">::</span><span class="n">CENTER</span> <span class="p">|</span> <span class="nn">align</span><span class="p">::</span><span class="n">MIDDLE</span><span class="p">})</span>
+        <span class="nf">.with</span><span class="p">(</span><span class="nf">Velocity</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+    <span class="p">);</span>
+    <span class="n">events</span><span class="nf">.schedule</span><span class="p">(</span><span class="nn">Duration</span><span class="p">::</span><span class="nf">from_millis</span><span class="p">(</span><span class="mi">600</span><span class="p">),</span> <span class="nf">Destroy</span><span class="p">(</span><span class="n">text_id</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Ok, cool. But why take this approach?</p>
+
+<h3 id="data-models-dont-suit-games">Data Models Don’t Suit Games</h3>
+
+<p>In a traditional OO approach, I’d be defining the various different types of objects with, well, types. This gives me a few options:</p>
+
+<p>I could define entirely different types for each entity, implementing common interfaces to describe their behaviour with methods like <code class="language-plaintext highlighter-rouge">render()</code>, <code class="language-plaintext highlighter-rouge">update()</code> and so on.</p>
+
+<p>Or I could split entities into broad classifications - say, in a shoot-‘em-up like Gradius, I might want <code class="language-plaintext highlighter-rouge">Player</code>, <code class="language-plaintext highlighter-rouge">Enemy</code>, <code class="language-plaintext highlighter-rouge">Bullet</code>, <code class="language-plaintext highlighter-rouge">Powerup</code>, <code class="language-plaintext highlighter-rouge">Particle</code> and <code class="language-plaintext highlighter-rouge">Wall</code> - with variation within those types achieved via parameterisation.</p>
+
+<p>I have a tension between boilerplate and hierarchical abstraction here. Either the same code exists in multiple places, or I need an idea of how these types relate to each other, how they’re classified into subgroups, in order to determine how to share code.</p>
+
+<p>But my problem here is: the similarities between the types of entities I want for <em>this</em> game (and, for that matter, many games) are <em>not</em> hierarchical. There is no base set of properties or behaviours common to all entities, save possibly identity.</p>
+
+<p>What I want is a compositional approach. At least, to state.</p>
+
+<h3 id="what-about-logic">What About Logic?</h3>
+
+<p>That’s entities and components, but there’s one last part to an ECS approach: systems. Components are bits of data, and entities are aggregations of components: so far, all we have is data. The logic, the behaviour: that lies in the systems.</p>
+
+<p>The OO approach to game logic would suggest state and behaviour should live together. That’s an approach I could take: in addition to a list of properties I provide to any new entity, I could also provide it with a list of behaviours: functions which act over the appropriate subsets of properties.</p>
+
+<p>That’s one approach, but it’s not the one I’m taking. Rather, I’m defining behaviour by a system of universal functions. If you have a sprite and a position, then you get drawn. If you have a velocity and a position, you move. And so on.</p>
+
+<p>So, for example, this is a system:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">translate</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Duration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">entities</span><span class="nf">.apply</span><span class="p">(|(</span><span class="nf">Velocity</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">),</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))|</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">()),</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">())));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This approach has a number of benefits: it reduces boilerplate of passing the same common functions into many entities, it eliminates the risk of forgetting to attach an important behaviour. It models functions on the simulation that constitutes the game as a set of physical laws, which makes a lot of sense to me.</p>
+
+<p>It also provides a lens to think about <em>interactions</em> between entities. Our player character can collect coins. Where should that logic live? It’s not a behaviour of the player character <em>or</em> a coin, per se, it’s about the <em>both</em> of them.</p>
+
+<p>If we’re applying our logic from the outside, not attached to any individual entity, we can define functions over pairs of entities in exactly the same way as we define functions over individual entities.</p>
+
+<p>This approach has some drawbacks, too! It becomes harder to determine <em>what</em> logic is being applied to a given entity, as it’s inferred rather than defined, and it requires some new approaches if we want to exclude a given entity from a particular behaviour. These seem like a more than reasonable tradeoff to me, in the situations I’ve encountered. Your mileage may well vary.</p>
+
+<h3 id="performance">Performance?</h3>
+
+<p>A lot of the conversation around entity component systems is about them being very high performance for games. This is not true of what I’ve built. At least, not currently.</p>
+
+<p>I haven’t designed this to maximise runtime performance: I’m building dinky little 8-bit style games. I’ve built it to maximise <em>developer</em> performance, particularly at the trying-new-ideas stage. Adding new components or behaviours is very, very low boilerplate, meaning I can try out new ideas often in seconds, and the code is free of extraneous noise, meaning it’s very clear to me exactly how all these various systems work.</p>
+
+<p>That’s not to say that there isn’t room for increasing performance: there’s a lot of low-hanging fruit in my implementation, which I haven’t pursued because I’m already running fast enough for my needs. I’ll touch on that when I dive into exactly how all of this works.</p>
+
+<p>Equally, there are some decisions I’ve made which limit performance in pursuit of a nicer API. This isn’t even a tradeoff, as far as I’m concerned, for as long as I’m already running at 60fps, which I imagine I will continue to do for some time.</p>
+
+<h3 id="magic">Magic</h3>
+
+<p>The bit that I find really cool, though, is exactly what’s going on in this application of logic to entities:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">translate</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Duration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">entities</span><span class="nf">.apply</span><span class="p">(|(</span><span class="nf">Velocity</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">),</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))|</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">()),</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">())));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This is doing some powerful magic under the hood, leveraging both Rust’s powerful static type inference <em>and</em> its dynamic typing capabilities in concert, in a way that simply isn’t possible in languages like Java or Python. I’ve also done similar things in Haskell, so this is by no means unique to Rust.</p>
+
+<p>It’s cool, but you don’t need to understand the implementation to use it: it just provides a simple, intuitive API. Give me a function, and I’ll apply to everything I can apply it to.</p>
+
+<p>I’ll get into how this all works in the next post.</p>
+
+            </div>
+            
+            </div>
+          </div>
+          <div class="pagination">
+              
+              
+                <a class="btn btn-default" href="/2023/02/just-intonation" class="previous">Older Post</a>
+              
+          </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12 footer navbar-inverse navbar-fixed-bottom">
+            <p class="copyright">&copy;2023 write once, read many. Powered by <a href="http://jekyllrb.com">Jekyll</a>, theme by <a href="https://github.com/scotte/jekyll-clean">Scott Emmons</a>
+            under
+            <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution</a></p>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</body>
+</html>
+

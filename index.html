@@ -57,6 +57,8 @@ ruminations on software development
     <h1>Recent Posts</h1>
     <ul>
         
+          <li><a href="/2023/05/entity-controller-system-as-a-programming-model">Entity Component System as a programming model</a></li>
+        
           <li><a href="/2023/02/just-intonation">It's Just Intonation</a></li>
         
           <li><a href="/2023/02/composing-musical">Composing Music</a></li>
@@ -64,8 +66,6 @@ ruminations on software development
           <li><a href="/2023/02/initial-commit">Pandamonium: Initial Commit</a></li>
         
           <li><a href="/2018/02/detecting-when-in-intellij">Detecting when you're in IntelliJ</a></li>
-        
-          <li><a href="/2018/02/fancy-railways">Fancy Railways</a></li>
         
     </ul>
 </div>
@@ -84,6 +84,29 @@ ruminations on software development
         </div>
         <div class="col-md-9">
             
+<div class="article">
+    <div class="well">
+        <h1><a href="/2023/05/entity-controller-system-as-a-programming-model">May 13, 2023 - Entity Component System as a programming model</a></h1>
+        
+        <div class="content">
+            <p>Pandamonium is, perhaps unnecessarily, implemented using an Entity Component System architecture.</p>
+
+<p>(Caveat: I have only read very surface-level things about Entity Component Systems, my approach has diverged over time, and I suspect it is abnormal and deficient in a bunch of ways. For now, I suspect those ways are ways I don’t care about)</p>
+
+<p>What does that mean, and why? Well, the best way to illustrate that is by example. Much of my game logic is implemented using functions like this:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">fn</span> <span class="nf">translate</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="o">&amp;</span><span class="k">mut</span> <span class="n">Entities</span><span class="p">,</span> <span class="n">dt</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">Duration</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">entities</span><span class="nf">.apply</span><span class="p">(|(</span><span class="nf">Velocity</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">),</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))|</span> <span class="nf">Position</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">()),</span> <span class="n">y</span> <span class="o">+</span> <span class="p">(</span><span class="n">dy</span> <span class="o">*</span> <span class="n">dt</span><span class="nf">.as_secs_f64</span><span class="p">())));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>What’s going on here? Very simply: we’re applying a function to our entities, that takes a velocity and a position, and returns a new position.</p>
+
+
+        </div>
+    </div>
+</div>
+
 <div class="article">
     <div class="well">
         <h1><a href="/2023/02/just-intonation">Feb 24, 2023 - It's Just Intonation</a></h1>
@@ -133,35 +156,10 @@ one of the best ones:</p>
     </div>
 </div>
 
-<div class="article">
-    <div class="well">
-        <h1><a href="/2023/02/initial-commit">Feb 22, 2023 - Pandamonium: Initial Commit</a></h1>
-        
-        <div class="content">
-            <p>The phrase “Initial commit” covers a real multitude of sins. It’s shorthand for “I’ve done too much stuff
-already to describe it meaningfully, so… here’s all of what I’ve done so far”. It’s an admission that
-an important step has been left too late.</p>
-
-<p>Now, I have - I think - exercised good commit habits on Pandamonium, my current hobby project. But I’ve 
-done a bunch of (I think) cool things with it that I’d like to share, and now I’m in a position 
-where that’s a bit overwhelming - I’m in an “Initial commit” position on the blog.</p>
-
-<p>So I’ll start with a brief introduction, post in-the-moment as I solve interesting problems, and slowly
-backfill the more interesting choices made so far.</p>
-
-<p>Here’s what I’ve got so far:</p>
-
-<p><img src="/assets/pandamonium_screenshot.png" alt="image tooltip here" width="500" class="centered" /></p>
-
-
-        </div>
-    </div>
-</div>
-
 
 <div class="pagination">
   
-  <span class="page_number ">Page: 1 of 8</span>
+  <span class="page_number ">Page: 1 of 9</span>
   
     <a class="btn btn-default" href="/page2" class="next">Older</a>
   
